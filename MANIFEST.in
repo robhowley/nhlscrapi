@@ -1,0 +1,6 @@
+include MANIFEST.in
+include README.md
+include AUTHORS.md
+include LICENSE
+
+recursive-include docs *.html *.css *.png
