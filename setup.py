@@ -2,44 +2,46 @@ from distutils.core import setup
 from setuptools import find_packages
 
 setup(
-    name="nhlscrapi",
+  name="nhlscrapi",
     
-    version=nhlscrapi.__version__,
+  version=nhlscrapi.__version__,
     
-    description='NHL Scrapr API for Python',
+  description='NHL Scrapr API for Python',
     
-    author='Rob Howley',
-    author_email='howley.robert@gmail.com',
-    url='https://github.com/robhowley/nhlscrapi',
+  author='Rob Howley',
+  author_email='howley.robert@gmail.com',
+  url='https://github.com/robhowley/nhlscrapi',
     
-    packages=find_packages(),
+  packages=find_packages(),
     
-    include_package_data=True,
+  include_package_data=True,
     
-    license="Apache Software License version 2.0",
+  scripts=['bin/gamedata'],
     
-    platforms='any',
+  license="Apache Software License version 2.0",
     
-    zip_safe=False,
+  platforms='any',
     
-    keywords='nhlscrapi',
+  zip_safe=False,
     
-    classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
-        'Intended Audience :: Developers',
-        'License :: OSI Approved :: BSD License',
-        'Natural Language :: English',
-        "Programming Language :: Python :: 2",
-        'Programming Language :: Python :: 2.6',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
-        'Operating System :: OS Independent',
-        'Topic :: Software Development :: Libraries :: Python Modules',
-    ],
+  keywords='nhlscrapi',
     
-    test_suite='tests',
+  classifiers=[
+    'Development Status :: 2 - Pre-Alpha',
+    'Intended Audience :: Developers',
+    'License :: OSI Approved :: BSD License',
+    'Natural Language :: English',
+    'Programming Language :: Python :: 2',
+    'Programming Language :: Python :: 2.6',
+    'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.3',
+    'Operating System :: OS Independent',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+  ],
     
-    # Dependent packages (distributions)
-    install_requires=[],
+  test_suite='tests',
+    
+  # Dependent packages (distributions)
+  install_requires=[],
 )
