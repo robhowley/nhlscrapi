@@ -6,8 +6,7 @@ sys.path.append('..')
 
 import nhlscrapi.constants as C
 from nhlscrapi._tools import build_enum
-
-from scrapr.pbp import PlayByPlay as PBP
+from nhlscrapi.scrapr.rtss import RTSS
 
 
 """Enum denoting whether the game is regular season or playoff"""
@@ -18,11 +17,14 @@ GameType = build_enum(Regular=2, Playoffs=3)
 class GameKey(object):
   """Unique identifying info for a given game. (regular/playoffs, season numer, game number). TODO: JSON serializable"""
   
-  def __init__(self, season = C.MIN_SEASON, game_num = 1, game_type = GameType.Regular):
-    self.season = season
-    self.game_num = game_num
-    self.game_type = game_type
-  
+  def __init__(self, season = C.MIN_SEASON, game_type = GameType.Regular, game_num = 1, key_tup=None):
+    if key_tup is None:
+      self.season = season
+      self.game_num = game_num
+      self.game_type = game_type
+    else:
+      self.season, self.game_num, self.game_type = key_tup
+      
   @property
   def season(self):
     return self._season
@@ -39,21 +41,35 @@ class GameKey(object):
     
   @game_type.setter
   def game_type(self, value):
-    if isinstance(value, GameType):
+    if value in GameType.Name:
       self._game_type = value
     else:
       raise TypeError("GameKey.game_type must be of type GameType")
+      
+  def to_tuple(self):
+    return (self.season, self.game_type, self.game_num)
 
 
 class Game(object):
-  def __init__(game_key = GameKey()):
+  # add constructor argument for json source
+  def __init__(self, game_key = None, extractors = {}, cum_stats = {}):
     self.plays = []
-    if isinstance(game_key, GameKey):
-      self.game_key = game_key
-    else:
-      raise TypeError("Game is initialized with object GameKey")
+    self.game_key = game_key
+    
+    self.extractors = extractors
+    self.cum_stats = cum_stats
       
   def load_plays(self):
-    pbp = PBP(self.game_key)
-    self.plays = PBP.load()
-    
+    rtss = RTSS(self.game_key)
+    for play in rtss.parsed_play_stream():
+      play.extracted_data = self.__process(play, self.extractors, 'extract')
+      play.cum_stats = self.__process(play, self.cum_stats, 'update')
+      self.plays.append(play)
+  
+    return self.plays
+  
+  def __process(self, play, d, meth):
+    r = { }
+    for name, m in d.iteritems():
+      r[name] = getattr(m, meth)(play)
+    return r

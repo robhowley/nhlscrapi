@@ -6,7 +6,7 @@ sys.path.append('..')
 
 from nhlscrapi._tools import build_enum
   
-Strength = build_enum('Even', 'PP')
+Strength = build_enum('Even', 'PP', 'SH')
 
 class Play(object):
   def __init__(self):
@@ -16,4 +16,4 @@ class Play(object):
     self.time = { "min": 20, "sec": 0 }
     self.vis_on_ice = { }
     self.home_on_ice = { }
-    self.event = 0
+    self.event = None

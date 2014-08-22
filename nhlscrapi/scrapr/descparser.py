@@ -179,7 +179,7 @@ def parse_faceoff_08(event):
 #############################
 # VAN #3 BIEKSA HIT NYR #21 STEPAN, Def. Zone
 def parse_hit_08(event):
-  s = split_and_strip(event.desc, "HIT")
+  s = split_and_strip(event.desc, " HIT ")
   
   event.hit_by = team_num_name(s[0])
   

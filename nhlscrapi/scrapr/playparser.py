@@ -5,10 +5,8 @@ import sys
 sys.path.append('../')
 
 
-from lxml.html import fromstring
-
 import nhlscrapi.constants as c
-from nhlscrapi.plays import Play
+from nhlscrapi.games.plays import Play, Strength
 
 from eventparser import event_type_mapper, parse_event_desc
 
@@ -26,9 +24,9 @@ class RTSSCol(object):
           "home": 7
         }
     else:
-      raise ValueError("Col_MAP(season): Invalid season " + str(season))
+      raise ValueError("RTSSCol.MAP(season): Invalid season " + str(season))
       
-  Col_Map = staticmethod(Col_Map)
+  Map = staticmethod(Map)
     
 
 # will take a RTSS play table row and return a Play object
@@ -49,7 +47,8 @@ class PlayParser(object):
     p = Play()
     p.play_num = int(d[c["play_num"]].text) if d[c["play_num"]].text.isdigit() else 0
     p.period = d[c["per"]].text
-    p.strength = d[c["str"]].text
+    
+    p.strength = self.__strength(d[c["str"]].text)
     
     time = d[c["time"]].text.split(":")
     p.time = { "min": int(time[0]), "sec": int(time[1]) }
@@ -87,5 +86,10 @@ class PlayParser(object):
       
     return res
     
-
-    
+  def __strength(self, sg_str):
+    if 'PP' in sg_str:
+      return Strength.PP
+    elif 'SH' in sg_str:
+      return Strength.PP
+    else:
+      return Strength.Even

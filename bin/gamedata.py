@@ -4,9 +4,12 @@ if __name__ == '__main__':
   import sys
   sys.path.append('../nhlscrapi')
   
+  import json
+  
   from cli_opts import cli_opts
+  from nhlscrapi._tools import JSONDataEncoder as Encoder
   from nhlscrapi import constants as C
-  from nhlscrapi import
+  from nhlscrapi.games.game import Game, GameKey, GameType
   
   # get cli opts
   def get_inp_params(args):
@@ -30,3 +33,12 @@ if __name__ == '__main__':
     sys.exit(0)
     
   print season, game_num, reg_season
+  
+  gt = GameType.Regular if reg_season else GameType.Playoffs
+  gk = GameKey(season, gt, game_num)
+  game = Game(gk)
+  
+  out_f = ''.join(str(x) for x in gk.to_tuple()) + '.json'
+  with open(out_f, 'w') as f:
+    for p in game.load_plays():
+      f.write(json.dumps(p, cls=Encoder) + '\n')

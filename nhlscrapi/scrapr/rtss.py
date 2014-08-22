@@ -1,6 +1,7 @@
 
 from lxml.html import fromstring
 
+from nhlreq import NHLCn
 from nhlscrapi.scrapr import playparser as pp
 
 
@@ -13,16 +14,20 @@ class RTSS(object):
     
     self.plays = []
     """List of nhlscrapi.Plays loaded"""
-
-  @property
-  def game_key(self):
-    return self._game_key
-    
+  
   def parse_plays(self):
     """Retreive and parse Play by Play data for the given nhlscrapi.GameKey"""
+    self.plays = [p for p in self.parsed_play_stream()]
     
-    lx_doc = NHLCn().rtss(self.game_key)
-    if lx_doc:
+    
+  def parsed_play_stream(self):
+    """Generate stream of parsed plays. Useful for per play processing"""
+    
+    cn = NHLCn()
+    html = cn.rtss(self.game_key)
+    lx_doc = fromstring(html)
+    
+    if lx_doc is not None:
       parser = pp.PlayParser(self.game_key.season)
       plays = lx_doc.xpath('//tr[@class = "evenColor"]')
       for p in plays:
@@ -30,6 +35,4 @@ class RTSS(object):
         self.plays.append(p_obj)
         
         yield p_obj
-          
-    return self.plays
       

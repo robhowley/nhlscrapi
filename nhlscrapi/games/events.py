@@ -6,6 +6,7 @@ sys.path.append('..')
 
 from nhlscrapi._tools import build_enum
 
+
 EventType = build_enum('Event', 'ShotAttempt', 'Shot', 'Block', 'Miss', 'Goal',
   'Hit', 'FaceOff', 'Giveaway', 'Takeaway', 'Penalty', 'Stoppage', 'ShoutOutAtt',
   'PenaltyShot', 'End')
@@ -128,15 +129,16 @@ class EventFactory(object):
   
   def Create(event_type):
     """Factory method creates object derived from (or or type) Event with class name matching the EventType.
-    :param event_type: string for type of event
+    :param event_type: number for type of event
     :rtype: :class: nhlscrapi.Event"""
     
+    if event_type in EventType.Name:
       # unknown event type gets base class
-      if event_type.name == Event.__name__:
+      if EventType.Name[event_type] == Event.__name__:
         return Event()
       else:
         # instantiate Event subclass with same name as EventType name
-        return [t for t in EventFactory.event_list if t.__name__ == event_type.name][0]()
+        return [t for t in EventFactory.event_list if t.__name__ == EventType.Name[event_type]][0]()
     else:
       raise TypeError("EventFactory.Create: Invalid EventType")
       

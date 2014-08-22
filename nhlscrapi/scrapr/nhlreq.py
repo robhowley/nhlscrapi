@@ -4,6 +4,8 @@ from urllib2 import urlopen
 from urllib2 import Request
 from urllib2 import URLError
 
+from datetime import datetime as dt
+
 class NHLCn(object):
   
   __domain = 'http://www.nhl.com/'
@@ -11,12 +13,13 @@ class NHLCn(object):
   def __init__(self):
     self.html_src = None
     self.req_err = None
+    self.req_time = 0
   
   def rtss(self, game_key):
     seas, gt, num = game_key.to_tuple()
     url = [ self.__domain, "scores/htmlreports/", str(seas-1), str(seas),
       "/PL0", str(gt), ("%04i" % (num)), ".HTM" ]
-      
+    print ''.join(url)
     return self.__open(''.join(url))
   
   def __open(self, url):
@@ -28,15 +31,19 @@ class NHLCn(object):
       'Accept-Language': 'en-US,en;q=0.8',
       'Connection': 'keep-alive'})
     
+    start = dt.now()
+    
     req = None
     try:
-      req = urlopen(req)
+      req = urlopen(url)
       self.html_src = req.read()
     except Exception as e:
       self.req_err = e
     else:
       if self.req_err is not None:
         req.close()
+    
+    self.req_time = dt.now() - start
       
     return self.html_src
 
