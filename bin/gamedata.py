@@ -9,6 +9,7 @@ if __name__ == '__main__':
   from cli_opts import cli_opts
   from nhlscrapi._tools import JSONDataEncoder as Encoder
   from nhlscrapi import constants as C
+  from nhlscrapi.games.cumstats import ShotAttemptCt
   from nhlscrapi.games.game import Game, GameKey, GameType
   
   # get cli opts
@@ -36,9 +37,14 @@ if __name__ == '__main__':
   
   gt = GameType.Regular if reg_season else GameType.Playoffs
   gk = GameKey(season, gt, game_num)
-  game = Game(gk)
+  game = Game(gk, cum_stats={ 'ShotAtt': ShotAttemptCt() })
   
   out_f = ''.join(str(x) for x in gk.to_tuple()) + '.json'
   with open(out_f, 'w') as f:
     for p in game.load_plays():
       f.write(json.dumps(p, cls=Encoder) + '\n')
+  
+    # fix the jsonification of full game object
+    # hits a recursion limit
+    print game.cum_stats['ShotAtt'].tally
+    print game.cum_stats['ShotAtt'].total

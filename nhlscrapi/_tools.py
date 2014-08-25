@@ -2,12 +2,14 @@
 
 import json
 
+# need to fix this to accommodate recursion depth limit/error
+# if not, then go through the pain staking of a class.to_json() structure? ugh
 class JSONDataEncoder(json.JSONEncoder):
   def default(self, obj):
     if isinstance(obj, (list, dict, str, unicode, int, float, bool, type(None))):
       return json.JSONEncoder.default(self, obj)
     else:
-      return obj.__dict__
+      return obj.__dict__ if hasattr(obj, '__dict__') else str(obj)
   
 # didn't use built in enum for backwards compat
 def build_enum(*sequential, **named):

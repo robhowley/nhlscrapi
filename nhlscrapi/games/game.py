@@ -55,21 +55,24 @@ class Game(object):
   def __init__(self, game_key = None, extractors = {}, cum_stats = {}):
     self.plays = []
     self.game_key = game_key
+    self.match_up = { 'home': '', 'away': '', 'final': { 'home': 0, 'away': 0 } }
     
     self.extractors = extractors
     self.cum_stats = cum_stats
       
   def load_plays(self):
     rtss = RTSS(self.game_key)
+    
+    self.match_up = rtss.parse_matchup()
+    
     for play in rtss.parsed_play_stream():
-      play.extracted_data = self.__process(play, self.extractors, 'extract')
-      play.cum_stats = self.__process(play, self.cum_stats, 'update')
+      self.__process(play, self.extractors, 'extract')
+      self.__process(play, self.cum_stats, 'update')
       self.plays.append(play)
   
     return self.plays
   
   def __process(self, play, d, meth):
-    r = { }
     for name, m in d.iteritems():
-      r[name] = getattr(m, meth)(play)
-    return r
+      getattr(m, meth)(play)
+    

@@ -19,7 +19,7 @@ class NHLCn(object):
     seas, gt, num = game_key.to_tuple()
     url = [ self.__domain, "scores/htmlreports/", str(seas-1), str(seas),
       "/PL0", str(gt), ("%04i" % (num)), ".HTM" ]
-    print ''.join(url)
+    
     return self.__open(''.join(url))
   
   def __open(self, url):
