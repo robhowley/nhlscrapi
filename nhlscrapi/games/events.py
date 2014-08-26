@@ -8,8 +8,8 @@ from nhlscrapi._tools import build_enum
 
 
 EventType = build_enum('Event', 'ShotAttempt', 'Shot', 'Block', 'Miss', 'Goal',
-  'Hit', 'FaceOff', 'Giveaway', 'Takeaway', 'Penalty', 'Stoppage', 'ShoutOutAtt',
-  'PenaltyShot', 'End')
+  'Hit', 'FaceOff', 'Giveaway', 'Takeaway', 'Penalty', 'Stoppage', 'ShootOutAtt',
+  'ShootOutGoal', 'PenaltyShot', 'End')
   
   
 class Event(object):
@@ -21,14 +21,15 @@ class Event(object):
 class ShotAttempt(Event):
   def __init__(self, event_type = EventType.ShotAttempt):
     super(ShotAttempt, self).__init__(event_type)
-    self.team = ""
-    self.shooter_num = 0
+    self.shooter = { 'team': '', 'name': '', 'num': 0 }
     self.shot_type = ""
     self.dist = 0
 
 class Goal(ShotAttempt):
   def __init__(self):
     super(Goal, self).__init__(EventType.Goal)
+    self.assists = []
+    
 
 
 class Shot(ShotAttempt):
@@ -39,10 +40,7 @@ class Shot(ShotAttempt):
 class PenaltyShot(ShotAttempt):
   def __init__(self):
     super(PenaltyShot, self).__init__(EventType.PenaltyShot)
-
-class ShootOutAtt(ShotAttempt):
-  def __init__(self):
-    super(ShootOutAtt, self).__init__(EventType.ShootOutAtt)
+    
 
 class Miss(ShotAttempt):
   def __init__(self):
@@ -106,9 +104,20 @@ class Giveaway(Turnover):
   def __init__(self):
     super(Giveaway, self).__init__(Turnover.TOType.Giveaway)
 
-# don't have this data yet
-class ZoneEntry(Event):
-  pass
+
+
+# accumulators are based upon inheritance
+# shoot outs don't count as a shot attempts
+class ShootOutAtt(Event):
+  def __init__(self, event_type = EventType.ShootOutAtt):
+    super(ShootOutAtt, self).__init__(event_type)
+    self.shooter = { 'team': '', 'name': '', 'num': 0 }
+    self.shot_type = ""
+    self.dist = 0
+    
+class ShootOutGoal(ShootOutAtt):
+  def __init__(self):
+    super(ShootOutGoal, self).__init__(EventType.ShootOutGoal)
   
   
 def get_class_hierarchy(base):

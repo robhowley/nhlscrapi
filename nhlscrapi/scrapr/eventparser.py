@@ -15,10 +15,18 @@ def __shot_type(**kwargs):
   if skater_ct > 2:
     return ET.Shot
   elif period < 5:
-    return EventType.PenaltyShot
+    return ET.PenaltyShot
   else:
-    return EventType.ShoutOutAtt
-    
+    return ET.ShootOutAtt
+
+def __goal_type(**kwargs):
+  skater_ct = kwargs['skater_ct'] if 'skater_ct' in kwargs else 12
+  period = kwargs['period'] if 'period' in kwargs else 1
+  
+  if skater_ct <= 2 and period > 4:
+    return ET.ShootOutGoal
+  else:
+    return ET.Goal
 
 def event_type_mapper(event_str, **kwargs):
   event_type_map =  {
@@ -29,7 +37,7 @@ def event_type_mapper(event_str, **kwargs):
     "BLOCKED SHOT": lambda **kwargs: ET.Block,
     "MISS": lambda **kwargs: ET.Miss,
     "MISSED SHOT": lambda **kwargs: ET.Miss,
-    "GOAL": lambda **kwargs: ET.Goal,
+    "GOAL": __goal_type,
     "HIT": lambda **kwargs: ET.Hit,
     "HIT (!)": lambda **kwargs: ET.Hit,
     "HIT (*)": lambda **kwargs: ET.Hit,
@@ -70,5 +78,7 @@ def parse_event_desc(event, season = 2008):
     dp.parse_takeaway_08(event)
   elif event.event_type == ET.Giveaway and season >= 2008:
     dp.parse_giveaway_08(event)
+  elif event.event_type == ET.ShootOutGoal:
+    dp.parse_shootout(event)
   else:
     dp.default_desc_parser(event)

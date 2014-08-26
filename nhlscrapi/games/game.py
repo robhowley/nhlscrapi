@@ -63,13 +63,16 @@ class Game(object):
   def load_plays(self):
     rtss = RTSS(self.game_key)
     
-    self.match_up = rtss.parse_matchup()
+    if rtss.req_err is None:
+      self.match_up = rtss.parse_matchup()
+      
+      for play in rtss.parsed_play_stream():
+        self.__process(play, self.extractors, 'extract')
+        self.__process(play, self.cum_stats, 'update')
+        self.plays.append(play)
+    else:
+      print 'Game not found'
     
-    for play in rtss.parsed_play_stream():
-      self.__process(play, self.extractors, 'extract')
-      self.__process(play, self.cum_stats, 'update')
-      self.plays.append(play)
-  
     return self.plays
   
   def __process(self, play, d, meth):

@@ -24,13 +24,21 @@ class RTSS(object):
       'away': '',
       'final': { 'home': 0, 'away': 0 }
     }
+    """Team match up and final"""
+    
+    self.req_err = None
+    """Error from http request"""
+  
   
   def html_doc(self):
     if self.__lx_doc is None:
       cn = NHLCn()
       html = cn.rtss(self.game_key)
-      self.__lx_doc = fromstring(html)
-      
+      if cn.req_err is None:
+        self.__lx_doc = fromstring(html)
+      else:
+        self.req_err = cn.req_err
+        
     return self.__lx_doc
   
   def parse_matchup(self):
@@ -52,8 +60,6 @@ class RTSS(object):
     lx_doc = self.html_doc()
     
     if lx_doc is not None:
-      
-      
       parser = pp.PlayParser(self.game_key.season)
       plays = lx_doc.xpath('//tr[@class = "evenColor"]')
       for p in plays:

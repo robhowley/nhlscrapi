@@ -9,7 +9,7 @@ class JSONDataEncoder(json.JSONEncoder):
     if isinstance(obj, (list, dict, str, unicode, int, float, bool, type(None))):
       return json.JSONEncoder.default(self, obj)
     else:
-      return obj.__dict__ if hasattr(obj, '__dict__') else str(obj)
+      return obj.__dict__
   
 # didn't use built in enum for backwards compat
 def build_enum(*sequential, **named):

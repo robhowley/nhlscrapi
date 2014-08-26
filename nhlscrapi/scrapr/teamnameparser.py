@@ -15,7 +15,7 @@ def team_abbr_parser(abr):
   if abr in __abbr_alts:
     return __abbr_alts[abr]
     
-  print 'UNKNOWN ABBREVIATION: %s' % abr
+  #print 'UNKNOWN ABBREVIATION: %s' % abr
   return abr
 
 
@@ -27,8 +27,9 @@ def team_name_parser(name):
   try:
     return ABB.keys()[ABB.values().index(ns)]
   except:
-    print 'UNKNOWN TEAM NAME: %s' % name
-    
+    #print 'UNKNOWN TEAM NAME: %s' % name
+    pass
+  
   return name
   
   

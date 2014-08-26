@@ -1,5 +1,6 @@
 
 import string
+from nhlscrapi.scrapr.teamnameparser import team_abbr_parser
     
 # default parser does nothing
 def default_desc_parser(event):
@@ -26,7 +27,7 @@ def team_num_name(s):
   tnn[1] = int(tnn[1]) if tnn[1].isdigit() else -1
   
   return {
-    "team": tnn[0],
+    "team": team_abbr_parser(tnn[0]),
     "num": tnn[1],
     "name": str(tnn[2] + (tnn[3] if len(tnn) > 3 else ""))  # two word names
   }
@@ -34,6 +35,9 @@ def team_num_name(s):
 
 def split_and_strip(s, by):
   return [si.strip() for si in s.split(by)]
+
+
+
 
 
 
@@ -50,13 +54,11 @@ def parse_shot_desc_08(event):
   s = split_and_strip(event.desc, ",")
   
   # split to get team
-  st = split_and_strip(s[0], "-")
+  st = split_and_strip(s[0], " - ")
   st[0] = rem_char(st[0].split(" ")[0].strip(), ".")
   
   # s[0] in form (#)num name; split by space to get num
-  tnn = team_num_name(" ".join(st))
-  event.shooter_num = tnn["num"]
-  event.shooter_name = tnn["name"]
+  event.shooter = team_num_name(" ".join(st))
   
   # s[1] ' shottype '
   event.shot_type = s[1].strip() if len(s) > 1 else ""
@@ -92,26 +94,42 @@ def parse_goal_desc_08(event):
   s = s[0].split(",")
   s = [e.strip() for e in s if e not in ["Assists", "Assist", "A"]]
   
-  event.shot_type = s[1]
-  event.zone = s[2]
-  event.dist = get_ft(s[3])
-  
+  # base case
+  if len(s) > 3:
+    event.shot_type = s[1]
+    event.zone = s[2]
+    event.dist = get_ft(s[3])
+  else:
+    # this is really ugly
+    try:
+      event.dist = get_ft(s[-1])
+      if 'zone' in s[-2].lower():
+        event.zone = s[-2]
+      else:
+        event.shot_type = s[-2]
+    except:
+      if 'zone' in s[-1].lower():
+        event.zone = s[-2]
+      else:
+        event.shot_type = s[-2]
+        
   scorer = s[0].split(" ")
   
   # account for two word last names
   if len(scorer) == 4:
     scorer[2] = scorer[2] + " " + scorer[3]
-  event.team = rem_char(scorer[0], ".") # remove . from L.A.
   
   num_str = rem_char(scorer[1], '#')
-  event.shooter_num = int(num_str) if num_str.isdigit() else -1
-  
   pl_tot = [e.strip() for e in scorer[2].split("(")]
-  event.shooter_name = pl_tot[0]
+  
+  event.shooter = {
+    'team': team_abbr_parser(scorer[0]),
+    'num': int(num_str) if num_str.isdigit() else -1,
+    'name': pl_tot[0]
+  }
   
   pl_tot[1] = rem_char(pl_tot[1], '()')
   event.shooter_seas_tot = int(pl_tot[1]) if pl_tot[1].isdigit() else -1
-    
     
 def assist_from(a):
   pl = a.strip().split(" ")
@@ -138,11 +156,7 @@ def parse_miss_08(event):
   
   s = split_and_strip(event.desc, ",")
   
-  tnn = team_num_name(s[0])
-  event.team = tnn["team"]
-  event.shooter_num = tnn["num"]
-  event.shooter = tnn["name"]
-  
+  event.shooter = team_num_name(s[0])
   event.shot_type = s[1]
   event.shot_miss_desc = s[2]
   event.zone = s[3]
@@ -158,7 +172,7 @@ def parse_miss_08(event):
 #############################
 # VAN won Off. Zone - NYR #19 RICHARDS vs VAN #22 SEDIN
 def parse_faceoff_08(event):
-  s = split_and_strip(event.desc, "-")
+  s = split_and_strip(event.desc, " - ")
   
   w_loc = split_and_strip(s[0], "won")
   event.winner = w_loc[0]
@@ -166,9 +180,11 @@ def parse_faceoff_08(event):
   
   vs = s[1].split("vs")
   tnn = team_num_name(vs[0].strip())
-  tnn2 = team_num_name(vs[1].strip())
-  event.head_to_head = [ tnn, tnn2 ]
-  
+  try:
+    tnn2 = team_num_name(vs[1].strip())
+    event.head_to_head = [ tnn, tnn2 ]
+  except:
+    print vs
 
 
 
@@ -182,6 +198,7 @@ def parse_hit_08(event):
   s = split_and_strip(event.desc, " HIT ")
   
   event.hit_by = team_num_name(s[0])
+  event.team = event.hit_by['team']
   
   p_z = s[1].split(",")
   event.player_hit = team_num_name(p_z[0])
@@ -217,9 +234,10 @@ def parse_block_08(event):
 #############################
 # NYR TAKEAWAY - #27 MCDONAGH, Def. Zone
 def parse_takeaway_08(event):
-  s = split_and_strip(event.desc, "-")
+  s = split_and_strip(event.desc, " - ")
   
-  event.team = s[0].split(" ")[0].strip()
+  s[0] = s[0].replace('?', ' ')
+  event.team = team_abbr_parser(s[0].split(" ")[0].strip())
   
   s = split_and_strip(s[1], ",")
   tnn = team_num_name(str('team ' + s[0]))
@@ -232,10 +250,33 @@ def parse_takeaway_08(event):
 
 #############################
 ##
-## parse blocked shot - '08 format
+## parse giveaway - '08 format
 ## same form as takeaway
 ##
 #############################
 # NYR GIVEAWAY - #21 STEPAN, Def. Zone
 def parse_giveaway_08(event):
   parse_takeaway_08(event)
+  
+  
+  
+  
+  
+#############################
+##
+## parse shootout
+##
+#############################
+def parse_shootout(event):
+  s = split_and_strip(event.desc, ',')
+  
+  d_str = s[-1].split(' ')[0]
+  event.dist = int(d_str) if d_str.isdigit() else 0
+  
+  event.shot_type = s[1]
+  
+  tnn = split_and_strip(s[0], ' ')
+  if len(tnn) == 3:
+    event.shooter = team_num_name(' '.join(tnn))
+  elif len(tnn) == 5:
+    event.shooter = team_num_name(' '.join([tnn[0], tnn[3], tnn[4]]))
