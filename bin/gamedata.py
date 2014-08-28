@@ -9,7 +9,7 @@ if __name__ == '__main__':
   from cli_opts import cli_opts
   from nhlscrapi._tools import JSONDataEncoder as Encoder
   from nhlscrapi import constants as C
-  from nhlscrapi.games.cumstats import ShotCt, ShotAttemptCt, Corsi, Fenwick
+  from nhlscrapi.games.cumstats import Score, ShotCt, ShotAttemptCt, Corsi, Fenwick
   from nhlscrapi.games.game import Game
   from nhlscrapi.games.gamekey import GameKey, GameType
   
@@ -39,6 +39,7 @@ if __name__ == '__main__':
   gt = GameType.Regular if reg_season else GameType.Playoffs
   gk = GameKey(season, gt, game_num)
   cum_stats = {
+    'Score': Score(),
     'Shots': ShotCt(),
     'ShotAtt': ShotAttemptCt(),
     'Corsi': Corsi(),
@@ -47,36 +48,18 @@ if __name__ == '__main__':
   game = Game(gk, cum_stats=cum_stats)
   
   out_f = ''.join(str(x) for x in gk.to_tuple()) + '.json'
-  # with open(out_f, 'w') as f:
-  #   game.load_plays()
-  #   print 'Shots         :', game.cum_stats['Shots'].total
-  #   print 'Shot Attempts :', game.cum_stats['ShotAtt'].total
-  #   print 'EV Shot Atts  :', game.cum_stats['Corsi'].total
-  #   print 'Corsi         :', game.cum_stats['Corsi'].share()
-  #   print 'FW Shot Atts  :', game.cum_stats['Fenwick'].total
-  #   print 'Fenwick       :', game.cum_stats['Fenwick'].share()
+  with open(out_f, 'w') as f:
+    game.load_plays()
+    game.load_all_personnel()
     
-    #f.write(json.dumps(game, cls=Encoder) + '\n')
-  
-  
-#  for team, pls in game.load_rosters().iteritems():
-#    print '\n%s Team' % team
-#    for num, pl in pls.iteritems():
-#      print num, pl
-  
-  # print '\nby property'
-  # print 'Home'
-  # for num, pl in game.home_roster.iteritems():
-  #   print num, pl
+    print 'Final         :', game.cum_stats['Score'].total
+    print 'Shootout      :', game.cum_stats['Score'].shootout.total
+    print 'Shots         :', game.cum_stats['Shots'].total
+    print 'Shot Attempts :', game.cum_stats['ShotAtt'].total
+    print 'EV Shot Atts  :', game.cum_stats['Corsi'].total
+    print 'Corsi         :', game.cum_stats['Corsi'].share()
+    print 'FW Shot Atts  :', game.cum_stats['Fenwick'].total
+    print 'Fenwick       :', game.cum_stats['Fenwick'].share()
     
-  # print 'Away'
-  # for num, pl in game.home_roster.iteritems():
-  #   print num, pl
+    f.write(json.dumps(game, cls=Encoder) + '\n')
     
-  # print game.match_up
-  
-  for team, coach in game.load_coaches().iteritems():
-    print team, coach
-    
-  for ot, off in game.load_officials().iteritems():
-    print ot, off

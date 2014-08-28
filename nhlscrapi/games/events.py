@@ -9,7 +9,7 @@ from nhlscrapi._tools import build_enum
 
 EventType = build_enum('Event', 'ShotAttempt', 'Shot', 'Block', 'Miss', 'Goal',
   'Hit', 'FaceOff', 'Giveaway', 'Takeaway', 'Penalty', 'Stoppage', 'ShootOutAtt',
-  'ShootOutGoal', 'PenaltyShot', 'End')
+  'ShootOutGoal', 'PenaltyShot', 'PeriodEnd', 'GameEnd', 'ShootOutEnd')
   
   
 class Event(object):
@@ -59,13 +59,20 @@ class FaceOff(Event):
     super(FaceOff, self).__init__(EventType.FaceOff)
 
 class Stoppage(Event):
-  def __init__(self):
-    super(Stoppage, self).__init__(EventType.Stoppage)
+  def __init__(self, event_type=EventType.Stoppage):
+    super(Stoppage, self).__init__(event_type)
 
-class End(Stoppage):
+class PeriodEnd(Stoppage):
   def __init__(self):
-    super(End, self).__init__()
-    self.event_type = EventType.End
+    super(PeriodEnd, self).__init__(EventType.PeriodEnd)
+    
+class GameEnd(Stoppage):
+  def __init__(self):
+    super(GameEnd, self).__init__(EventType.GameEnd)
+    
+class ShootOutEnd(Stoppage):
+  def __init__(self):
+    super(ShootOutEnd, self).__init__(EventType.ShootOutEnd)
 
 class Penalty(Event):
   def __init__(self):

@@ -51,9 +51,9 @@ def event_type_mapper(event_str, **kwargs):
     "PENALTY": lambda **kwargs: ET.Penalty,
     "STOP": lambda **kwargs: ET.Stoppage,
     "STOPPAGE": lambda **kwargs: ET.Stoppage,
-    "PEND": lambda **kwargs: ET.End,
-    "GEND": lambda **kwargs: ET.End,
-    "SOC": lambda **kwargs: ET.End
+    "PEND": lambda **kwargs: ET.PeriodEnd,
+    "GEND": lambda **kwargs: ET.GameEnd,
+    "SOC": lambda **kwargs: ET.ShootOutEnd
   }
   
   e_type = event_type_map[event_str](**kwargs) if event_str in event_type_map else ET.Event

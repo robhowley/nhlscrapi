@@ -1,5 +1,5 @@
 
-
+from nhlscrapi.scrapr.officialsparser import official_parser_mapper as opm
 from nhlscrapi.scrapr.reportloader import ReportLoader
 
 
@@ -102,42 +102,10 @@ class RosterRep(ReportLoader):
   def parse_officials(self):
     """Parse the officials"""
     
-    def get_num(s):
-      s = s.replace('#', '').strip()
-      return int(s) if s.isdigit() else -1
-      
-    def num_name(s):
-      s = s.split(' ')
-      if len(s) > 1:
-        num = get_num(s[0])
-        name = ' '.join(si.strip() for si in s[1:])
-      else:
-        num = get_num(s) if '#' in s else -1
-        name = s if num == -1 else ''
-        
-      return num, name
-    
-    def make_dict(o):
-      d = { }
-      for oi in o:
-        num, name = num_name(oi)
-        if num in d:
-          num = max(d.keys())+1
-        
-        d[num] = name
-        
-      return d
-        
     # begin proper body of method
     lx_doc = self.html_doc()
-    off_row = lx_doc.xpath('//td[contains(text(),"Referee")]')[0].xpath('..')[0]
-    
-    refs = self.__exclude_junk(off_row[1].xpath('.//text()'))
-    lines = self.__exclude_junk(off_row[3].xpath('.//text()'))
-    
-    self.officials = { 'refs': { }, 'linesman': { } }
-    self.officials['refs'] = make_dict(refs)
-    self.officials['linesman'] = make_dict(lines)
+    off_parser = opm(self.game_key.season)
+    self.officials = off_parser(lx_doc)
       
     return self.officials
     

@@ -7,6 +7,7 @@ setup(
   version=nhlscrapi.__version__,
     
   description='NHL Scrapr API for Python',
+  long_description=open('README.rst').read(),
     
   author='Rob Howley',
   author_email='howley.robert@gmail.com',

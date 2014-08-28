@@ -49,9 +49,9 @@ class Game(object):
     
     # only need RTSS once, so no need for banner checks
     if rtss.req_err is None:
-      if not self.have_match_up:
+      if not self.__have_match_up:
         self.match_up = rtss.parse_matchup()
-        self.have_match_up = False
+        self.__have_match_up = False
       
       for play in rtss.parsed_play_stream():
         self.__process(play, self.extractors, 'extract')

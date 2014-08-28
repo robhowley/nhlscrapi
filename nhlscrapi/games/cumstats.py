@@ -121,16 +121,50 @@ class Corsi(ShotAttemptCt):
 # doesn't include shootout, can't get final as an incrementor
 # need to find a workaround
 # build dict for shootout results, check for end of game event, add final tally
+
+class ShootOut(TeamIncrementor):
+  def __init__(self):
+    super(ShootOut, self).__init__()
+    
+  def _get_team(self, play):
+    return play.event.shooter['team']
+    
+  def _count_play(self, play):
+    return isinstance(play.event, EV.ShootOutGoal)
+
 class Score(TeamIncrementor):
   def __init__(self):
     super(Score, self).__init__()
+    self.shootout = ShootOut()
+
+  def update(self, play):
+    self.shootout.update(play)
+    super(Score, self).update(play)
 
   def _get_team(self, play):
     return play.event.shooter['team']
 
   def _count_play(self, play):
-    return isinstance(play.event, EV.Goal) and play.period < 5
-    
+    if isinstance(play.event, EV.ShootOutEnd):
+      self.__set_shootout_winner()
+      
+    return isinstance(play.event, EV.Goal)
+
+
+  def __set_shootout_winner(self):
+    t1 = self.shootout.teams[0]
+    if len(self.shootout.teams) == 1:
+      try:
+        self.total[t1] += 1
+      except:
+        self.total[t1] = 1
+    else:
+      t2 = self.shootout.teams[1]
+      if len(self.teams) != 2:
+        self.teams = [t1, t2]
+      t1wins = 1 if self.shootout[t1] > self.shootout[t2] else 0
+      self.total[t1] += t1wins
+      self.total[t2] += 1-t1wins
     
 class Fenwick(ShotAttemptCt):
   def __init__(self):
