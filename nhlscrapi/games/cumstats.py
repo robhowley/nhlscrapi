@@ -120,6 +120,7 @@ class Corsi(ShotAttemptCt):
 
 # doesn't include shootout, can't get final as an incrementor
 # need to find a workaround
+# build dict for shootout results, check for end of game event, add final tally
 class Score(TeamIncrementor):
   def __init__(self):
     super(Score, self).__init__()

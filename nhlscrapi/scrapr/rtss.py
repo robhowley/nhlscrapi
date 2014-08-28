@@ -1,53 +1,15 @@
 
-from lxml.html import fromstring
-
-from nhlreq import NHLCn
-from nhlscrapi.scrapr import teamnameparser as TP
 from nhlscrapi.scrapr import playparser as pp
+from nhlscrapi.scrapr.reportloader import ReportLoader
 
-
-class RTSS(object):
+class RTSS(ReportLoader):
   """Retrieve and load RTSS play by play game data from nhl.com"""
   
-  __lx_doc = None
-  
   def __init__(self, game_key):
-    self.game_key = game_key
-    """Game key being retrieved"""
-    
+    super(RTSS, self).__init__(game_key, "rtss")
+
     self.plays = []
     """List of nhlscrapi.Plays loaded"""
-    
-    # info to be extracted from banner
-    self.match_up = {
-      'home': '',
-      'away': '',
-      'final': { 'home': 0, 'away': 0 }
-    }
-    """Team match up and final"""
-    
-    self.req_err = None
-    """Error from http request"""
-  
-  
-  def html_doc(self):
-    if self.__lx_doc is None:
-      cn = NHLCn()
-      html = cn.rtss(self.game_key)
-      if cn.req_err is None:
-        self.__lx_doc = fromstring(html)
-      else:
-        self.req_err = cn.req_err
-        
-    return self.__lx_doc
-  
-  def parse_matchup(self):
-    lx_doc = self.html_doc()
-
-    if lx_doc is not None:
-      self.match_up = self.__fill_meta(lx_doc)
-      
-    return self.match_up
   
   def parse_plays(self):
     """Retreive and parse Play by Play data for the given nhlscrapi.GameKey"""
@@ -67,24 +29,3 @@ class RTSS(object):
         self.plays.append(p_obj)
         
         yield p_obj
-      
-  def __fill_meta(self, doc):
-    def team_scr(doc, t):
-      xp = ''.join(['//table[@id="', t, '"]'])
-      team = doc.xpath(xp)[0]
-      team = [s for s in team.xpath('.//text()') if s.lower() != t.lower() and '\r\n' not in s and 'game' not in s.lower()]
-      
-      return team
-      
-    final = { }
-    final['away'], at = tuple(team_scr(doc, 'Visitor'))
-    final['home'], ht = tuple(team_scr(doc, 'Home'))
-    
-    away = TP.team_name_parser(at)
-    home = TP.team_name_parser(ht)
-    
-    return {
-      'home': home,
-      'away': away,
-      'final': final
-    }

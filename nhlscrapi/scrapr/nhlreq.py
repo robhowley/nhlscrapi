@@ -15,12 +15,20 @@ class NHLCn(object):
     self.req_err = None
     self.req_time = 0
   
-  def rtss(self, game_key):
+  def __html_rep(self, game_key, rep_code):
+    """Retrieves the nhl html reports for the specified game and report code"""
     seas, gt, num = game_key.to_tuple()
     url = [ self.__domain, "scores/htmlreports/", str(seas-1), str(seas),
-      "/PL0", str(gt), ("%04i" % (num)), ".HTM" ]
+      "/", rep_code, "0", str(gt), ("%04i" % (num)), ".HTM" ]
+    url = ''.join(url)
     
-    return self.__open(''.join(url))
+    return self.__open(url)
+  
+  def game_roster(self, game_key):
+    return self.__html_rep(game_key, 'RO')
+      
+  def rtss(self, game_key):
+    return self.__html_rep(game_key, 'PL')
   
   def __open(self, url):
     req = Request(url, headers = {
