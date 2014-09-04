@@ -31,6 +31,6 @@ class TOI(RepScrWrap):
   @RepScrWrap.lazy_load('_away', 'parse_shifts')
   def all_toi(self):
     return {
-      'home': self.load_home(),
-      'away': self.load_away()
+      'home': self.home_shift_summ(),
+      'away': self.away_shift_summ()
     }
