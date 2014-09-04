@@ -19,8 +19,10 @@ class Game(object):
     
     self.toi = TOI(game_key)
     self.rosters = Rosters(game_key)
+    self.summary = GameSummary(game_key)
     self.play_by_play = PlayByPlay(game_key, extractors, cum_stats)
     
+  
   
   
   #########################################
@@ -51,6 +53,7 @@ class Game(object):
     
   @property
   def cum_stats(self):
+    self.play_by_play.compute_stats()
     return self.play_by_play.cum_stats
   
   

@@ -56,6 +56,22 @@ class RosterRep(ReportLoader):
         r[num] = { 'position': txt[1], 'name': txt[2] }
         
     return r
+  
+  def parse(self):
+    """Parse full document. Plays and matchups.
+    :returns: boolean success indicator
+    :rtype: bool """
+    
+    r = super(RosterRep, self).parse()
+    try:
+      self.parse_rosters()
+      self.parse_scratches()
+      self.parse_coaches()
+      self.parse_officials()
+    except:
+      r = False
+      
+    return r and True
     
   def parse_rosters(self):
     """Parse the home and away game rosters"""
@@ -92,7 +108,7 @@ class RosterRep(ReportLoader):
     
     for i, td in enumerate(tr):
       txt = td.xpath('.//text()')
-      txt = self.ex_junk(txt)
+      txt = ex_junk(txt, ['\n','\r'])
       team = 'away' if i == 0 else 'home'
       self.coaches[team] = txt[0]
       
@@ -108,15 +124,3 @@ class RosterRep(ReportLoader):
     self.officials = off_parser(lx_doc)
       
     return self.officials
-    
-  def parse_all(self):
-    self.parse_rosters()
-    self.parse_scratches()
-    self.parse_officials()
-    
-    return {
-      'rosters': self.rosters,
-      'scratches': self.scratches,
-      'coaches': self.coaches,
-      'officials': self.officials
-    }

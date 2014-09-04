@@ -4,9 +4,13 @@ from lxml.html import fromstring
 from nhlreq import NHLCn
 from nhlscrapi.scrapr import teamnameparser as TP
 
+# enforce one method interface that fully parses doc
+from abc import ABCMeta, abstractmethod
 
 class ReportLoader(object):
   """Base class for objects that load full reports. Manages html request and extracts match up from banner"""
+  
+  __metaclass__ = ABCMeta
   
   __lx_doc = None
   
@@ -62,6 +66,15 @@ class ReportLoader(object):
       
     return self.match_up
   
+  @abstractmethod
+  def parse(self):
+    """Fully parses html document.
+    :returns: boolean success indicator
+    :rtype: bool """
+    self.parse_matchup()
+    
+    return True
+    
     
   def _fill_meta(self, doc):
     def team_scr(doc, t):

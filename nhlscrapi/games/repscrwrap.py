@@ -35,8 +35,6 @@ class RepScrWrap(object):
           attr = getattr(self, scrapr)
           getattr(attr, loader_name)()
           self.__lazy[l] = True
-        else:
-          print 'already loaded'
           
         return f(self, *f_args, **f_kwargs)
       return wrapped

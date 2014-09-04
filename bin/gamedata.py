@@ -48,34 +48,23 @@ if __name__ == '__main__':
   game = Game(gk, cum_stats=cum_stats)
   
   out_f = ''.join(str(x) for x in gk.to_tuple()) + '.json'
-#  with open(out_f, 'w') as f:
-    # game.load_plays()
-    # game.load_all_personnel()
+  with open(out_f, 'w') as f:
     
-    # print 'Final         :', game.cum_stats['Score'].total
-    # print 'Shootout      :', game.cum_stats['Score'].shootout.total
-    # print 'Shots         :', game.cum_stats['Shots'].total
-    # print 'Shot Attempts :', game.cum_stats['ShotAtt'].total
-    # print 'EV Shot Atts  :', game.cum_stats['Corsi'].total
-    # print 'Corsi         :', game.cum_stats['Corsi'].share()
-    # print 'FW Shot Atts  :', game.cum_stats['Fenwick'].total
-    # print 'Fenwick       :', game.cum_stats['Fenwick'].share()
+    # auto computes when using game wrapper
+    print 'Final         :', game.cum_stats['Score'].total
+    print 'Shootout      :', game.cum_stats['Score'].shootout.total
+    print 'Shots         :', game.cum_stats['Shots'].total
+    print 'Shot Attempts :', game.cum_stats['ShotAtt'].total
+    print 'EV Shot Atts  :', game.cum_stats['Corsi'].total
+    print 'Corsi         :', game.cum_stats['Corsi'].share()
+    print 'FW Shot Atts  :', game.cum_stats['Fenwick'].total
+    print 'Fenwick       :', game.cum_stats['Fenwick'].share()
+    
+    print '\nRefs          :', game.refs
+    print 'Linesman      :', game.linesman
+    print 'Coaches'
+    print '  Home        :', game.home_coach
+    print '  Away        :', game.away_coach
     
     #f.write(json.dumps(game, cls=Encoder) + '\n')
     
-  #from nhlscrapi.scrapr.toi import TOIRepBase
-  #toi = TOIRepBase(gk, 'away_toi')
-  #print toi.parse_matchup()
-  #print toi.parse_shifts()
-  #print game.load_home_toi()
-  #print game.matchup
-  print game.rosters.away_scratches()
-  print 'do it again ... better not load'
-  print game.rosters.away_scratches()
-  
-  print '\nPlay by plays first load'
-  game.play_by_play.plays()
-  
-  print '\nPlay by plays second load'
-  game.play_by_play.compute_stats()
-  print game.play_by_play.cum_stats['Score'].total

@@ -120,6 +120,20 @@ class TOIRepBase(ReportLoader):
       
     return summ, per_summ
 
+  
+  def parse(self):
+    """Parse full TOI document.
+    :returns: boolean success indicator
+    :rtype: bool """
+    
+    r = super(TOIRepBase, self).parse()
+    try:
+      self.parse_shifts()
+    except:
+      r = False
+      
+    return r and True
+
 
   def parse_shifts(self):
     lx_doc = self.html_doc()

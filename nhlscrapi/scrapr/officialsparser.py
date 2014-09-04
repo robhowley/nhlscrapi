@@ -58,7 +58,7 @@ def official_parser_pre_09(lx_doc):
 def official_parser_10(lx_doc):
   off_table = lx_doc.xpath('//td[contains(text(),"Referee")]')[0].xpath('../..')[0]
   
-  offs = ex_junk(off_table[1].xpath('.//text()'))
+  offs = ex_junk(off_table[1].xpath('.//text()'), ['\n','\r'])
   
   if len(offs) == 4:
     return __format_out(offs[:2], offs[2:])

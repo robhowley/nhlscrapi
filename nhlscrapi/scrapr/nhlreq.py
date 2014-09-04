@@ -36,6 +36,23 @@ class NHLCn(object):
   def away_toi(self, game_key):
     return self.__html_rep(game_key, 'TV')
   
+  def face_offs(self, game_key):
+    return self.__html_rep(game_key, 'FC')
+  
+  def shootout(self, game_key):
+    return self.__html_rep(game_key, 'SO')
+    
+  def game_summary(self, game_key):
+    return self.__html_rep(game_key, 'GS')
+    
+  def event_summary(self, game_key):
+    return self.__html_rep(game_key, 'ES')
+  
+  def shot_summary(self, game_key):
+    return self.__html_rep(game_key, 'SS')
+    
+  
+  
   def __open(self, url):
     req = Request(url, headers = {
       'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',

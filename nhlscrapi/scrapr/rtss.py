@@ -11,6 +11,20 @@ class RTSS(ReportLoader):
     self.plays = []
     """List of nhlscrapi.Plays loaded"""
   
+  def parse(self):
+    """Parse full document. Plays and matchups.
+    :returns: boolean success indicator
+    :rtype: bool """
+    
+    r = super(RTSS, self).parse()
+    try:
+      self.parse_plays()
+      r = r and self.plays
+    except:
+      r = False
+      
+    return r
+  
   def parse_plays(self):
     """Retreive and parse Play by Play data for the given nhlscrapi.GameKey"""
     self.plays = [p for p in self.parse_plays_stream()]
