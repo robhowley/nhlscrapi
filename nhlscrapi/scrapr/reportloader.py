@@ -14,21 +14,25 @@ class ReportLoader(object):
     self.game_key = game_key
     """Game key being retrieved"""
   
-    self.report_type = report_type.lower()
+    self.report_type = report_type#.lower()
     """Type of report to be loaded. Valid types correspond to the methods of NHLCn"""
   
     self.teams = { 'home': '', 'away': '' }
     """The teams in the game"""
   
-    self.match_up = {
-      'home': '',
-      'away': '',
-      'final': { 'home': 0, 'away': 0 }
-    }
-    """Team match up and final"""
+    self.matchup = { 'home': '', 'away': '', 'final': { 'home': 0, 'away': 0 } }
+    """Team match up and final
+      {
+        'home': '',
+        'away': '',
+        'final': { 'home': 0, 'away': 0 }
+      } """
     
     self.req_err = None
     """Error from http request"""
+    
+    self.__have_matchup = False
+      
     
   def html_doc(self):
     """Get html document"""

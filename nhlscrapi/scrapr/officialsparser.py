@@ -1,6 +1,5 @@
 
-def __exclude_junk(s):
-    return [si for si in s if '\r' not in si and '\n' not in si and si != '']
+from nhlscrapi._tools import exclude_from as ex_junk
 
 def __get_num(s):
   s = s.replace('#', '').strip()
@@ -45,8 +44,8 @@ def __format_out(refs, lines):
 def official_parser_pre_09(lx_doc):
   off_row = lx_doc.xpath('//td[contains(text(),"Referee")]')[0].xpath('..')[0]
   
-  refs = __exclude_junk(off_row[1].xpath('.//text()'))
-  lines = __exclude_junk(off_row[3].xpath('.//text()'))
+  refs = ex_junk(off_row[1].xpath('.//text()'))
+  lines = ex_junk(off_row[3].xpath('.//text()'))
     
   return __format_out(refs, lines)
 
@@ -59,7 +58,7 @@ def official_parser_pre_09(lx_doc):
 def official_parser_10(lx_doc):
   off_table = lx_doc.xpath('//td[contains(text(),"Referee")]')[0].xpath('../..')[0]
   
-  offs = __exclude_junk(off_table[1].xpath('.//text()'))
+  offs = ex_junk(off_table[1].xpath('.//text()'))
   
   if len(offs) == 4:
     return __format_out(offs[:2], offs[2:])

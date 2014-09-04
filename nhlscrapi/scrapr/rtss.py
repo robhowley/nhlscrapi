@@ -13,10 +13,11 @@ class RTSS(ReportLoader):
   
   def parse_plays(self):
     """Retreive and parse Play by Play data for the given nhlscrapi.GameKey"""
-    self.plays = [p for p in self.parsed_play_stream()]
+    self.plays = [p for p in self.parse_plays_stream()]
+    return self.plays
     
     
-  def parsed_play_stream(self):
+  def parse_plays_stream(self):
     """Generate stream of parsed plays. Useful for per play processing"""
     
     lx_doc = self.html_doc()

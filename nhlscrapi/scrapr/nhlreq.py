@@ -29,6 +29,12 @@ class NHLCn(object):
       
   def rtss(self, game_key):
     return self.__html_rep(game_key, 'PL')
+    
+  def home_toi(self, game_key):
+    return self.__html_rep(game_key, 'TH')
+    
+  def away_toi(self, game_key):
+    return self.__html_rep(game_key, 'TV')
   
   def __open(self, url):
     req = Request(url, headers = {

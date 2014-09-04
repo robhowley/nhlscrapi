@@ -4,104 +4,92 @@
 import sys
 sys.path.append('..')
 
-from functools import wraps
 
-from nhlscrapi.scrapr.rtss import RTSS
-from nhlscrapi.scrapr.roster import RosterRep
+from nhlscrapi.games.toi import TOI
+from nhlscrapi.games.rosters import Rosters
+from nhlscrapi.games.playbyplay import PlayByPlay
 
 
 class Game(object):
   
-  # extracts matchup from banner if it hasn't
-  # been done by another report already
-  def banner_reader(rep):
-    def wrapper(f):
-      @wraps(f)
-      def wrapped(self, *f_args, **f_kwargs):
-        if not self.__have_match_up:
-          attr = getattr(self, rep)
-          self.match_up = attr.parse_matchup()
-          self.__have_match_up = True
-        return f(self, *f_args, **f_kwargs)
-      return wrapped
-    return wrapper
-  
   # add constructor argument for json source
   def __init__(self, game_key = None, extractors = {}, cum_stats = {}):
-    self.plays = []
+    
     self.game_key = game_key
-    self.match_up = { 'home': '', 'away': '', 'final': { 'home': 0, 'away': 0 } }
     
-    self.extractors = extractors
-    self.cum_stats = cum_stats
+    self.toi = TOI(game_key)
+    self.rosters = Rosters(game_key)
+    self.play_by_play = PlayByPlay(game_key, extractors, cum_stats)
     
-    self._rosters = RosterRep(game_key)
-    
-    self.__have_match_up = False
-    
+  
+  
   #########################################
   ##
-  ## RTSS Play by Play related
+  ## convenience wrapper properties
   ##
   #########################################
-  def load_plays(self):
-    rtss = RTSS(self.game_key)
-    
-    # only need RTSS once, so no need for banner checks
-    if rtss.req_err is None:
-      if not self.__have_match_up:
-        self.match_up = rtss.parse_matchup()
-        self.__have_match_up = False
-      
-      for play in rtss.parsed_play_stream():
-        self.__process(play, self.extractors, 'extract')
-        self.__process(play, self.cum_stats, 'update')
-        self.plays.append(play)
+  @property
+  def matchup(self):
+    if self.play_by_play.matchup:
+      return self.play_by_play.matchup
+    elif self.rosters.matchup:
+      return self.rosters.matchup
     else:
-      print 'Game not found'
-    
-    return self.plays
-  
-  def __process(self, play, d, meth):
-    for name, m in d.iteritems():
-      getattr(m, meth)(play)
+      return self.toi.matchup
   
   
-  
-  
-  #########################################
-  ##
-  ## Roster Report
-  ## players, scratches, coaches officials
-  ##
-  #########################################
+  #
+  # play related
+  #
   @property
-  def home_roster(self):
-    return self._rosters.rosters['home']
+  def plays(self):
+    return self.play_by_play.plays()
+  
+  @property
+  def extractors(self):
+    return self.play_by_play.extractors
     
   @property
-  def away_roster(self):
-    return self._rosters.rosters['away']
-  
-  @banner_reader('_rosters')
-  def load_rosters(self):
-    return self._rosters.parse_rosters()
-  
-  @banner_reader('_rosters')
-  def load_scratches(self):
-    return self._rosters.parse_scratches()
-  
-  @banner_reader('_rosters')
-  def load_coaches(self):
-    return self._rosters.parse_coaches()
-  
-  @banner_reader('_rosters')
-  def load_officials(self):
-    return self._rosters.parse_officials()
-  
-  @banner_reader('_rosters')
-  def load_all_personnel(self):
-    return self._rosters.parse_all()
+  def cum_stats(self):
+    return self.play_by_play.cum_stats
   
   
+  #
+  # personnel related
+  #
+  @property
+  def home_skaters(self):
+    return self.rosters.home_skaters()
+    
+  @property
+  def home_coach(self):
+    return self.rosters.home_coach()
+    
+  @property
+  def away_skaters(self):
+    return self.rosters.away_skaters()
+  
+  @property
+  def away_coach(self):
+    return self.rosters.away_coach()
+    
+  @property
+  def refs(self):
+    return self.rosters.refs()
+    
+  @property
+  def linesman(self):
+    return self.rosters.linesman()
+  
+  
+  #
+  # toi related
+  #
+  @property
+  def home_toi(self):
+    return self.toi.home_shift_summ()
+    
+  @property
+  def away_toi(self):
+    return self.toi.away_shift_summ()
     

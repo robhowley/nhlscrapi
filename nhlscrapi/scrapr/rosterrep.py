@@ -1,4 +1,6 @@
 
+from nhlscrapi._tools import exclude_from as ex_junk
+
 from nhlscrapi.scrapr.officialsparser import official_parser_mapper as opm
 from nhlscrapi.scrapr.reportloader import ReportLoader
 
@@ -35,9 +37,6 @@ class RosterRep(ReportLoader):
     for i, bl in enumerate(bls):
       table = bl.xpath('../..')[0]
       self.__blocks[bl_k[i+1]] = table
-  
-  def __exclude_junk(self, s):
-    return [si for si in s if '\r' not in si and '\n' not in si and si != '']
     
   def __clean_pl_block(self, bl):
     def no_letter(s):
@@ -49,7 +48,7 @@ class RosterRep(ReportLoader):
     for p in bl:
       txt = p.xpath('.//text()')
       if len(txt) and '#' not in txt[0]:
-        txt = self.__exclude_junk(txt)
+        txt = ex_junk(txt, ['\r','\n'])
         txt[2] = ' '.join(s.strip() for s in txt[2].split(' ') if no_letter(s))
         
         # need some unique key
@@ -73,6 +72,7 @@ class RosterRep(ReportLoader):
   
   def parse_scratches(self):
     """Parse the home and away healthy scratches"""
+    lx_doc = self.html_doc()
     
     if not self.__blocks:
       self.__pl_blocks(lx_doc)
@@ -92,7 +92,7 @@ class RosterRep(ReportLoader):
     
     for i, td in enumerate(tr):
       txt = td.xpath('.//text()')
-      txt = self.__exclude_junk(txt)
+      txt = self.ex_junk(txt)
       team = 'away' if i == 0 else 'home'
       self.coaches[team] = txt[0]
       
