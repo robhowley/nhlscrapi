@@ -15,6 +15,7 @@ Related projects:
 Usage
 ------
 To scrape game data for the last game of 2014, Ottawa vs Pittsburgh, game 1230 the library can be used as follows.
+
 .. code-block:: python
    from nhlscrapi.games.gamekey import GameKey, GameType
    from nhlscrapi.games.game import Game
