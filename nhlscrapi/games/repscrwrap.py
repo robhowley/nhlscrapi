@@ -54,6 +54,6 @@ class RepScrWrap(object):
   
   def load_all(self):
     for k,v in self.__lazy.iteritems():
-      attr = getattr(self, k)
-      getattr(attr, v)()
-      self.__lazy[k] = True
+      if not v:
+        attr = getattr(self, k)()
+        self.__lazy[k] = True
