@@ -18,21 +18,21 @@ To scrape game data for the last game of 2014, Ottawa vs Pittsburgh, game 1230 t
 
 .. code-block:: python
 
-   from nhlscrapi.games.gamekey import GameKey, GameType
-   from nhlscrapi.games.game import Game
-   from nhlscrapi.games.cumstats import Score, ShotCt, Corsi, Fenwick
+  from nhlscrapi.games.game import Game
+  from nhlscrapi.games.gamekey import GameKey, GameType
+  from nhlscrapi.games.cumstats import Score, ShotCt, Corsi, Fenwick
 
-   season = 2014                              # 2013-2014 season
-   game_num = 1230                            # last game of the season
-   game_type = GameType.Regular               # regular season game
-   game_key = GameKey(season, game_type, game_num)
+  season = 2014                                    # 2013-2014 season
+  game_num = 1230                                  # last game of the season
+  game_type = GameType.Regular                     # regular season game
+  game_key = GameKey(season, game_type, game_num)
 
-   # define stat types that will be counted as the plays are parsed
-   cum_stats = {
-     'Score': Score(),
-     'Shots': ShotCt(),
-     'Corsi': Corsi(),
-     'Fenwick': Fenwick()
+  # define stat types that will be counted as the plays are parsed
+  cum_stats = {
+    'Score': Score(),
+    'Shots': ShotCt(),
+    'Corsi': Corsi(),
+    'Fenwick': Fenwick()
   }
   game = Game(game_key, cum_stats=cum_stats)
 
