@@ -12,9 +12,9 @@ Related projects:
   - `nhlscrapr <http://cran.r-project.org/web/packages/nhlscrapr/index.html>`_
   - `py-nhl <https://github.com/wellsoliver/py-nhl>`_
 
-Usage
-------
-To scrape game data for the last game of 2014, Ottawa vs Pittsburgh, game 1230 the library can be used as follows.
+Usage Example
+--------------
+Scrape data for the last regular season game of 2014, Ottawa vs Pittsburgh, game 1230.
 
 .. code-block:: python
 
