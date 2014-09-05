@@ -19,10 +19,21 @@ class Game(object):
     
     self.toi = TOI(game_key)
     self.rosters = Rosters(game_key)
-    self.summary = GameSummary(game_key)
+    #self.summary = GameSummary(game_key)
     self.play_by_play = PlayByPlay(game_key, extractors, cum_stats)
+  
     
   
+  def load_all(self):
+    """Force all reports to be loaded and parsed instead of lazy loading on demand."""
+    try:
+      self.toi.load_all()
+      self.rosters.load_all()
+      self.summary.load_all()
+      self.play_by_play.load_all()
+      return True
+    except:
+      return False
   
   
   #########################################
