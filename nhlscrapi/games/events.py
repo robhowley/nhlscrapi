@@ -25,18 +25,19 @@ class ShotAttempt(Event):
     self.shot_type = ""
     self.dist = 0
 
-class Goal(ShotAttempt):
-  def __init__(self):
-    super(Goal, self).__init__(EventType.Goal)
-    self.assists = []
-    
-
 
 class Shot(ShotAttempt):
   def __init__(self):
     super(Shot, self).__init__(EventType.Shot)
     
     
+class Goal(Shot):
+  def __init__(self):
+    super(Goal, self).__init__()
+    self.event_type = EventType.Goal
+    self.assists = []
+    
+
 class PenaltyShot(ShotAttempt):
   def __init__(self):
     super(PenaltyShot, self).__init__(EventType.PenaltyShot)
