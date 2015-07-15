@@ -14,7 +14,7 @@ Related projects:
 
 Usage Example
 --------------
-Scrape data for the last regular season game of 2014, Ottawa vs Pittsburgh, game 1230.
+Scrape data for game 1226 of 2014, Ottawa vs Pittsburgh.
 
 .. code-block:: python
 
