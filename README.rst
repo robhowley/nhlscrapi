@@ -23,7 +23,7 @@ Scrape data for game 1226 of 2014, Ottawa vs Pittsburgh.
   from nhlscrapi.games.cumstats import Score, ShotCt, Corsi, Fenwick
 
   season = 2014                                    # 2013-2014 season
-  game_num = 1230                                  # last game of the season
+  game_num = 1230                                  #
   game_type = GameType.Regular                     # regular season game
   game_key = GameKey(season, game_type, game_num)
 
