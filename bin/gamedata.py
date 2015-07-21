@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 if __name__ == '__main__':
-  import sys
-  sys.path.append('../nhlscrapi')
   
   import json
   
@@ -51,20 +49,24 @@ if __name__ == '__main__':
   with open(out_f, 'w') as f:
     
     # auto computes when using game wrapper
-    print 'Final         :', game.cum_stats['Score'].total
-    print 'Shootout      :', game.cum_stats['Score'].shootout.total
-    print 'Shots         :', game.cum_stats['Shots'].total
-    print 'Shot Attempts :', game.cum_stats['ShotAtt'].total
-    print 'EV Shot Atts  :', game.cum_stats['Corsi'].total
-    print 'Corsi         :', game.cum_stats['Corsi'].share()
-    print 'FW Shot Atts  :', game.cum_stats['Fenwick'].total
-    print 'Fenwick       :', game.cum_stats['Fenwick'].share()
+    # print 'Final         :', game.cum_stats['Score'].total
+    # print 'Shootout      :', game.cum_stats['Score'].shootout.total
+    # print 'Shots         :', game.cum_stats['Shots'].total
+    # print 'Shot Attempts :', game.cum_stats['ShotAtt'].total
+    # print 'EV Shot Atts  :', game.cum_stats['Corsi'].total
+    # print 'Corsi         :', game.cum_stats['Corsi'].share()
+    # print 'FW Shot Atts  :', game.cum_stats['Fenwick'].total
+    # print 'Fenwick       :', game.cum_stats['Fenwick'].share()
     
-    print '\nRefs          :', game.refs
-    print 'Linesman      :', game.linesman
-    print 'Coaches'
-    print '  Home        :', game.home_coach
-    print '  Away        :', game.away_coach
+    # print '\nRefs          :', game.refs
+    # print 'Linesman      :', game.linesman
+    # print 'Coaches'
+    # print '  Home        :', game.home_coach
+    # print '  Away        :', game.away_coach
     
     #f.write(json.dumps(game, cls=Encoder) + '\n')
     
+    from nhlscrapi.scrapr.gamesummrep import GameSummRep
+    summ = GameSummRep(gk)
+    print summ.parse_matchup()
+    summ.parse_scoring_summary()
