@@ -1,6 +1,6 @@
 
 from nhlscrapi.games.toi import TOI
-from nhlscrapi.gamekey import GameKey
+from nhlscrapi.games.gamekey import GameKey
 from nhlscrapi.games.rosters import Rosters
 from nhlscrapi.games.playbyplay import PlayByPlay
 
