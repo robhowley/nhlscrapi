@@ -1,9 +1,4 @@
 
-# annoying boilerplate
-# get access to other sub folders
-#import sys
-#sys.path.append('../')
-
 
 import nhlscrapi.constants as c
 from nhlscrapi.games.plays import Play, Strength

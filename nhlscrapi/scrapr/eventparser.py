@@ -1,8 +1,4 @@
 
-# annoying boilerplate
-# get access to other sub folders
-import sys
-sys.path.append('../')
 
 from nhlscrapi.games.events import EventType as ET, EventFactory as EF
 from nhlscrapi.scrapr import descparser as dp

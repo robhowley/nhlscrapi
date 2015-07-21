@@ -1,8 +1,4 @@
 
-# annoying boilerplate
-# get access to other sub folders
-import sys
-sys.path.append('..')
 
 from nhlscrapi._tools import build_enum
 
