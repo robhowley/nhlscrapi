@@ -31,9 +31,9 @@ class Game(object):
       self.rosters.load_all()
       self.summary.load_all()
       self.play_by_play.load_all()
-      return True
+      return self
     except:
-      return False
+      return None
   
   
   #########################################

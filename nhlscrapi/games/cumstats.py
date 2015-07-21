@@ -48,11 +48,13 @@ class TeamIncrementor(AccumulateStats):
                 new_tally['period'] = play.period
                 new_tally['time'] = play.time
                 new_tally[team] += 1
+                new_tally['play'] = play
             except:
                 new_tally = {
                     'period': play.period,
                     'time': play.time,
-                    team: 1
+                    team: 1,
+                    'play': play
                 }
       
             self.tally.append(new_tally)
@@ -73,7 +75,7 @@ class ShotCt(ShotEventTallyBase):
         super(ShotCt, self).__init__(
             count_play=lambda play: isinstance(play.event, EV.Shot)
         )
-    
+
 
 class EvenStShotCt(ShotEventTallyBase):
     def __init__(self):

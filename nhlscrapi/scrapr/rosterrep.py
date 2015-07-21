@@ -12,7 +12,7 @@ class RosterRep(ReportLoader):
     super(RosterRep, self).__init__(game_key, 'game_roster')
     
     self.rosters = { 'home': { }, 'away': { } }
-    """Rosters { 'home/away': { num: { pos: , name: } } }"""
+    """Rosters { 'home/away': { num: { 'pos': '', 'name': '' } } }"""
     
     self.scratches = { 'home': { }, 'away': { } }
     """Dictionary of healthy scratches keyed home/away loaded"""

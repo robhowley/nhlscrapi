@@ -12,10 +12,10 @@ def __shot_type(**kwargs):
   skater_ct = kwargs['skater_ct'] if 'skater_ct' in kwargs else 12
   period = kwargs['period'] if 'period' in kwargs else 1
   
-  if skater_ct > 2:
+  if period < 5:
     return ET.Shot
-  elif period < 5:
-    return ET.PenaltyShot
+#  elif period < 5:
+#    return ET.PenaltyShot
   else:
     return ET.ShootOutAtt
 
@@ -62,23 +62,26 @@ def event_type_mapper(event_str, **kwargs):
       
       
 def parse_event_desc(event, season = 2008):
-  if event.event_type == ET.Shot and season >= 2008:
-    dp.parse_shot_desc_08(event)
-  elif event.event_type == ET.Goal and season >= 2008:
-    dp.parse_goal_desc_08(event)
-  elif event.event_type == ET.Miss and season >= 2008:
-    dp.parse_miss_08(event)
-  elif event.event_type == ET.FaceOff and season >= 2008:
-    dp.parse_faceoff_08(event)
-  elif event.event_type == ET.Hit and season >= 2008:
-    dp.parse_hit_08(event)
-  elif event.event_type == ET.Block and season >= 2008:
-    dp.parse_block_08(event)
-  elif event.event_type == ET.Takeaway and season >= 2008:
-    dp.parse_takeaway_08(event)
-  elif event.event_type == ET.Giveaway and season >= 2008:
-    dp.parse_giveaway_08(event)
-  elif event.event_type == ET.ShootOutGoal:
-    dp.parse_shootout(event)
-  else:
-    dp.default_desc_parser(event)
+    
+    if event.event_type == ET.Shot and season >= 2008:
+        dp.parse_shot_desc_08(event)
+#    elif event.event_type == ET.PenaltyShot:
+#        dp.parse_penalty_shot_desc_08(event)
+    elif event.event_type == ET.Goal and season >= 2008:
+        dp.parse_goal_desc_08(event)
+    elif event.event_type == ET.Miss and season >= 2008:
+        dp.parse_miss_08(event)
+    elif event.event_type == ET.FaceOff and season >= 2008:
+        dp.parse_faceoff_08(event)
+    elif event.event_type == ET.Hit and season >= 2008:
+        dp.parse_hit_08(event)
+    elif event.event_type == ET.Block and season >= 2008:
+        dp.parse_block_08(event)
+    elif event.event_type == ET.Takeaway and season >= 2008:
+        dp.parse_takeaway_08(event)
+    elif event.event_type == ET.Giveaway and season >= 2008:
+        dp.parse_giveaway_08(event)
+    elif event.event_type == ET.ShootOutGoal:
+        dp.parse_shootout(event)
+    else:
+        dp.default_desc_parser(event)

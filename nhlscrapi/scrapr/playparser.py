@@ -1,8 +1,8 @@
 
 # annoying boilerplate
 # get access to other sub folders
-import sys
-sys.path.append('../')
+#import sys
+#sys.path.append('../')
 
 
 import nhlscrapi.constants as c
@@ -45,8 +45,10 @@ class PlayParser(object):
     c = RTSSCol.Map(self.season)
     
     p = Play()
-    p.play_num = int(d[c["play_num"]].text) if d[c["play_num"]].text.isdigit() else 0
-    p.period = d[c["per"]].text
+    
+    to_dig = lambda t: int(t) if t.isdigit() else 0
+    p.play_num = to_dig(d[c["play_num"]].text)
+    p.period = to_dig(d[c["per"]].text)
     
     p.strength = self.__strength(d[c["str"]].text)
     
