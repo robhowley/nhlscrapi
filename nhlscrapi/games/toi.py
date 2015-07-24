@@ -35,3 +35,9 @@ class TOI(RepScrWrap):
             'home': self.home_shift_summ(),
             'away': self.away_shift_summ()
         }
+        
+    def load_all(self):
+        if self._home.parse() and self._away.parse():
+            return self
+        else:
+            return None

@@ -35,5 +35,5 @@ class PlayByPlay(RepScrWrap):
     def __process(self, play, d, meth):
         for name, m in d.iteritems():
             getattr(m, meth)(play)
-      
+
   

@@ -37,9 +37,8 @@ class RepScrWrap(object):
     def matchup(self):
         return self._rep_reader.matchup
         
-        
     def load_all(self):
-        for k,v in self._lazy.iteritems():
-            if not v:
-                attr = getattr(self, k)()
-                self.__lazy[k] = True
+        if self._rep_reader.parse():
+            return self
+        else:
+            return None
