@@ -38,28 +38,31 @@ Scrape data for game 1226 of 2014, Ottawa vs Pittsburgh.
 
   # also http requests and processing are lazy
   # accumulators require play by play info so they parse the RTSS PBP
-  print 'Final         :', game.cum_stats['Score'].total
-  print 'Shootout      :', game.cum_stats['Score'].shootout.total
-  print 'Shots         :', game.cum_stats['Shots'].total
-  print 'EV Shot Atts  :', game.cum_stats['Corsi'].total
-  print 'Corsi         :', game.cum_stats['Corsi'].share()
-  print 'FW Shot Atts  :', game.cum_stats['Fenwick'].total
-  print 'Fenwick       :', game.cum_stats['Fenwick'].share()
+  print('Final         : {}'.format(game.cum_stats['Score'].total))
+  print('Shootout      : {}'.format(game.cum_stats['Score'].shootout.total))
+  print('Shots         : {}'.format(game.cum_stats['Shots'].total))
+  print('EV Shot Atts  : {}'.format(game.cum_stats['Corsi'].total))
+  print('Corsi         : {}'.format(game.cum_stats['Corsi'].share()))
+  print('FW Shot Atts  : {}'.format(game.cum_stats['Fenwick'].total))
+  print('Fenwick       : {}'.format(game.cum_stats['Fenwick'].share()))
 
   # http req for roster report
   # only parses the sections related to officials and coaches
-  print '\nRefs          :', game.refs
-  print 'Linesman      :', game.linesman
-  print 'Coaches'
-  print '  Home        :', game.home_coach
-  print '  Away        :', game.away_coach
+  print('\nRefs          : {}'.format(game.refs))
+  print('Linesman      : {}'.format(game.linesman))
+  print('Coaches')
+  print('  Home        : {}'.format(game.home_coach))
+  print('  Away        : {}'.format(game.away_coach))
 
   # scrape all remaining reports
   game.load_all()
 
-Current Release: v0.0.1
+Current Release: v0.0.2
 ------------------------
 This is a pre-release and is not stable and fully fit for production. The first full stable release (v0.1.0) will be made available once the framework for all `NHL RTSS reports <http://www.nhl.com/ice/gamestats.htm?fetchKey=20142ALLSATAll&sort=gameDate&viewName=teamRTSSreports>`_ is completed. Currently, Play-by-Play, Home/Away TOI and Roster reports are functional.
+
+
+Update 07-23-2015: Restructured the request handling and cleaned things up. Next pre-release, v0.0.3 will have the FaceOff report added.
 
 
 License
