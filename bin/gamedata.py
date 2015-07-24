@@ -68,5 +68,5 @@ if __name__ == '__main__':
     
     from nhlscrapi.scrapr.gamesummrep import GameSummRep
     summ = GameSummRep(gk)
-    print summ.parse_matchup()
+    print(summ.parse_matchup())
     summ.parse_scoring_summary()
