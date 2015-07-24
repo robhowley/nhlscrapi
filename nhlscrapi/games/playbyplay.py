@@ -5,12 +5,13 @@ from nhlscrapi.games.repscrwrap import RepScrWrap
   
 
 class PlayByPlay(RepScrWrap):
-    def __init__(self, game_key, extractors = {}, cum_stats = {}):
+    def __init__(self, game_key, extractors = {}, cum_stats = {}, init_cs_teams=True):
         super(PlayByPlay, self).__init__(game_key, RTSS(game_key))
         
         #    self._rtss = RTSS(game_key)
         self.extractors = extractors
         self.cum_stats = cum_stats
+        self.init_cs_teams = init_cs_teams
         self.__have_stats = False
         
     
@@ -24,6 +25,9 @@ class PlayByPlay(RepScrWrap):
         
     def compute_stats(self):
         if not self.__have_stats:
+            if self.init_cs_teams:
+                self.__init_cs_teams()
+            
             for play in self._rep_reader.parse_plays_stream():
                 self.__process(play, self.extractors, 'extract')
                 self.__process(play, self.cum_stats, 'update')
@@ -36,4 +40,8 @@ class PlayByPlay(RepScrWrap):
         for name, m in d.iteritems():
             getattr(m, meth)(play)
 
+    def __init_cs_teams(self):
+        teams = [ self.matchup['home'], self.matchup['away'] ]
+        for _, cs in self.cum_stats.items():
+            cs.initialize_teams(teams)
   

@@ -12,6 +12,11 @@ class AccumulateStats(object):
   
     def __init__(self):
         self.total = { }
+        self.teams = []
+    
+    def initialize_teams(self, teams):
+        self.teams = teams
+        self.total = { t: 0 for t in teams }
     
     @abstractmethod
     def update(self, play):
@@ -24,7 +29,6 @@ class TeamIncrementor(AccumulateStats):
     def __init__(self, get_team=None, count_play=None):
         super(TeamIncrementor, self).__init__()
         self.tally = []
-        self.teams = []
         self._get_team = get_team
         self._count_play = count_play
     
@@ -137,6 +141,10 @@ class Score(ShotEventTallyBase):
     def update(self, play):
         self.shootout.update(play)
         super(Score, self).update(play)
+        
+    def initialize_teams(self, teams):
+        super(Score, self).initialize_teams(teams)
+        self.shootout.initialize_teams(teams)
 
     def __set_shootout_winner(self):
         t1 = self.shootout.teams[0]
@@ -187,6 +195,10 @@ class Fenwick(ShotEventTallyBase):
     def update(self, play):
         self.score.update(play)
         super(Fenwick, self).update(play)
+        
+    def initialize_teams(self, teams):
+        super(Fenwick, self).initialize_teams(teams)
+        self.score.initialize_teams(teams)
     
     def share(self):
         tot = sum(self.total.values())

@@ -10,15 +10,13 @@ class Game(object):
     # add constructor argument for json source
     def __init__(self, game_key = None, extractors = {}, cum_stats = {}):
     
-        if hasattr(game_key, 'to_tuple'):
-            self.game_key = game_key
-        else:
-            self.game_key = GameKey(key_tup=game_key)
+        # conversion to GameKey from tuple allowed
+        self.game_key = game_key if hasattr(game_key, 'to_tuple') else GameKey(key_tup=game_key)
         
-        self.toi = TOI(game_key)
-        self.rosters = Rosters(game_key)
+        self.toi = TOI(self.game_key)
+        self.rosters = Rosters(self.game_key)
         #self.summary = GameSummary(game_key)
-        self.play_by_play = PlayByPlay(game_key, extractors, cum_stats)
+        self.play_by_play = PlayByPlay(self.game_key, extractors, cum_stats)
   
     
   
@@ -27,10 +25,11 @@ class Game(object):
         try:
             self.toi.load_all()
             self.rosters.load_all()
-            self.summary.load_all()
+            #self.summary.load_all()
             self.play_by_play.load_all()
             return self
-        except:
+        except Exception as e:
+            print(e)
             return None
   
   
