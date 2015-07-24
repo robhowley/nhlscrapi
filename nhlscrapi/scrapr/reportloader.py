@@ -1,4 +1,6 @@
 
+import re
+
 from lxml.html import fromstring
 
 from nhlreq import NHLCn
@@ -35,9 +37,6 @@ class ReportLoader(object):
         
         self.req_err = None
         """Error from http request"""
-        
-        #self.__have_matchup = False
-        self.__matchup = { }
       
     
     def html_doc(self):
@@ -95,18 +94,24 @@ class ReportLoader(object):
         away = TP.team_name_parser(at)
         home = TP.team_name_parser(ht)
         
-        game_info = doc.xpath('//table[@id="GameInfo"]')
-        if game_info:
-            for tr in game_info[0].xpath('/tr'):
-                print(tr)
-                print(tr[0].xpath('//text()'))
+        game_info = doc.xpath('//table[@id="GameInfo"]')[0].xpath('.//text()')
+        game_info = '; '.join(s.strip() for s in game_info if s.strip() != '')
+        
+        att = re.findall(r'(?<=[aA]ttendance\s)(\d*\,?\d*)', game_info)
+        att = int(att[0].replace(',','')) if att else 0
+        
+        date = re.findall(r'\w+\,?\s\w+\s\d+\,?\s\d+', game_info)
+        date = date[0] if date else ''
+        
+        loc = re.findall(r'(?<=at\W)([^\;]*)', game_info)
+        loc = loc[0] if loc else ''
     
         return {
             'home': home,
             'away': away,
             'final': final,
-            'attendance': 0,
-            'date': '',
-            'location': ''
+            'attendance': att,
+            'date': date,
+            'location': loc
         }
 
