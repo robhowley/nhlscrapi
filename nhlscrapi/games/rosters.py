@@ -40,20 +40,14 @@ class Rosters(RepScrWrap):
     
     @property
     @dispatch_loader('_rep_reader', 'parse_officials')
-    def refs(self):
+    def linesman(self):
         return self._rep_reader.officials['linesman']
-    
-    
-    @property
-    @dispatch_loader('_rep_reader', 'parse_scratches')
-    def refs(self):
-        return self._rep_reader.officials['home']
         
         
     @property
     @dispatch_loader('_rep_reader', 'parse_scratches')
     def home_scratches(self):
-        return self._roster_rep.scratches['away']
+        return self._roster_rep.scratches['home']
         
         
     @property
