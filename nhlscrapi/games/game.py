@@ -56,14 +56,15 @@ class Game(object):
     def plays(self):
         return self.play_by_play.plays()
   
+  
     @property
     def extractors(self):
         return self.play_by_play.extractors
     
+    
     @property
     def cum_stats(self):
-        self.play_by_play.compute_stats()
-        return self.play_by_play.cum_stats
+        return self.play_by_play.compute_stats()
   
   
     #
@@ -71,27 +72,27 @@ class Game(object):
     #
     @property
     def home_skaters(self):
-        return self.rosters.home_skaters()
+        return self.rosters.home_skaters
     
     @property
     def home_coach(self):
-        return self.rosters.home_coach()
+        return self.rosters.home_coach
     
     @property
     def away_skaters(self):
-        return self.rosters.away_skaters()
+        return self.rosters.away_skaters
   
     @property
     def away_coach(self):
-        return self.rosters.away_coach()
+        return self.rosters.away_coach
     
     @property
     def refs(self):
-        return self.rosters.refs()
+        return self.rosters.refs
     
     @property
     def linesman(self):
-        return self.rosters.linesman()
+        return self.rosters.linesman
   
   
     #
@@ -99,9 +100,9 @@ class Game(object):
     #
     @property
     def home_toi(self):
-        return self.toi.home_shift_summ()
+        return self.toi.home_shift_summ
     
     @property
     def away_toi(self):
-        return self.toi.away_shift_summ()
+        return self.toi.away_shift_summ
     

@@ -1,59 +1,45 @@
 
-# annoying boilerplate
-# get access to other sub folders
-import sys
-sys.path.append('..')
-
 from functools import wraps
 from abc import ABCMeta, abstractmethod
 
-class RepScrWrap(object):
-  """Lazy matchup reader base. Reports can be read in pieces. Only need to read matchup on read of first part."""
-  
-  @staticmethod
-  def read_banner(scrapr):
-    def wrapper(f):
-      @wraps(f)
-      def wrapped(self, *f_args, **f_kwargs):
-        if not self.__have_matchup:
-          attr = getattr(self, scrapr)
-          self.matchup = attr.parse_matchup()
-          self.__have_matchup = True
-        return f(self, *f_args, **f_kwargs)
-      return wrapped
-    return wrapper
-    
-  @staticmethod
-  def lazy_load(scrapr, loader_name):
+def dispatch_loader(scrapr, loader_name):
     l = '.'.join([scrapr, loader_name])
     def wrapper(f):
-      @wraps(f)
-      def wrapped(self, *f_args, **f_kwargs):
-        already_loaded = self.__lazy.setdefault(l, False)
-        
-        if not already_loaded:
-          attr = getattr(self, scrapr)
-          getattr(attr, loader_name)()
-          self.__lazy[l] = True
-          
-        return f(self, *f_args, **f_kwargs)
-      return wrapped
+        @wraps(f)
+        def wrapped(self, *f_args, **f_kwargs):
+            if not hasattr(self, '_loaded'):
+                self._loaded = { }
+                
+            already_loaded = self._loaded.setdefault(l, False)
+            if not already_loaded:
+                attr = getattr(self, scrapr)
+                self._loaded[l] = getattr(attr, loader_name)() is not None
+            return f(self, *f_args, **f_kwargs)
+        return wrapped
     return wrapper
-  
-  def __init__(self, game_key):
-    self.__have_matchup = False
-    # for decorated properties that share a loader
-    self.__lazy = { }
+        
+        
+class RepScrWrap(object):
+    """Lazy matchup reader base. Reports can be read in pieces. Only need to read matchup on read of first part. Serves
+    as the base class for all wrappers of report scrapers. """
+
+    def __init__(self, game_key, rep_reader):
+        self.__have_matchup = False
+        
+        self.game_key = game_key
+        """Game key identifier"""
+        
+        self._rep_reader = rep_reader
     
-    self.game_key = game_key
-    """Game key identifier"""
     
-    self.matchup = { }
-    """Matchup format: { 'home': '', 'away': '', 'final': { 'home': 0, 'away': 0 } }"""
-  
-  
-  def load_all(self):
-    for k,v in self.__lazy.iteritems():
-      if not v:
-        attr = getattr(self, k)()
-        self.__lazy[k] = True
+    @property
+    @dispatch_loader('_rep_reader', 'parse_matchup')
+    def matchup(self):
+        return self._rep_reader.matchup
+        
+        
+    def load_all(self):
+        for k,v in self._lazy.iteritems():
+            if not v:
+                attr = getattr(self, k)()
+                self.__lazy[k] = True
