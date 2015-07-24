@@ -12,8 +12,9 @@ class ShiftSummary(object):
     def __init__(self):
     
         self.player_num = 0
-        self.player_name = { 'first': '', 'last': '' }
-    
+        self.player_name = { }
+        """ Player's name: { 'first': '', 'last': '' }"""
+        
         self.shifts = []
         """List of all shifts in the form
         [
