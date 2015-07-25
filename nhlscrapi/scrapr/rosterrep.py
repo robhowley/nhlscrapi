@@ -85,7 +85,7 @@ class RosterRep(ReportLoader):
         for t in ['home', 'away']:
             self.rosters[t] = self.__clean_pl_block(self.__blocks[t])
             
-        return self.rosters
+        return self if self.rosters else None
         
         
     def parse_scratches(self):
@@ -98,7 +98,7 @@ class RosterRep(ReportLoader):
             ix = 'away' if t == 'aw_scr' else 'home'
             self.scratches[ix] = self.__clean_pl_block(self.__blocks[t])
             
-        return self.scratches
+        return self if self.scratches else None
         
         
     def parse_coaches(self):
@@ -112,7 +112,7 @@ class RosterRep(ReportLoader):
             team = 'away' if i == 0 else 'home'
             self.coaches[team] = txt[0]
             
-        return self.coaches
+        return self if self.coaches else None
         
         
     def parse_officials(self):
@@ -122,4 +122,4 @@ class RosterRep(ReportLoader):
         off_parser = opm(self.game_key.season)
         self.officials = off_parser(lx_doc)
         
-        return self.officials
+        return return self if self.officials else None

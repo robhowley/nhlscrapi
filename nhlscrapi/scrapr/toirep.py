@@ -41,7 +41,6 @@ class ShiftSummary(object):
             'sh_toi': sh_toi
         } """
       
-      
     @property
     def game_summ(self):
         return self.by_period.get(0, None)
@@ -55,7 +54,6 @@ class TOIRepBase(ReportLoader):
     
         self.by_player = { }
         """by player dictionary of shift summaries { player_num: ShiftSummary() }}"""
-
 
     def __player_shifts(self, shift):
         parsed_shifts = []
@@ -72,11 +70,9 @@ class TOIRepBase(ReportLoader):
       
         return parsed_shifts, shift
   
-  
     def __get_time(self, time_str):
         mins, secs = time_str.split(':')
         return { 'min': to_int(mins), 'sec': to_int(secs) }
-    
     
     def __build_shift(self, shift):
         shift = [s.strip() for s in shift]
@@ -95,7 +91,6 @@ class TOIRepBase(ReportLoader):
             'dur': self.__get_time(shift[4]),
             'event': ev
         }
-    
     
     def __get_by_per_summ(self, per_summ):
         summ = { }
@@ -125,22 +120,23 @@ class TOIRepBase(ReportLoader):
       
         return summ, per_summ
 
-  
     def parse(self):
         """Parse full TOI document.
-        :returns: boolean success indicator
-        :rtype: bool """
+        :returns: self if successfule else None
+        """
         
-        r = super(TOIRepBase, self).parse()
         try:
-            self.parse_shifts()
+            return super(TOIRepBase, self).parse().self.parse_shifts()
         except:
             r = False
       
         return r and True
 
-
     def parse_shifts(self):
+        """Parse shifts from TOI report
+        :returns: self if successfule else None
+        """
+        
         lx_doc = self.html_doc()
         pl_heads = lx_doc.xpath('//td[contains(@class, "playerHeading")]')
         for pl in pl_heads:
