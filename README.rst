@@ -1,4 +1,4 @@
-nhlscrapi: NHL Scrapr API
+nhlscrapi: NHL Scraper API
 ===============================
 
 Purpose
