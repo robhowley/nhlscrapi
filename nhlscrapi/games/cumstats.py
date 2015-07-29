@@ -157,7 +157,7 @@ class Score(ShotEventTallyBase):
             t2 = self.shootout.teams[1]
             if len(self.teams) != 2:
                 self.teams = [t1, t2]
-            t1wins = 1 if self.shootout[t1] > self.shootout[t2] else 0
+            t1wins = 1 if self.shootout.total[t1] > self.shootout.total[t2] else 0
             self.total[t1] += t1wins
             self.total[t2] += 1-t1wins
     

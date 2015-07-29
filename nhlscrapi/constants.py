@@ -227,7 +227,7 @@ TEAMS_BY_ABBR = {
   'PIT': 'Pittsburgh Penguins', # (1967-68 - present)
   'PIP': 'Pittsburgh Pirates', # (1925-26 - 1929-30)
   'OTT': 'Ottawa Senators', # (1992-93 - present)
-  'OTS': 'Ottawa Senators', # (1917-18 - 1930-31, 1932-33 - 1933-34)
+  'OTS': 'Ottawa Senators (orig)', # (1917-18 - 1930-31, 1932-33 - 1933-34)
   'QUE': 'Quebec Nordiques', # (1979-80 - 1994-95)
   'QUB': 'Quebec Bulldogs', # (1919-20)
   'STL': 'St Louis Blues', # (1967-68 - present)
@@ -239,6 +239,6 @@ TEAMS_BY_ABBR = {
   'TRS': 'Toronto St Pats', # (1919-20 - 1925-26)
   'VAN': 'Vancouver Canucks', # (1970-71 - present)
   'WSH': 'Washington Capitals', # (1974-75 - present)
-  'WIJ': 'Winnipeg Jets', # (1st) (1979-80 - 1995-96)
+  'WIJ': 'Winnipeg Jets (orig)', # (1st) (1979-80 - 1995-96)
   'WIN': 'Winnipeg Jets', # (2011-12 - present)
 }
