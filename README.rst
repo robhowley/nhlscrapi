@@ -63,7 +63,7 @@ This is a pre-release and is not stable and fully fit for production. The first 
 
 License
 --------
-The NHL Scrapr API is a free Python library provided under Apache License version 2.0.
+The NHL Scraper API is a free Python library provided under Apache License version 2.0.
 
   - Free software: Apache License, v2.0
   - Documentation: (coming eventually)
