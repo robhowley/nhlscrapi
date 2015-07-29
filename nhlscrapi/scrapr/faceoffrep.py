@@ -22,10 +22,10 @@ class FaceOffRep(ReportLoader):
                     player_nums: {
                         'name': name,
                         'pos': position,
-                        'off': { offensive zone faceoff info }
-                        'def' { defensive zone faceoff info }
-                        'neu': { neutral zone faceoff info }
-                        'total': { total faceoff info }
+                        'off': { 'won': won, 'total': total }   # offensive zone faceoff info
+                        'def' { 'won': won, 'total': total }    # defensive zone faceoff info
+                        'neu': { 'won': won, 'total': total }   # neutral zone faceoff info
+                        'all': { 'won': won, 'total': total }   # all zone faceoff info
                         'opps': { basically the same as above; opps means opponents }
                     }
                 }
@@ -100,7 +100,7 @@ class FaceOffRep(ReportLoader):
             'off': off,
             'def': defz,
             'neut': neut,
-            'total': tot
+            'all': tot
         }
     
     @staticmethod
