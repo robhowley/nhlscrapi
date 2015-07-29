@@ -122,4 +122,4 @@ class RosterRep(ReportLoader):
         off_parser = opm(self.game_key.season)
         self.officials = off_parser(lx_doc)
         
-        return return self if self.officials else None
+        return self if self.officials else None
