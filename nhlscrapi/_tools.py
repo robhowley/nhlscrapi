@@ -1,5 +1,5 @@
 
-
+import re
 import json
 
 # need to fix this to accommodate recursion depth limit/error
@@ -27,7 +27,8 @@ def exclude_from(l, containing = [], equal_to = []):
         >>> containing = ['\n', '\r']
         >>> equal_to = ['r']
         >>> exclude_from(l, containing, equal_to)
-        ['bob']"""
+        ['bob']
+    """
       
     cont = lambda li: any(c in li for c in containing)
     eq = lambda li: any(e == li for e in equal_to)
@@ -41,3 +42,17 @@ def to_int(s, default=-1):
 def split_time(t):
     ti = t.split(':')
     return { 'min': to_int(ti[0]), 'sec': to_int(ti[1]) }
+    
+    
+def re_comp_num_pos_name():
+    """
+    Compiles the regex pattern that extracts the pattern (num) (position) (last), (first)
+    
+    Example:
+        s = '21 C Stepan, Derek'
+        reg = re_comp_num_pos_name()
+        num, pos, last, first = reg.findall(s)[0]
+    
+    :return: compiled regex
+    """
+    return re.compile(r'(\d+)\s*(\w+)\s*([^\,]+)[\W]+(\w+)')  # (num) (position) (last), (first)
