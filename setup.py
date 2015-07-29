@@ -44,5 +44,5 @@ setup(
   test_suite='tests',
     
   # Dependent packages (distributions)
-  install_requires=[],
+  install_requires=['lxml.html'],
 )
