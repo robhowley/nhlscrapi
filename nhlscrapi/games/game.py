@@ -3,6 +3,7 @@ from nhlscrapi.games.toi import TOI
 from nhlscrapi.games.gamekey import GameKey
 from nhlscrapi.games.rosters import Rosters
 from nhlscrapi.games.playbyplay import PlayByPlay
+from nhlscrapi.games.faceoffcomp import FaceOffComparison
 
 
 class Game(object):
@@ -16,6 +17,7 @@ class Game(object):
         self.toi = TOI(self.game_key)
         self.rosters = Rosters(self.game_key)
         #self.summary = GameSummary(game_key)
+        self.face_off_comp = FaceOffComparison(self.game_key)
         self.play_by_play = PlayByPlay(self.game_key, extractors, cum_stats)
   
     
@@ -27,6 +29,7 @@ class Game(object):
             self.rosters.load_all()
             #self.summary.load_all()
             self.play_by_play.load_all()
+            self.face_off_comp.load_all()
             return self
         except Exception as e:
             print(e)
@@ -44,8 +47,10 @@ class Game(object):
             return self.play_by_play.matchup
         elif self.rosters.matchup:
             return self.rosters.matchup
-        else:
+        elif self.toi.matchup:
             return self.toi.matchup
+        else:
+            self.face_off_comp.matchup
   
   
     #
@@ -105,3 +110,14 @@ class Game(object):
     def away_toi(self):
         return self.toi.away_shift_summ
     
+    
+    #
+    # face off related
+    #
+    @property
+    def home_fo_summ(self):
+        return self.face_off_comp.home_fo
+        
+    @property
+    def away_fo_summ(self):
+        return self.face_off_comp.home_fo
