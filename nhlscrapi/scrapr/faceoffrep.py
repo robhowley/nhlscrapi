@@ -91,7 +91,7 @@ class FaceOffRep(ReportLoader):
     @staticmethod
     def __player_fo_rec(name, pos, zone_raw):
         off, defz, neut, tot = tuple(
-            FaceOffRep.__tot_pct(ri) if ord(ri[0]) < 128 else ''
+            FaceOffRep.__tot_pct(ri) if ord(ri[0]) < 128 else { 'won': 0, 'total': 0 }
             for ri in zone_raw
         )
         return {
