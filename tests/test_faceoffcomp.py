@@ -3,7 +3,7 @@ import unittest
 class TestFaceOffComparison(unittest.TestCase):
 
     def test_face_off_comparison(self):
-        from nhlscrapi.games.gamekey import GameKey
+        from nhlscrapi.games.game import GameKey
         from nhlscrapi.games.faceoffcomp import FaceOffComparison
 
         gk = GameKey(2015,3,224)        # 2015, playoffs (3), NYR/WSH game 3 (game 224)

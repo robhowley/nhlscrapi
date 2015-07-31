@@ -18,8 +18,7 @@ Scrape data for game 1226 of 2014, Ottawa vs Pittsburgh.
 
 .. code-block:: python
 
-  from nhlscrapi.games.game import Game
-  from nhlscrapi.games.gamekey import GameKey, GameType
+  from nhlscrapi.games.game import Game, GameKey, GameType
   from nhlscrapi.games.cumstats import Score, ShotCt, Corsi, Fenwick
 
   season = 2014                                    # 2013-2014 season

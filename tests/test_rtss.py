@@ -5,8 +5,7 @@ import unittest
 class TestRTSSParse(unittest.TestCase):
 
     def test_game(self):
-        from nhlscrapi.games.game import Game
-        from nhlscrapi.games.gamekey import GameKey, GameType
+        from nhlscrapi.games.game import Game, GameKey, GameType
         from nhlscrapi.games.cumstats import Score, ShotCt, EvenStShotCt, Corsi, Fenwick
             
         fin_score = { }
