@@ -240,5 +240,5 @@ TEAMS_BY_ABBR = {
   'VAN': 'Vancouver Canucks', # (1970-71 - present)
   'WSH': 'Washington Capitals', # (1974-75 - present)
   'WIJ': 'Winnipeg Jets (orig)', # (1st) (1979-80 - 1995-96)
-  'WIN': 'Winnipeg Jets', # (2011-12 - present)
+  'WPG': 'Winnipeg Jets', # (2011-12 - present)
 }

@@ -25,12 +25,14 @@ class PlayByPlay(RepScrWrap):
         
     def compute_stats(self):
         if not self.__have_stats:
-            if self.init_cs_teams:
+            if self.init_cs_teams and self.cum_stats:
                 self.__init_cs_teams()
             
             for play in self._rep_reader.parse_plays_stream():
-                self.__process(play, self.extractors, 'extract')
-                self.__process(play, self.cum_stats, 'update')
+                if self.extractors:
+                    self.__process(play, self.extractors, 'extract')
+                if self.cum_stats:
+                    self.__process(play, self.cum_stats, 'update')
                 self.__have_stats = True
                 
         return self.cum_stats
