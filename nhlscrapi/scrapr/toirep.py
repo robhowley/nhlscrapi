@@ -16,7 +16,8 @@ class TOIRepBase(ReportLoader):
     
         self.by_player = { }
         """
-        By player dictionary of shift summaries. Format is
+        By player dictionary of shift summaries. The only events recorded per shift are :py:class:`.EventType.Goal`
+        or :py:class:`.EventType.Penalty`. For ``period = 0``, the game totals are returned. Format is
         
         .. code:: python
         
@@ -44,10 +45,6 @@ class TOIRepBase(ReportLoader):
                     }
                 }
             }
-            
-            
-        The only events recorded per shift are :py:class:`.EventType.Goal` or :py:class:`.EventType.Penalty`. For
-        ``period = 0``, the game totals are returned.
         """
 
     def __player_shifts(self, shift):
@@ -116,7 +113,9 @@ class TOIRepBase(ReportLoader):
         return summ, per_summ
 
     def parse(self):
-        """Parse full TOI document.
+        """
+        Parse full TOI document.
+        
         :returns: ``self`` if successful else ``None``
         """
         
@@ -126,7 +125,9 @@ class TOIRepBase(ReportLoader):
             return None
 
     def parse_shifts(self):
-        """Parse shifts from TOI report
+        """
+        Parse shifts from TOI report
+        
         :returns: self if successfule else None
         """
         

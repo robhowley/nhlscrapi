@@ -39,8 +39,7 @@ class TeamIncrementor(AccumulateStats):
     Accumulator base class for team vs team stats such as score, shot count et c.
     
     :param get_team: function, takes a play and returns the team associated with it
-    :param count_play: function, takes a play and returns True if it is a tally for the
-    given accumulator's definition.
+    :param count_play: function, takes a play and returns True if it is a tally for the given accumulator's definition.
     """
     __metaclass__ = ABCMeta
   
@@ -48,6 +47,7 @@ class TeamIncrementor(AccumulateStats):
         super(TeamIncrementor, self).__init__()
         self.tally = []
         """List of plays that lead to tallies, i.e. increments of the stat accumulator. E.g. a goal or shot."""
+        
         self._get_team = get_team
         self._count_play = count_play
     
@@ -55,7 +55,8 @@ class TeamIncrementor(AccumulateStats):
         """
         Update the accumulator with the current play
         
-        :returns: new tally, ``{ 'period': per, 'time': clock, 'team': cumul, 'play': play }``
+        :returns: new tally
+        :rtype: dict, ``{ 'period': per, 'time': clock, 'team': cumul, 'play': play }``
         """
         new_tally = { }
         #if any(isinstance(play.event, te) for te in self.trigger_event_types):
@@ -104,7 +105,7 @@ class ShotCt(ShotEventTallyBase):
     Tallies shots on goal for each team. Increments if
     
       * the play event inherits from :py:class:`.Shot`
-      
+    
     """
     def __init__(self):
         super(ShotCt, self).__init__(
@@ -118,7 +119,7 @@ class EvenStShotCt(ShotEventTallyBase):
     
       * the play event inherits from :py:class:`.Shot`
       * play happened at even strength
-      
+    
     """
     def __init__(self):
         super(EvenStShotCt, self).__init__(
@@ -131,7 +132,7 @@ class ShotAttemptCt(ShotEventTallyBase):
     Tallies even strength shots on goal for each team. Increments if
     
       * the play event inherits from :py:class:`.ShotAttempt`
-      
+    
     """
     def __init__(self):
         super(ShotAttemptCt, self).__init__(
@@ -145,7 +146,7 @@ class EvenStShotAttCt(ShotEventTallyBase):
     
       * the play event inherits from :py:class:`.ShotAttempt`
       * play happened at even strength
-      
+    
     """
     def __init__(self):
         super(EvenStShotAttCt, self).__init__(
@@ -195,7 +196,7 @@ class Score(ShotEventTallyBase):
     
       * the play event inherits from :py:class:`.Goal`
       * the play event inherits from :py:class:`.ShootOutGoal`
-      
+    
     """
     def __init__(self):
         self.shootout = ShootOut()
@@ -241,7 +242,7 @@ class Fenwick(ShotEventTallyBase):
       * the play event inherits from :py:class:`.ShotAttempt`
       * the play event does not inherit from :py:class:`.Block`
       * play happened at even strength
-      
+    
     """
     def __init__(self):
         self.score = Score()
@@ -282,9 +283,8 @@ class Fenwick(ShotEventTallyBase):
     
     def share(self):
         """
-        The Fenwick-share (% of unblocked even strength shot attempts) for each team
-        
-        :returns: dict, ``{ 'home_name': %, 'away_name': % }``
+        :returns: The Fenwick-share (% of unblocked even strength shot attempts) for each team
+        :rtype: dict, ``{ 'home_name': %, 'away_name': % }``
         """
         tot = sum(self.total.values())
         return { k: v/float(tot) for k,v in self.total.iteritems() }

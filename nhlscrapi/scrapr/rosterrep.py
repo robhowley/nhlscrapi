@@ -6,13 +6,16 @@ from nhlscrapi.scrapr.reportloader import ReportLoader
 
 
 class RosterRep(ReportLoader):
-    """Retrieve and load roster report from nhl.com"""
+    """Retrieve and load roster report from nhl.com. This is a base class and not intended to be used directly."""
     
     def __init__(self, game_key):
         super(RosterRep, self).__init__(game_key, 'game_roster')
         
         self.rosters = { }
-        """Rosters { 'home/away': { num: { 'pos': '', 'name': '' } } }"""
+        """
+        Rosters for both home and away.
+        Data: ``{ 'home/away': { num: { 'pos': '', 'name': '' } } }``
+        """
         
         self.scratches = { }
         """Dictionary of healthy scratches keyed home/away loaded"""
@@ -21,7 +24,7 @@ class RosterRep(ReportLoader):
         """Dictionary of coaches keyed home/away loaded"""
         
         self.officials = { 'refs': { }, 'linesman': { } }
-        """Game officials: { 'refs': { }, 'linesman': { } }"""
+        """Game officials: ``{ 'refs': { }, 'linesman': { } }``"""
         
         self.__blocks = {}
         
@@ -61,8 +64,10 @@ class RosterRep(ReportLoader):
         
         
     def parse(self):
-        """Retreive and parse Play by Play data for the given nhlscrapi.GameKey
-        :returns: self on success, None otherwise
+        """
+        Retreive and parse Play by Play data for the given :py:class:`nhlscrapi.games.game.GameKey``
+        
+        :returns: ``self`` on success, ``None`` otherwise
         """
         
         try:
@@ -76,7 +81,11 @@ class RosterRep(ReportLoader):
             
             
     def parse_rosters(self):
-        """Parse the home and away game rosters"""
+        """
+        Parse the home and away game rosters
+        
+        :returns: ``self`` on success, ``None`` otherwise
+        """
         lx_doc = self.html_doc()
         
         if not self.__blocks:
@@ -89,7 +98,11 @@ class RosterRep(ReportLoader):
         
         
     def parse_scratches(self):
-        """Parse the home and away healthy scratches"""
+        """
+        Parse the home and away healthy scratches
+        
+        :returns: ``self`` on success, ``None`` otherwise
+        """
         lx_doc = self.html_doc()
         if not self.__blocks:
             self.__pl_blocks(lx_doc)
@@ -102,7 +115,11 @@ class RosterRep(ReportLoader):
         
         
     def parse_coaches(self):
-        """Parse the home and away coaches"""
+        """
+        Parse the home and away coaches
+        
+        :returns: ``self`` on success, ``None`` otherwise
+        """
         lx_doc = self.html_doc()
         tr = lx_doc.xpath('//tr[@id="HeadCoaches"]')[0]
         
@@ -116,7 +133,11 @@ class RosterRep(ReportLoader):
         
         
     def parse_officials(self):
-        """Parse the officials"""
+        """
+        Parse the officials
+        
+        :returns: ``self`` on success, ``None`` otherwise
+        """
         # begin proper body of method
         lx_doc = self.html_doc()
         off_parser = opm(self.game_key.season)

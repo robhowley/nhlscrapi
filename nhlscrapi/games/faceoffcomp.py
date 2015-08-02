@@ -7,13 +7,16 @@ class FaceOffComparison(RepScrWrap):
     """
     Face-off Comparison and summary report. Produces the by player and head-to-head matchup face off totals
     by zone and overall. For either home or away the full summary data takes the following form
+        
+    .. code:: python
+    
         {
-            'home/away': {
-                player_num: {
-                    'off/def/neut/all': { 'won': won, 'total': total }
-                }
+            player_num: {
+                'off/def/neut/all': { 'won': won, 'total': total }
             }
         }
+        
+    :param game_key: unique game identifier of type :py:class:`.GameKey`
     """
     
     def __init__(self, game_key):
@@ -25,10 +28,9 @@ class FaceOffComparison(RepScrWrap):
     @dispatch_loader('_rep_reader', 'parse_home_face_offs')
     def home_fo(self):
         """
-        Property that returns the full by player face-off summary for the home team. See FaceOffComparison
-        for dictionary key structure.
+        Property that returns the full by player face-off summary for the home team.
         
-        :returns: dict
+        :returns: dict keyed by player num
         """
         return self._rep_reader.face_offs['home']
         
@@ -36,43 +38,45 @@ class FaceOffComparison(RepScrWrap):
     @dispatch_loader('_rep_reader', 'parse_away_face_offs')
     def away_fo(self):
         """
-        Property that returns the full by player face-off summary for the away team. See FaceOffComparison
-        for dictionary key structure.
+        Property that returns the full by player face-off summary for the away team.
         
-        :returns: dict
+        :returns: dict keyed by player num
         """
         return self._rep_reader.face_offs['away']
     
     def head_to_head(self, home_num, away_num):
         """
         Return the head-to-head face-off outcomes between two players.
-        If the matchup happened, then the format of the output is
-            {
-                'home': { 'off/def/neut/all': { 'won': won, 'total': total } }
-                'away': { 'off/def/neut/all': { 'won': won, 'total': total } }
-            }
-        else an empty { } dictionary will be returned
+        If the matchup didn't happen, ``{ }`` is returned.
         
         :param home_num: the number of the home team player
         :param away_num: the number of the away team player
-        :returns: dict described above or { }
+        :returns: dict, either ``{ }`` or the following
+        
+        .. code:: python
+        
+            {
+                'home/away': {
+                    'off/def/neut/all': { 'won': won, 'total': total }
+                }
+            }
         """
-        h_fo = self.home_fo[home_num]['opps'][away_num]
-        a_fo = self.away_fo[away_num]['opps'][home_num]
-        return {
-            'home': { k: h_fo[k] for k in self.__zones },
-            'away': { k: a_fo[k] for k in self.__zones }
-        }
+        if home_num in self.home_fo and away_num in self.home_fo[home_num]['opps']:
+            h_fo = self.home_fo[home_num]['opps'][away_num]
+            a_fo = self.away_fo[away_num]['opps'][home_num]
+            return {
+                'home': { k: h_fo[k] for k in self.__zones },
+                'away': { k: a_fo[k] for k in self.__zones }
+            }
+        else:
+            return { }
 
     @property
     def team_totals(self):
         """
         Returns the overall faceoff win/total breakdown for home and away as
-            {
-                'home/away': { 'won': won, 'total': total }
-            }
         
-        :returns: dict
+        :returns: dict, ``{ 'home/away': { 'won': won, 'total': total } }``
         """
         if self.__team_tots is None:
             self.__team_tots = self.__comp_tot()
@@ -86,12 +90,14 @@ class FaceOffComparison(RepScrWrap):
     def by_zone(self):
         """
         Returns the faceoff win/total breakdown by zone for home and away as
-            {
-                'home/away': {
-                    'off/def/neut': { 'won': won, 'total': total }
+        
+        .. code:: python
+        
+            { 'home/away': {
+                'off/def/neut/all': { 'won': won, 'total': total }
                 }
             }
-        
+            
         :returns: dict
         """
         if self.__team_tots is None:
@@ -109,9 +115,9 @@ class FaceOffComparison(RepScrWrap):
     @property
     def fo_pct(self):
         """
-        Get the by team overall face-off win %. Format is { 'home': %, 'away': % }
+        Get the by team overall face-off win %.
         
-        :returns: dict
+        :returns: dict, ``{ 'home': %, 'away': % }``
         """
         tots = self.team_totals
         return {
@@ -123,11 +129,8 @@ class FaceOffComparison(RepScrWrap):
     def fo_pct_by_zone(self):
         """
         Get the by team face-off win % by zone. Format is
-            {
-                'home/away': { 'off/def/neut': % }
-            }
             
-        :returns: dict
+        :returns: dict ``{ 'home/away': { 'off/def/neut': % } }``
         """
         bz = self.by_zone
         return {

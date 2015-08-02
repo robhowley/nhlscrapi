@@ -9,18 +9,20 @@ from nhlscrapi.scrapr.reportloader import ReportLoader
 
 
 class RTSS(ReportLoader):
-    """Retrieve and load RTSS play by play game data from nhl.com"""
+    """Retrieve and load RTSS play by play game data"""
   
     def __init__(self, game_key):
         super(RTSS, self).__init__(game_key, "rtss")
         
         self.plays = []
-        """List of nhlscrapi.Plays loaded"""
+        """List of plays loaded. See :py:class:`.PlayParser` for play data structure."""
         
         
     def parse(self):
-        """Parse full document. Plays and matchups.
-        :returns: self on success, None otherwise
+        """
+        Parse full document. Plays and matchups.
+        
+        :returns: ``self`` on success, ``None`` otherwise
         """
 
         try:
@@ -30,8 +32,11 @@ class RTSS(ReportLoader):
         
         
     def parse_plays(self):
-        """Retreive and parse Play by Play data for the given nhlscrapi.GameKey
-        :returns: self on success, None otherwise"""
+        """
+        Retreive and parse Play by Play data for the given :py:class:`nhlscrapi.games.GameKey`
+        
+        :returns: ``self`` on success, ``None`` otherwise
+        """
         
         try:
             self.plays = [p for p in self.parse_plays_stream()]
@@ -41,7 +46,7 @@ class RTSS(ReportLoader):
         
         
     def parse_plays_stream(self):
-        """Generate stream of parsed plays. Useful for per play processing."""
+        """Generate and yield a stream of parsed plays. Useful for per play processing."""
         
         lx_doc = self.html_doc()
         if lx_doc is not None:
@@ -56,7 +61,7 @@ class RTSS(ReportLoader):
                 
 # will take a RTSS play table row and return a Play object
 class PlayParser(object):
-    """Interprets RTSS play by play table row and populates nhlscrapi.Play with info."""
+    """Interprets a single RTSS play by play table row, i.e. a single play. Constructs a dictionary of play features."""
     
     def __init__(self, season = c.MAX_SEASON):
         self.season = season
@@ -68,7 +73,8 @@ class PlayParser(object):
         appropriate column number. The column locations pre/post 2008 are different.
         
         :param season: int for the season number
-        :returns: dict, keys are ``'play_num', 'per', 'str', 'time', 'event', 'desc', 'vis', 'home'``
+        :returns: mapping of RTSS column to info type
+        :rtype: dict, keys are ``'play_num', 'per', 'str', 'time', 'event', 'desc', 'vis', 'home'``
         """
         if c.MIN_SEASON <= season <= c.MAX_SEASON:
             return {
@@ -86,9 +92,25 @@ class PlayParser(object):
     
     def build_play(self, pbp_row):
         """
-        Parses table row from RTSS
-        :param pbp_row: table row from RTSS tagged with <tr class='evenColor' ... >
-        :returns: nhlscrapi.Play
+        Parses table row from RTSS. These are the rows tagged with ``<tr class='evenColor' ... >``. Result set
+        contains :py:class:`nhlscrapi.games.playbyplay.Strength` and :py:class:`nhlscrapi.games.events.EventType`
+        objects. Returned play data is in the form
+        
+        .. code:: python
+        
+            {
+                'play_num': num_of_play
+                'period': curr_period
+                'strength': strength_enum
+                'time': { 'min': min, 'sec': sec }
+                'vis_on_ice': { 'player_num': player }
+                'home_on_ice': { 'player_num': player }
+                'event': event_object
+            }
+        
+        :param pbp_row: table row from RTSS
+        :returns: play data
+        :rtype: dict
         """
         d = pbp_row.findall('./td')
         c = PlayParser.ColMap(self.season)
@@ -123,7 +145,7 @@ class PlayParser(object):
         """
         Constructs dictionary of players on the ice in the provided table at time of play.
         :param tab: RTSS table of the skaters and goalie on at the time of the play
-        :returns: dictionary, key = player number, value = [position, name]
+        :rtype: dictionary, key = player number, value = [position, name]
         """
         
         res = { }

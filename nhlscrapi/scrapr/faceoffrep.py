@@ -16,17 +16,23 @@ class FaceOffRep(ReportLoader):
         super(FaceOffRep, self).__init__(game_key, 'face_offs')
         
         self.face_offs = { }
-        """ report in dictionary format
+        """
+        report in dictionary format
+        
+        .. code:: python
+        
             {
                 home/away: {
                     player_nums: {
                         'name': name,
                         'pos': position,
-                        'off': { 'won': won, 'total': total }   # offensive zone faceoff info
-                        'def' { 'won': won, 'total': total }    # defensive zone faceoff info
-                        'neu': { 'won': won, 'total': total }   # neutral zone faceoff info
-                        'all': { 'won': won, 'total': total }   # all zone faceoff info
-                        'opps': { basically the same as above; opps means opponents }
+                        'off/def/neut/all': {
+                            'won': won, 'total': total
+                        },
+                        'opps': {
+                            basically same info as above.
+                            name, pos, and zone info of opponents
+                        }
                     }
                 }
             }
@@ -48,9 +54,8 @@ class FaceOffRep(ReportLoader):
         """
         Retreive and parse Play by Play data for the given nhlscrapi.GameKey
         
-        :returns: self on success, None otherwise
+        :returns: ``self`` on success, ``None`` otherwise
         """
-        
         try:
             return (
                 super(FaceOffRep, self).parse()
@@ -64,7 +69,7 @@ class FaceOffRep(ReportLoader):
         """
         Parse only the home faceoffs
         
-        :returns: self on success, None otherwise
+        :returns: ``self`` on success, ``None`` otherwise
         """
         self.__set_team_docs()
         self.face_offs['home'] = FaceOffRep.__read_team_doc(self.__home_doc)
@@ -74,7 +79,7 @@ class FaceOffRep(ReportLoader):
         """
         Parse only the away faceoffs
         
-        :returns: self on success, None otherwise
+        :returns: ``self`` on success, ``None`` otherwise
         """
         self.__set_team_docs()
         self.face_offs['away'] = FaceOffRep.__read_team_doc(self.__vis_doc)
@@ -85,8 +90,6 @@ class FaceOffRep(ReportLoader):
         ct = res.split('/')[0].strip()
         won, tot = tuple(to_int(i) for i in ct.split('-'))
         return { 'won': won, 'total': tot }
-            
-        return ''
     
     @staticmethod
     def __player_fo_rec(name, pos, zone_raw):

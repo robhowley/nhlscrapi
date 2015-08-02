@@ -11,28 +11,38 @@ from abc import ABCMeta, abstractmethod
 
 
 class ReportLoader(object):
-    """Base class for objects that load full reports. Manages html request and extracts match up from banner"""
+    """
+    Base class for objects that load full reports. Manages html request and extracts match up from banner
+    
+    :param game_key: unique game identifier of type :py:class:`nhlscrapi.games.game.GameKey`
+    :param report_type: str, type of report being loaded. Must be a method of :py:class:`.NHLCn`
+    """
   
     __metaclass__ = ABCMeta
     __lx_doc = None
  
     def __init__(self, game_key, report_type=''):
         self.game_key = game_key
-        """Game key being retrieved"""
+        """Game key being retrieved of type :py:class:`nhlscrapi.games.game.GameKey` """
       
         self.report_type = report_type
-        """Type of report to be loaded. Valid types correspond to the methods of NHLCn"""
+        """Type of report to be loaded. Valid types correspond to the methods of :py:class:`.NHLCn`"""
         
         self.matchup = { }
-        """Team match up and final
-          {
-            'home': '',
-            'away': '',
-            'final': { 'home': 0, 'away': 0 },
-            'attendance': 0,
-            'date': '',
-            'location': ''
-          }
+        """
+        Fame meta information displayed in report banners including team names,
+        final score, game date, location, and attendance. Data format is
+        
+        .. code:: python
+        
+            {
+                'home': home,
+                'away': away,
+                'final': final,
+                'attendance': att,
+                'date': date,
+                'location': loc
+            }
         """
         
         self.req_err = None
@@ -40,7 +50,10 @@ class ReportLoader(object):
       
     
     def html_doc(self):
-        """Get html document"""
+        """
+        :returns: the lxml processed html document
+        :rtype: ``lxml.html.document_fromstring`` output
+        """
         
         if self.__lx_doc is None:
             cn = NHLCn()
@@ -59,7 +72,11 @@ class ReportLoader(object):
     
     
     def parse_matchup(self):
-        """Extracts and returns the matchup. Also stores it in matchup attribute."""
+        """
+        Parse the banner matchup meta info for the game.
+        
+        :returns: ``self`` on success or ``None``
+        """
         lx_doc = self.html_doc()
         try:
             if not self.matchup:
@@ -71,8 +88,10 @@ class ReportLoader(object):
         
     @abstractmethod
     def parse(self):
-        """Fully parses html document.
-        :returns: self on success, None otherwise
+        """
+        Fully parses html document.
+        
+        :returns: ``self`` on success, ``None`` otherwise
         """
         
         return self.parse_matchup()

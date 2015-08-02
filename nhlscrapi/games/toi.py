@@ -24,8 +24,8 @@ class ShiftSummary(object):
                 {
                     'shift_num': shift_num,
                     'period': period_num,
-                    'start': start_time (elapsed)
-                    'end': end_time (elapsed)
+                    'start': start_time     # (elapsed)
+                    'end': end_time         # (elapsed)
                     'dur': length_of_shift,
                     'event': EventType.Goal or EventType.Penalty
                 }
@@ -87,9 +87,8 @@ class TOI(RepScrWrap):
     @dispatch_loader('_home', 'parse_shifts')
     def home_shift_summ(self):
         """
-        Return the :py:class:`.ShiftSummary` by player for the home team
-        
-        :returns: dict ``{ player_num: shift_summary_obj }``
+        :returns: :py:class:`.ShiftSummary` by player for the home team
+        :rtype: dict ``{ player_num: shift_summary_obj }``
         """
         if not self.__wrapped_home:
             self.__wrapped_home = self.__wrap(self._home.by_player)
@@ -100,9 +99,8 @@ class TOI(RepScrWrap):
     @dispatch_loader('_away', 'parse_shifts')
     def away_shift_summ(self):
         """
-        Return the :py:class:`scrapr.toi.ShiftSummary` by player for the away team
-    
-        :returns: dict ``{ player_num: shift_summary_obj }``
+        :returns: :py:class:`.ShiftSummary` by player for the away team
+        :rtype: dict ``{ player_num: shift_summary_obj }``
         """
         if not self.__wrapped_away:
             self.__wrapped_away = self.__wrap(self._away.by_player)
@@ -113,9 +111,10 @@ class TOI(RepScrWrap):
     @property
     def all_toi(self):
         """
-        Return the :py:class:`scrapr.toi.ShiftSummary` by player for the home/away team
+        Return
     
-        :returns: dict ``{ 'home/away': { player_num: shift_summary_obj } }``
+        :returns: the :py:class:`scrapr.toi.ShiftSummary` by player for the home/away team
+        :rtype: dict ``{ 'home/away': { player_num: shift_summary_obj } }``
         """
         return {
             'home': self.home_shift_summ(),
