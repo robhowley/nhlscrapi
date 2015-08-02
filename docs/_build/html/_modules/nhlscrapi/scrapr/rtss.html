@@ -1,0 +1,259 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nhlscrapi.scrapr.rtss &mdash; nhlscrapi  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="nhlscrapi  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for nhlscrapi.scrapr.rtss</h1><div class="highlight"><pre>
+<span class="c"># for the play parser</span>
+<span class="kn">import</span> <span class="nn">nhlscrapi.constants</span> <span class="kn">as</span> <span class="nn">c</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi._tools</span> <span class="kn">import</span> <span class="n">to_int</span>
+<span class="kn">from</span> <span class="nn">eventparser</span> <span class="kn">import</span> <span class="n">event_type_mapper</span><span class="p">,</span> <span class="n">parse_event_desc</span>
+
+<span class="c"># base for RTSS</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi.scrapr.reportloader</span> <span class="kn">import</span> <span class="n">ReportLoader</span>
+
+
+<span class="k">class</span> <span class="nc">RTSS</span><span class="p">(</span><span class="n">ReportLoader</span><span class="p">):</span>
+<div class="viewcode-block" id="RTSS"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.rtss.RTSS">[docs]</a>    <span class="sd">&quot;&quot;&quot;Retrieve and load RTSS play by play game data&quot;&quot;&quot;</span>
+  
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">RTSS</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&quot;rtss&quot;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">plays</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="sd">&quot;&quot;&quot;List of plays loaded. See :py:class:`.PlayParser` for play data structure.&quot;&quot;&quot;</span>
+        
+        
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="RTSS.parse"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.rtss.RTSS.parse">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse full document. Plays and matchups.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: ``self`` on success, ``None`` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">RTSS</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span><span class="o">.</span><span class="n">parse_plays</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        
+        
+    <span class="k">def</span> <span class="nf">parse_plays</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="RTSS.parse_plays"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.rtss.RTSS.parse_plays">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retreive and parse Play by Play data for the given :py:class:`nhlscrapi.games.GameKey`</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: ``self`` on success, ``None`` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">plays</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_plays_stream</span><span class="p">()]</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        
+        
+    <span class="k">def</span> <span class="nf">parse_plays_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="RTSS.parse_plays_stream"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.rtss.RTSS.parse_plays_stream">[docs]</a>        <span class="sd">&quot;&quot;&quot;Generate and yield a stream of parsed plays. Useful for per play processing.&quot;&quot;&quot;</span>
+        
+        <span class="n">lx_doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">html_doc</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">lx_doc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">parser</span> <span class="o">=</span> <span class="n">PlayParser</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game_key</span><span class="o">.</span><span class="n">season</span><span class="p">)</span>
+            <span class="n">plays</span> <span class="o">=</span> <span class="n">lx_doc</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;//tr[@class = &quot;evenColor&quot;]&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">plays</span><span class="p">:</span>
+                <span class="n">p_obj</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">build_play</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">plays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_obj</span><span class="p">)</span>
+                
+                <span class="k">yield</span> <span class="n">p_obj</span>
+                
+                
+<span class="c"># will take a RTSS play table row and return a Play object</span>
+<span class="k">class</span> <span class="nc">PlayParser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span></div></div>
+<div class="viewcode-block" id="PlayParser"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.rtss.PlayParser">[docs]</a>    <span class="sd">&quot;&quot;&quot;Interprets a single RTSS play by play table row, i.e. a single play. Constructs a dictionary of play features.&quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">season</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">MAX_SEASON</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">season</span> <span class="o">=</span> <span class="n">season</span>
+    
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">ColMap</span><span class="p">(</span><span class="n">season</span><span class="p">):</span>
+<div class="viewcode-block" id="PlayParser.ColMap"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.rtss.PlayParser.ColMap">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a dictionary mapping the type of information in the RTSS play row to the</span>
+<span class="sd">        appropriate column number. The column locations pre/post 2008 are different.</span>
+<span class="sd">        </span>
+<span class="sd">        :param season: int for the season number</span>
+<span class="sd">        :returns: mapping of RTSS column to info type</span>
+<span class="sd">        :rtype: dict, keys are ``&#39;play_num&#39;, &#39;per&#39;, &#39;str&#39;, &#39;time&#39;, &#39;event&#39;, &#39;desc&#39;, &#39;vis&#39;, &#39;home&#39;``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">MIN_SEASON</span> <span class="o">&lt;=</span> <span class="n">season</span> <span class="o">&lt;=</span> <span class="n">c</span><span class="o">.</span><span class="n">MAX_SEASON</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s">&quot;play_num&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+                <span class="s">&quot;per&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                <span class="s">&quot;str&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+                <span class="s">&quot;time&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+                <span class="s">&quot;event&quot;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+                <span class="s">&quot;desc&quot;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+                <span class="s">&quot;vis&quot;</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+                <span class="s">&quot;home&quot;</span><span class="p">:</span> <span class="mi">7</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;RTSSCol.MAP(season): Invalid season &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">season</span><span class="p">))</span>
+    
+    <span class="k">def</span> <span class="nf">build_play</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pbp_row</span><span class="p">):</span></div>
+<div class="viewcode-block" id="PlayParser.build_play"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.rtss.PlayParser.build_play">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parses table row from RTSS. These are the rows tagged with ``&lt;tr class=&#39;evenColor&#39; ... &gt;``. Result set</span>
+<span class="sd">        contains :py:class:`nhlscrapi.games.playbyplay.Strength` and :py:class:`nhlscrapi.games.events.EventType`</span>
+<span class="sd">        objects. Returned play data is in the form</span>
+<span class="sd">        </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">        </span>
+<span class="sd">            {</span>
+<span class="sd">                &#39;play_num&#39;: num_of_play</span>
+<span class="sd">                &#39;period&#39;: curr_period</span>
+<span class="sd">                &#39;strength&#39;: strength_enum</span>
+<span class="sd">                &#39;time&#39;: { &#39;min&#39;: min, &#39;sec&#39;: sec }</span>
+<span class="sd">                &#39;vis_on_ice&#39;: { &#39;player_num&#39;: player }</span>
+<span class="sd">                &#39;home_on_ice&#39;: { &#39;player_num&#39;: player }</span>
+<span class="sd">                &#39;event&#39;: event_object</span>
+<span class="sd">            }</span>
+<span class="sd">        </span>
+<span class="sd">        :param pbp_row: table row from RTSS</span>
+<span class="sd">        :returns: play data</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">pbp_row</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">&#39;./td&#39;</span><span class="p">)</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">PlayParser</span><span class="o">.</span><span class="n">ColMap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">season</span><span class="p">)</span>
+        
+        <span class="n">p</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="n">to_dig</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="mi">0</span>
+        <span class="n">p</span><span class="p">[</span><span class="s">&#39;play_num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_int</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="s">&quot;play_num&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">p</span><span class="p">[</span><span class="s">&#39;period&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_int</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="s">&quot;per&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        
+        <span class="n">p</span><span class="p">[</span><span class="s">&#39;strength&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__strength</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="s">&quot;str&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        
+        <span class="n">time</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="s">&quot;time&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;:&quot;</span><span class="p">)</span>
+        <span class="n">p</span><span class="p">[</span><span class="s">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;min&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="s">&quot;sec&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">}</span>
+        
+        <span class="n">skater_tab</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="s">&quot;vis&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&quot;./table&quot;</span><span class="p">)</span>
+        <span class="n">p</span><span class="p">[</span><span class="s">&#39;vis_on_ice&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__skaters</span><span class="p">(</span><span class="n">skater_tab</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">skater_tab</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span> <span class="p">}</span>
+            
+        <span class="n">skater_tab</span> <span class="o">=</span> <span class="n">d</span><span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="s">&quot;home&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&quot;./table&quot;</span><span class="p">)</span>
+        <span class="n">p</span><span class="p">[</span><span class="s">&#39;home_on_ice&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__skaters</span><span class="p">(</span><span class="n">skater_tab</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">skater_tab</span><span class="p">)</span> <span class="k">else</span> <span class="p">{</span> <span class="p">}</span>
+            
+        <span class="n">p</span><span class="p">[</span><span class="s">&#39;event&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">event_type_mapper</span><span class="p">(</span>
+            <span class="n">d</span><span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="s">&quot;event&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">text</span><span class="p">,</span>
+            <span class="n">period</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="s">&#39;period&#39;</span><span class="p">],</span>
+            <span class="n">skater_ct</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s">&#39;vis_on_ice&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s">&#39;home_on_ice&#39;</span><span class="p">])</span>
+        <span class="p">)</span>
+        <span class="n">p</span><span class="p">[</span><span class="s">&#39;event&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">desc</span> <span class="o">=</span> <span class="s">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;ascii&#39;</span><span class="p">,</span> <span class="s">&#39;replace&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">d</span><span class="p">[</span><span class="n">c</span><span class="p">[</span><span class="s">&quot;desc&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&quot;text()&quot;</span><span class="p">)])</span>
+        <span class="n">parse_event_desc</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s">&#39;event&#39;</span><span class="p">],</span> <span class="n">season</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">season</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">p</span>
+        
+    <span class="k">def</span> <span class="nf">__skaters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tab</span><span class="p">):</span></div>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructs dictionary of players on the ice in the provided table at time of play.</span>
+<span class="sd">        :param tab: RTSS table of the skaters and goalie on at the time of the play</span>
+<span class="sd">        :rtype: dictionary, key = player number, value = [position, name]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">res</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="k">for</span> <span class="n">td</span> <span class="ow">in</span> <span class="n">tab</span><span class="o">.</span><span class="n">iterchildren</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">td</span><span class="p">):</span>
+                <span class="n">pl_data</span> <span class="o">=</span> <span class="n">td</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&quot;./table/tr&quot;</span><span class="p">)</span>
+                <span class="n">pl</span> <span class="o">=</span> <span class="n">pl_data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&quot;./td/font&quot;</span><span class="p">)</span>
+                
+                <span class="k">if</span> <span class="n">pl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">isdigit</span><span class="p">():</span>
+                    <span class="n">res</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">pl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">pl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;title&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;-&quot;</span><span class="p">)][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                
+                <span class="n">s</span> <span class="o">=</span> <span class="n">pl</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;title&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;-&quot;</span><span class="p">)</span>
+                <span class="n">pos</span> <span class="o">=</span> <span class="n">pl_data</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">getchildren</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span>
+                
+        <span class="k">return</span> <span class="n">res</span>
+        
+    <span class="k">def</span> <span class="nf">__strength</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sg_str</span><span class="p">):</span>
+        <span class="c"># avoids the circular import, but wreaks of code that needs refactoring</span>
+        <span class="kn">from</span> <span class="nn">nhlscrapi.games.playbyplay</span> <span class="kn">import</span> <span class="n">Strength</span>
+        
+        <span class="k">if</span> <span class="s">&#39;PP&#39;</span> <span class="ow">in</span> <span class="n">sg_str</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Strength</span><span class="o">.</span><span class="n">PP</span>
+        <span class="k">elif</span> <span class="s">&#39;SH&#39;</span> <span class="ow">in</span> <span class="n">sg_str</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Strength</span><span class="o">.</span><span class="n">PP</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Strength</span><span class="o">.</span><span class="n">Even</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

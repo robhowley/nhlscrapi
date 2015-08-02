@@ -1,0 +1,375 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nhlscrapi.games.cumstats &mdash; nhlscrapi  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="nhlscrapi  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for nhlscrapi.games.cumstats</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="kn">from</span> <span class="nn">nhlscrapi.games</span> <span class="kn">import</span> <span class="n">events</span> <span class="k">as</span> <span class="n">EV</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi.games.events</span> <span class="kn">import</span> <span class="n">EventFactory</span> <span class="k">as</span> <span class="n">EF</span>
+
+<span class="kn">from</span> <span class="nn">nhlscrapi.games.playbyplay</span> <span class="kn">import</span> <span class="n">Strength</span> <span class="k">as</span> <span class="n">St</span>
+
+<span class="c"># base class for accumulators</span>
+<span class="k">class</span> <span class="nc">AccumulateStats</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="AccumulateStats"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.AccumulateStats">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for accumulator classes. These classes keep tallies of specified events and</span>
+<span class="sd">    are updated each time a play from :py:class:`.PlayByPlay` is processed. Examples</span>
+<span class="sd">    include :py:class:`.ShotCt` and :py:class:`.Score`. This class is not intended to be</span>
+<span class="sd">    used directly.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+  
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">teams</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">def</span> <span class="nf">initialize_teams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">teams</span><span class="p">):</span>
+<div class="viewcode-block" id="AccumulateStats.initialize_teams"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.AccumulateStats.initialize_teams">[docs]</a>        <span class="bp">self</span><span class="o">.</span><span class="n">teams</span> <span class="o">=</span> <span class="n">teams</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total</span> <span class="o">=</span> <span class="p">{</span> <span class="n">t</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">teams</span> <span class="p">}</span>
+    
+    <span class="nd">@abstractmethod</span></div>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">play</span><span class="p">):</span>
+<div class="viewcode-block" id="AccumulateStats.update"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.AccumulateStats.update">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the accumulator with the current play</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: new tally, ``{ &#39;period&#39;: per, &#39;time&#39;: clock, &#39;team&#39;: cumul, &#39;play&#39;: play }``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">TeamIncrementor</span><span class="p">(</span><span class="n">AccumulateStats</span><span class="p">):</span></div></div>
+<div class="viewcode-block" id="TeamIncrementor"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.TeamIncrementor">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Accumulator base class for team vs team stats such as score, shot count et c.</span>
+<span class="sd">    </span>
+<span class="sd">    :param get_team: function, takes a play and returns the team associated with it</span>
+<span class="sd">    :param count_play: function, takes a play and returns True if it is a tally for the given accumulator&#39;s definition.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+  
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">get_team</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">count_play</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TeamIncrementor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tally</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="sd">&quot;&quot;&quot;List of plays that lead to tallies, i.e. increments of the stat accumulator. E.g. a goal or shot.&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_team</span> <span class="o">=</span> <span class="n">get_team</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_count_play</span> <span class="o">=</span> <span class="n">count_play</span>
+    
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">play</span><span class="p">):</span>
+<div class="viewcode-block" id="TeamIncrementor.update"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.TeamIncrementor.update">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update the accumulator with the current play</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: new tally</span>
+<span class="sd">        :rtype: dict, ``{ &#39;period&#39;: per, &#39;time&#39;: clock, &#39;team&#39;: cumul, &#39;play&#39;: play }``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_tally</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="c">#if any(isinstance(play.event, te) for te in self.trigger_event_types):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count_play</span><span class="p">(</span><span class="n">play</span><span class="p">):</span>
+            <span class="c"># the team who made the play / triggered the event</span>
+    
+            <span class="n">team</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_team</span><span class="p">(</span><span class="n">play</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="p">[</span><span class="n">team</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="p">[</span><span class="n">team</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">teams</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">team</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tally</span><span class="p">)):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">tally</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">team</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+      
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">new_tally</span> <span class="o">=</span> <span class="p">{</span> <span class="n">k</span><span class="p">:</span><span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">tally</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tally</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="p">}</span>
+                <span class="n">new_tally</span><span class="p">[</span><span class="s">&#39;period&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">play</span><span class="o">.</span><span class="n">period</span>
+                <span class="n">new_tally</span><span class="p">[</span><span class="s">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">play</span><span class="o">.</span><span class="n">time</span>
+                <span class="n">new_tally</span><span class="p">[</span><span class="n">team</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">new_tally</span><span class="p">[</span><span class="s">&#39;play&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">play</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="n">new_tally</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="s">&#39;period&#39;</span><span class="p">:</span> <span class="n">play</span><span class="o">.</span><span class="n">period</span><span class="p">,</span>
+                    <span class="s">&#39;time&#39;</span><span class="p">:</span> <span class="n">play</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+                    <span class="n">team</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="s">&#39;play&#39;</span><span class="p">:</span> <span class="n">play</span>
+                <span class="p">}</span>
+      
+            <span class="bp">self</span><span class="o">.</span><span class="n">tally</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_tally</span><span class="p">)</span>
+      
+        <span class="k">return</span> <span class="n">new_tally</span>
+      
+
+<span class="k">class</span> <span class="nc">ShotEventTallyBase</span><span class="p">(</span><span class="n">TeamIncrementor</span><span class="p">):</span></div></div>
+<div class="viewcode-block" id="ShotEventTallyBase"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.ShotEventTallyBase">[docs]</a>    <span class="sd">&quot;&quot;&quot;Base class for all shot attempt based events&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">count_play</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ShotEventTallyBase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">get_team</span><span class="o">=</span><span class="k">lambda</span> <span class="n">play</span><span class="p">:</span> <span class="n">play</span><span class="o">.</span><span class="n">event</span><span class="o">.</span><span class="n">shooter</span><span class="p">[</span><span class="s">&#39;team&#39;</span><span class="p">],</span>
+            <span class="n">count_play</span><span class="o">=</span><span class="n">count_play</span>
+        <span class="p">)</span>
+            
+      
+<span class="k">class</span> <span class="nc">ShotCt</span><span class="p">(</span><span class="n">ShotEventTallyBase</span><span class="p">):</span></div>
+<div class="viewcode-block" id="ShotCt"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.ShotCt">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tallies shots on goal for each team. Increments if</span>
+<span class="sd">    </span>
+<span class="sd">      * the play event inherits from :py:class:`.Shot`</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ShotCt</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">count_play</span><span class="o">=</span><span class="k">lambda</span> <span class="n">play</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">play</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">EV</span><span class="o">.</span><span class="n">Shot</span><span class="p">)</span>
+        <span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">EvenStShotCt</span><span class="p">(</span><span class="n">ShotEventTallyBase</span><span class="p">):</span></div>
+<div class="viewcode-block" id="EvenStShotCt"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.EvenStShotCt">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tallies even strength shots on goal for each team. Increments if</span>
+<span class="sd">    </span>
+<span class="sd">      * the play event inherits from :py:class:`.Shot`</span>
+<span class="sd">      * play happened at even strength</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">EvenStShotCt</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">count_play</span><span class="o">=</span><span class="k">lambda</span> <span class="n">play</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">play</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">EV</span><span class="o">.</span><span class="n">Shot</span><span class="p">)</span> <span class="ow">and</span> <span class="n">play</span><span class="o">.</span><span class="n">strength</span> <span class="o">==</span> <span class="n">St</span><span class="o">.</span><span class="n">Even</span>
+        <span class="p">)</span>
+
+    
+<span class="k">class</span> <span class="nc">ShotAttemptCt</span><span class="p">(</span><span class="n">ShotEventTallyBase</span><span class="p">):</span></div>
+<div class="viewcode-block" id="ShotAttemptCt"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.ShotAttemptCt">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tallies even strength shots on goal for each team. Increments if</span>
+<span class="sd">    </span>
+<span class="sd">      * the play event inherits from :py:class:`.ShotAttempt`</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ShotAttemptCt</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">count_play</span><span class="o">=</span><span class="k">lambda</span> <span class="n">play</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">play</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">EV</span><span class="o">.</span><span class="n">ShotAttempt</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    
+<span class="k">class</span> <span class="nc">EvenStShotAttCt</span><span class="p">(</span><span class="n">ShotEventTallyBase</span><span class="p">):</span></div>
+<div class="viewcode-block" id="EvenStShotAttCt"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.EvenStShotAttCt">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tallies even strength shots on goal for each team. Increments if</span>
+<span class="sd">    </span>
+<span class="sd">      * the play event inherits from :py:class:`.ShotAttempt`</span>
+<span class="sd">      * play happened at even strength</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">EvenStShotAttCt</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">count_play</span><span class="o">=</span><span class="k">lambda</span> <span class="n">play</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">play</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">EV</span><span class="o">.</span><span class="n">ShotAttempt</span><span class="p">)</span> <span class="ow">and</span> <span class="n">play</span><span class="o">.</span><span class="n">strength</span> <span class="o">==</span> <span class="n">St</span><span class="o">.</span><span class="n">Even</span>
+        <span class="p">)</span>
+    
+    
+<span class="k">class</span> <span class="nc">Corsi</span><span class="p">(</span><span class="n">EvenStShotAttCt</span><span class="p">):</span></div>
+<div class="viewcode-block" id="Corsi"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.Corsi">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tallies even strength shots on goal for each team. Increments if</span>
+<span class="sd">    </span>
+<span class="sd">      * the play event inherits from :py:class:`.Shot`</span>
+<span class="sd">      * play happened at even strength</span>
+<span class="sd">    </span>
+<span class="sd">    Defined more for convention/nostalgia. Same as :py:class:`.EvenStShotAttCt`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Corsi</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">share</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Corsi.share"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.Corsi.share">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The Cori-share (% of shot attempts) for each team</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict, ``{ &#39;home_name&#39;: %, &#39;away_name&#39;: % }``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tot</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">return</span> <span class="p">{</span> <span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">tot</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="p">}</span>
+
+
+<span class="k">class</span> <span class="nc">ShootOut</span><span class="p">(</span><span class="n">ShotEventTallyBase</span><span class="p">):</span></div></div>
+<div class="viewcode-block" id="ShootOut"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.ShootOut">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tallies shootout goals. Increments if</span>
+<span class="sd">    </span>
+<span class="sd">      * the play event inherits from :py:class:`.ShootOutGoal`</span>
+<span class="sd">      </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ShootOut</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">count_play</span><span class="o">=</span><span class="k">lambda</span> <span class="n">play</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">play</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">EV</span><span class="o">.</span><span class="n">ShootOutGoal</span><span class="p">)</span>
+        <span class="p">)</span>
+    
+
+<span class="c"># doesn&#39;t fit nicely into ShotEventTallyBase framework</span>
+<span class="c"># due to dual source nature, it doesn&#39;t quite fit</span>
+<span class="k">class</span> <span class="nc">Score</span><span class="p">(</span><span class="n">ShotEventTallyBase</span><span class="p">):</span></div>
+<div class="viewcode-block" id="Score"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.Score">[docs]</a>    <span class="sd">&quot;&quot;&quot;Tallies if a goal is scored. Also tracks shootout goals. Increments if</span>
+<span class="sd">    </span>
+<span class="sd">      * the play event inherits from :py:class:`.Goal`</span>
+<span class="sd">      * the play event inherits from :py:class:`.ShootOutGoal`</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shootout</span> <span class="o">=</span> <span class="n">ShootOut</span><span class="p">()</span>
+        
+        <span class="k">def</span> <span class="nf">_count_play</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">play</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">play</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">EV</span><span class="o">.</span><span class="n">ShootOutEnd</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__set_shootout_winner</span><span class="p">()</span>
+      
+            <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">play</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">EV</span><span class="o">.</span><span class="n">Goal</span><span class="p">)</span>
+            
+        <span class="nb">super</span><span class="p">(</span><span class="n">Score</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">count_play</span><span class="o">=</span><span class="k">lambda</span> <span class="n">play</span><span class="p">:</span> <span class="n">_count_play</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">play</span><span class="p">)</span>
+        <span class="p">)</span>
+        
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">play</span><span class="p">):</span>
+<div class="viewcode-block" id="Score.update"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.Score.update">[docs]</a>        <span class="bp">self</span><span class="o">.</span><span class="n">shootout</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">play</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Score</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">play</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">initialize_teams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">teams</span><span class="p">):</span></div>
+<div class="viewcode-block" id="Score.initialize_teams"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.Score.initialize_teams">[docs]</a>        <span class="nb">super</span><span class="p">(</span><span class="n">Score</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize_teams</span><span class="p">(</span><span class="n">teams</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shootout</span><span class="o">.</span><span class="n">initialize_teams</span><span class="p">(</span><span class="n">teams</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__set_shootout_winner</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+        <span class="n">t1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shootout</span><span class="o">.</span><span class="n">teams</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shootout</span><span class="o">.</span><span class="n">teams</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="p">[</span><span class="n">t1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="p">[</span><span class="n">t1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">t2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shootout</span><span class="o">.</span><span class="n">teams</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">teams</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">teams</span> <span class="o">=</span> <span class="p">[</span><span class="n">t1</span><span class="p">,</span> <span class="n">t2</span><span class="p">]</span>
+            <span class="n">t1wins</span> <span class="o">=</span> <span class="mi">1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">shootout</span><span class="o">.</span><span class="n">total</span><span class="p">[</span><span class="n">t1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">shootout</span><span class="o">.</span><span class="n">total</span><span class="p">[</span><span class="n">t2</span><span class="p">]</span> <span class="k">else</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="p">[</span><span class="n">t1</span><span class="p">]</span> <span class="o">+=</span> <span class="n">t1wins</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="p">[</span><span class="n">t2</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span><span class="o">-</span><span class="n">t1wins</span>
+    
+    
+<span class="k">class</span> <span class="nc">Fenwick</span><span class="p">(</span><span class="n">ShotEventTallyBase</span><span class="p">):</span></div>
+<div class="viewcode-block" id="Fenwick"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.Fenwick">[docs]</a>    <span class="sd">&quot;&quot;&quot;Tallies if a goal is scored. Also tracks shootout goals. Increments if</span>
+<span class="sd">    </span>
+<span class="sd">      * the play event inherits from :py:class:`.ShotAttempt`</span>
+<span class="sd">      * the play event does not inherit from :py:class:`.Block`</span>
+<span class="sd">      * play happened at even strength</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">score</span> <span class="o">=</span> <span class="n">Score</span><span class="p">()</span>
+        
+        <span class="k">def</span> <span class="nf">_count_play</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">play</span><span class="p">):</span>
+        
+            <span class="c"># if not the right event type, don&#39;t bother checking &#39;close&#39;</span>
+            <span class="n">is_p_type</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">play</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">EV</span><span class="o">.</span><span class="n">ShotAttempt</span><span class="p">)</span> \
+                <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">play</span><span class="o">.</span><span class="n">event</span><span class="p">,</span> <span class="n">EV</span><span class="o">.</span><span class="n">Block</span><span class="p">)</span> \
+                <span class="ow">and</span> <span class="n">play</span><span class="o">.</span><span class="n">strength</span> <span class="o">==</span> <span class="n">St</span><span class="o">.</span><span class="n">Even</span>
+        
+            <span class="n">close</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="k">if</span> <span class="n">is_p_type</span><span class="p">:</span>
+                <span class="n">scr</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">teams</span><span class="p">):</span>
+                    <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">teams</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">scr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">total</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">teams</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">teams</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">scr</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">total</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
+          
+                <span class="n">close</span> <span class="o">=</span> <span class="p">(</span><span class="n">scr</span> <span class="o">&lt;=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">play</span><span class="o">.</span><span class="n">period</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">scr</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">play</span><span class="o">.</span><span class="n">period</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">)</span>
+        
+            <span class="k">return</span> <span class="n">is_p_type</span> <span class="ow">and</span> <span class="n">close</span>
+        
+        <span class="nb">super</span><span class="p">(</span><span class="n">Fenwick</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span>
+            <span class="n">count_play</span><span class="o">=</span><span class="k">lambda</span> <span class="n">play</span><span class="p">:</span> <span class="n">_count_play</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">play</span><span class="p">)</span>
+        <span class="p">)</span>
+        
+  
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">play</span><span class="p">):</span>
+<div class="viewcode-block" id="Fenwick.update"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.Fenwick.update">[docs]</a>        <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">play</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Fenwick</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">play</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">initialize_teams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">teams</span><span class="p">):</span></div>
+<div class="viewcode-block" id="Fenwick.initialize_teams"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.Fenwick.initialize_teams">[docs]</a>        <span class="nb">super</span><span class="p">(</span><span class="n">Fenwick</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize_teams</span><span class="p">(</span><span class="n">teams</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">score</span><span class="o">.</span><span class="n">initialize_teams</span><span class="p">(</span><span class="n">teams</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">share</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="Fenwick.share"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.cumstats.Fenwick.share">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: The Fenwick-share (% of unblocked even strength shot attempts) for each team</span>
+<span class="sd">        :rtype: dict, ``{ &#39;home_name&#39;: %, &#39;away_name&#39;: % }``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tot</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
+        <span class="k">return</span> <span class="p">{</span> <span class="n">k</span><span class="p">:</span> <span class="n">v</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">tot</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">total</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()</span> <span class="p">}</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

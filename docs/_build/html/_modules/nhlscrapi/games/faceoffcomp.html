@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nhlscrapi.games.faceoffcomp &mdash; nhlscrapi  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="nhlscrapi  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for nhlscrapi.games.faceoffcomp</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">nhlscrapi.scrapr.faceoffrep</span> <span class="kn">import</span> <span class="n">FaceOffRep</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi.games.repscrwrap</span> <span class="kn">import</span> <span class="n">RepScrWrap</span><span class="p">,</span> <span class="n">dispatch_loader</span>
+
+
+<span class="k">class</span> <span class="nc">FaceOffComparison</span><span class="p">(</span><span class="n">RepScrWrap</span><span class="p">):</span>
+<div class="viewcode-block" id="FaceOffComparison"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.faceoffcomp.FaceOffComparison">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Face-off Comparison and summary report. Produces the by player and head-to-head matchup face off totals</span>
+<span class="sd">    by zone and overall. For either home or away the full summary data takes the following form</span>
+<span class="sd">        </span>
+<span class="sd">    .. code:: python</span>
+<span class="sd">    </span>
+<span class="sd">        {</span>
+<span class="sd">            player_num: {</span>
+<span class="sd">                &#39;off/def/neut/all&#39;: { &#39;won&#39;: won, &#39;total&#39;: total }</span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+<span class="sd">        </span>
+<span class="sd">    :param game_key: unique game identifier of type :py:class:`.GameKey`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FaceOffComparison</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="n">FaceOffRep</span><span class="p">(</span><span class="n">game_key</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__team_tots</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__zones</span> <span class="o">=</span> <span class="p">[</span> <span class="s">&#39;off&#39;</span><span class="p">,</span> <span class="s">&#39;def&#39;</span><span class="p">,</span> <span class="s">&#39;neut&#39;</span><span class="p">,</span> <span class="s">&#39;all&#39;</span> <span class="p">]</span>
+        
+    <span class="nd">@property</span>
+    <span class="nd">@dispatch_loader</span><span class="p">(</span><span class="s">&#39;_rep_reader&#39;</span><span class="p">,</span> <span class="s">&#39;parse_home_face_offs&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">home_fo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property that returns the full by player face-off summary for the home team.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict keyed by player num</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rep_reader</span><span class="o">.</span><span class="n">face_offs</span><span class="p">[</span><span class="s">&#39;home&#39;</span><span class="p">]</span>
+        
+    <span class="nd">@property</span>
+    <span class="nd">@dispatch_loader</span><span class="p">(</span><span class="s">&#39;_rep_reader&#39;</span><span class="p">,</span> <span class="s">&#39;parse_away_face_offs&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">away_fo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property that returns the full by player face-off summary for the away team.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict keyed by player num</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rep_reader</span><span class="o">.</span><span class="n">face_offs</span><span class="p">[</span><span class="s">&#39;away&#39;</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">head_to_head</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">home_num</span><span class="p">,</span> <span class="n">away_num</span><span class="p">):</span>
+<div class="viewcode-block" id="FaceOffComparison.head_to_head"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.faceoffcomp.FaceOffComparison.head_to_head">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the head-to-head face-off outcomes between two players.</span>
+<span class="sd">        If the matchup didn&#39;t happen, ``{ }`` is returned.</span>
+<span class="sd">        </span>
+<span class="sd">        :param home_num: the number of the home team player</span>
+<span class="sd">        :param away_num: the number of the away team player</span>
+<span class="sd">        :returns: dict, either ``{ }`` or the following</span>
+<span class="sd">        </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">        </span>
+<span class="sd">            {</span>
+<span class="sd">                &#39;home/away&#39;: {</span>
+<span class="sd">                    &#39;off/def/neut/all&#39;: { &#39;won&#39;: won, &#39;total&#39;: total }</span>
+<span class="sd">                }</span>
+<span class="sd">            }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">home_num</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">home_fo</span> <span class="ow">and</span> <span class="n">away_num</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">home_fo</span><span class="p">[</span><span class="n">home_num</span><span class="p">][</span><span class="s">&#39;opps&#39;</span><span class="p">]:</span>
+            <span class="n">h_fo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">home_fo</span><span class="p">[</span><span class="n">home_num</span><span class="p">][</span><span class="s">&#39;opps&#39;</span><span class="p">][</span><span class="n">away_num</span><span class="p">]</span>
+            <span class="n">a_fo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">away_fo</span><span class="p">[</span><span class="n">away_num</span><span class="p">][</span><span class="s">&#39;opps&#39;</span><span class="p">][</span><span class="n">home_num</span><span class="p">]</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s">&#39;home&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="n">k</span><span class="p">:</span> <span class="n">h_fo</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__zones</span> <span class="p">},</span>
+                <span class="s">&#39;away&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="n">k</span><span class="p">:</span> <span class="n">a_fo</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__zones</span> <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">{</span> <span class="p">}</span>
+
+    <span class="nd">@property</span></div>
+    <span class="k">def</span> <span class="nf">team_totals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the overall faceoff win/total breakdown for home and away as</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict, ``{ &#39;home/away&#39;: { &#39;won&#39;: won, &#39;total&#39;: total } }``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__team_tots</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__team_tots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__comp_tot</span><span class="p">()</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">t</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__team_tots</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="s">&#39;all&#39;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[</span> <span class="s">&#39;home&#39;</span><span class="p">,</span> <span class="s">&#39;away&#39;</span> <span class="p">]</span>
+        <span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">by_zone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the faceoff win/total breakdown by zone for home and away as</span>
+<span class="sd">        </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">        </span>
+<span class="sd">            { &#39;home/away&#39;: {</span>
+<span class="sd">                &#39;off/def/neut/all&#39;: { &#39;won&#39;: won, &#39;total&#39;: total }</span>
+<span class="sd">                }</span>
+<span class="sd">            }</span>
+<span class="sd">            </span>
+<span class="sd">        :returns: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__team_tots</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__team_tots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__comp_tot</span><span class="p">()</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">t</span><span class="p">:</span> <span class="p">{</span>
+                <span class="n">z</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__team_tots</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="n">z</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__zones</span>
+                <span class="k">if</span> <span class="n">z</span> <span class="o">!=</span> <span class="s">&#39;all&#39;</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[</span> <span class="s">&#39;home&#39;</span><span class="p">,</span> <span class="s">&#39;away&#39;</span> <span class="p">]</span>
+        <span class="p">}</span>
+       
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">fo_pct</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the by team overall face-off win %.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict, ``{ &#39;home&#39;: %, &#39;away&#39;: % }``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">tots</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">team_totals</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">t</span><span class="p">:</span> <span class="n">tots</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="s">&#39;won&#39;</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="mf">1.0</span><span class="o">*</span><span class="n">tots</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="s">&#39;total&#39;</span><span class="p">])</span> <span class="k">if</span> <span class="n">tots</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="s">&#39;total&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="mf">0.0</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[</span> <span class="s">&#39;home&#39;</span><span class="p">,</span> <span class="s">&#39;away&#39;</span> <span class="p">]</span>
+        <span class="p">}</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">fo_pct_by_zone</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the by team face-off win % by zone. Format is</span>
+<span class="sd">            </span>
+<span class="sd">        :returns: dict ``{ &#39;home/away&#39;: { &#39;off/def/neut&#39;: % } }``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">bz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">by_zone</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">t</span><span class="p">:</span> <span class="p">{</span>
+                <span class="n">z</span><span class="p">:</span> <span class="n">bz</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="n">z</span><span class="p">][</span><span class="s">&#39;won&#39;</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="mf">1.0</span><span class="o">*</span><span class="n">bz</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="n">z</span><span class="p">][</span><span class="s">&#39;total&#39;</span><span class="p">])</span> <span class="k">if</span> <span class="n">bz</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="n">z</span><span class="p">][</span><span class="s">&#39;total&#39;</span><span class="p">]</span> <span class="k">else</span> <span class="mf">0.0</span>
+                <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__zones</span>
+                <span class="k">if</span> <span class="n">z</span> <span class="o">!=</span> <span class="s">&#39;all&#39;</span>
+            <span class="p">}</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[</span> <span class="s">&#39;home&#39;</span><span class="p">,</span> <span class="s">&#39;away&#39;</span> <span class="p">]</span>
+            
+        <span class="p">}</span>
+        
+    <span class="k">def</span> <span class="nf">__comp_tot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">tbz</span><span class="p">(</span><span class="n">fos</span><span class="p">):</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">z</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;won&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;total&#39;</span><span class="p">:</span> <span class="mi">0</span> <span class="p">}</span>
+                <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__zones</span>
+            <span class="p">}</span>
+            
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">fos</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__zones</span><span class="p">:</span>
+                    <span class="n">r</span><span class="p">[</span><span class="n">z</span><span class="p">][</span><span class="s">&#39;won&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">d</span><span class="p">[</span><span class="n">z</span><span class="p">][</span><span class="s">&#39;won&#39;</span><span class="p">]</span>
+                    <span class="n">r</span><span class="p">[</span><span class="n">z</span><span class="p">][</span><span class="s">&#39;total&#39;</span><span class="p">]</span> <span class="o">+=</span> <span class="n">d</span><span class="p">[</span><span class="n">z</span><span class="p">][</span><span class="s">&#39;total&#39;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">r</span>
+            
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">&#39;home&#39;</span><span class="p">:</span> <span class="n">tbz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">home_fo</span><span class="p">),</span>
+            <span class="s">&#39;away&#39;</span><span class="p">:</span> <span class="n">tbz</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">away_fo</span><span class="p">)</span>
+        <span class="p">}</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

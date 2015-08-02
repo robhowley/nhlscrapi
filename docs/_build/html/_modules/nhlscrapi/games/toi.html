@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nhlscrapi.games.toi &mdash; nhlscrapi  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="nhlscrapi  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for nhlscrapi.games.toi</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">nhlscrapi.scrapr.toirep</span> <span class="kn">import</span> <span class="n">HomeTOIRep</span><span class="p">,</span> <span class="n">AwayTOIRep</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi.games.repscrwrap</span> <span class="kn">import</span> <span class="n">RepScrWrap</span><span class="p">,</span> <span class="n">dispatch_loader</span>
+
+
+<span class="k">class</span> <span class="nc">ShiftSummary</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="ShiftSummary"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.toi.ShiftSummary">[docs]</a>    <span class="sd">&quot;&quot;&quot;Player&#39;s shift summary&quot;&quot;&quot;</span>
+  
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">player_num</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">player_name</span><span class="o">=</span><span class="p">{</span> <span class="p">},</span> <span class="n">shifts</span><span class="o">=</span><span class="p">[],</span> <span class="n">by_period</span><span class="o">=</span><span class="p">{</span> <span class="p">}):</span>
+    
+        <span class="bp">self</span><span class="o">.</span><span class="n">player_num</span> <span class="o">=</span> <span class="n">player_num</span>
+        <span class="sd">&quot;&quot;&quot;The number of the player&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">player_name</span> <span class="o">=</span> <span class="n">player_name</span>
+        <span class="sd">&quot;&quot;&quot; Player&#39;s name: ``{ &#39;first&#39;: &#39;&#39;, &#39;last&#39;: &#39;&#39; }``&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">shifts</span> <span class="o">=</span> <span class="n">shifts</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        List of all shifts in the form</span>
+<span class="sd">        </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">        </span>
+<span class="sd">            [</span>
+<span class="sd">                {</span>
+<span class="sd">                    &#39;shift_num&#39;: shift_num,</span>
+<span class="sd">                    &#39;period&#39;: period_num,</span>
+<span class="sd">                    &#39;start&#39;: start_time     # (elapsed)</span>
+<span class="sd">                    &#39;end&#39;: end_time         # (elapsed)</span>
+<span class="sd">                    &#39;dur&#39;: length_of_shift,</span>
+<span class="sd">                    &#39;event&#39;: EventType.Goal or EventType.Penalty</span>
+<span class="sd">                }</span>
+<span class="sd">            ]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">by_period</span> <span class="o">=</span> <span class="n">by_period</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Summary table by period in the form</span>
+<span class="sd">        </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">        </span>
+<span class="sd">            {</span>
+<span class="sd">                &#39;period&#39;: period_num,</span>
+<span class="sd">                &#39;shifts&#39;: shift_count,</span>
+<span class="sd">                &#39;avg&#39;: { &#39;min&#39;: min, &#39;sec&#39;: sec },</span>
+<span class="sd">                &#39;toi&#39;: { &#39;min&#39;: min, &#39;sec&#39;: sec },</span>
+<span class="sd">                &#39;ev_toi&#39;: { &#39;min&#39;: min, &#39;sec&#39;: sec },</span>
+<span class="sd">                &#39;pp_toi&#39;: { &#39;min&#39;: min, &#39;sec&#39;: sec },</span>
+<span class="sd">                &#39;sh_toi&#39;: { &#39;min&#39;: min, &#39;sec&#39;: sec }</span>
+<span class="sd">            }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+      
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">game_summ</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Time on ice summary for the game</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict, same form as ``self.by_period``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">by_period</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">TOI</span><span class="p">(</span><span class="n">RepScrWrap</span><span class="p">):</span></div>
+<div class="viewcode-block" id="TOI"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.toi.TOI">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Time on ice summary report. Produces the time on ice per shift by player for both home and away.</span>
+<span class="sd">        </span>
+<span class="sd">    :param game_key: unique game identifier of type :py:class:`.GameKey`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TOI</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="n">HomeTOIRep</span><span class="p">(</span><span class="n">game_key</span><span class="p">))</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_away</span> <span class="o">=</span> <span class="n">AwayTOIRep</span><span class="p">(</span><span class="n">game_key</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped_home</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped_away</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">__wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shift_d</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="n">player_num</span><span class="p">:</span> <span class="n">ShiftSummary</span><span class="p">(</span><span class="o">**</span><span class="n">summ</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">player_num</span><span class="p">,</span> <span class="n">summ</span> <span class="ow">in</span> <span class="n">shift_d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+        <span class="p">}</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_home</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rep_reader</span>
+        
+    <span class="nd">@property</span>
+    <span class="nd">@dispatch_loader</span><span class="p">(</span><span class="s">&#39;_home&#39;</span><span class="p">,</span> <span class="s">&#39;parse_shifts&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">home_shift_summ</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: :py:class:`.ShiftSummary` by player for the home team</span>
+<span class="sd">        :rtype: dict ``{ player_num: shift_summary_obj }``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped_home</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped_home</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_home</span><span class="o">.</span><span class="n">by_player</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped_home</span>
+        
+    <span class="nd">@property</span>
+    <span class="nd">@dispatch_loader</span><span class="p">(</span><span class="s">&#39;_away&#39;</span><span class="p">,</span> <span class="s">&#39;parse_shifts&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">away_shift_summ</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: :py:class:`.ShiftSummary` by player for the away team</span>
+<span class="sd">        :rtype: dict ``{ player_num: shift_summary_obj }``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped_away</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped_away</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrap</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_away</span><span class="o">.</span><span class="n">by_player</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__wrapped_away</span>
+        
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">all_toi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return</span>
+<span class="sd">    </span>
+<span class="sd">        :returns: the :py:class:`scrapr.toi.ShiftSummary` by player for the home/away team</span>
+<span class="sd">        :rtype: dict ``{ &#39;home/away&#39;: { player_num: shift_summary_obj } }``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">&#39;home&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">home_shift_summ</span><span class="p">(),</span>
+            <span class="s">&#39;away&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">away_shift_summ</span><span class="p">()</span>
+        <span class="p">}</span>
+        
+    <span class="k">def</span> <span class="nf">load_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TOI.load_all"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.toi.TOI.load_all">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads all parts of the report.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: ``self`` or ``None`` if load fails</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_home</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_away</span><span class="o">.</span><span class="n">parse</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,934 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nhlscrapi.scrapr package &mdash; nhlscrapi  documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="nhlscrapi  documentation" href="index.html" />
+    <link rel="up" title="nhlscrapi package" href="nhlscrapi.html" />
+    <link rel="prev" title="nhlscrapi.games package" href="nhlscrapi.games.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="nhlscrapi-scrapr-package">
+<h1>nhlscrapi.scrapr package<a class="headerlink" href="#nhlscrapi-scrapr-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-nhlscrapi.scrapr.nhlreq">
+<span id="nhlscrapi-scrapr-nhlreq-module"></span><h2>nhlscrapi.scrapr.nhlreq module<a class="headerlink" href="#module-nhlscrapi.scrapr.nhlreq" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nhlscrapi.scrapr.nhlreq.NHLCn">
+<em class="property">class </em><code class="descclassname">nhlscrapi.scrapr.nhlreq.</code><code class="descname">NHLCn</code><a class="reference internal" href="_modules/nhlscrapi/scrapr/nhlreq.html#NHLCn"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.nhlreq.NHLCn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Builds the URLs, makes the HTTP calls and retreives the raw HTML associated with various NHL report data. If
+an error occurs in the retrieval process, the error is recorded in <code class="docutils literal"><span class="pre">req_err</span></code>.</p>
+<dl class="method">
+<dt id="nhlscrapi.scrapr.nhlreq.NHLCn.away_toi">
+<code class="descname">away_toi</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/nhlreq.html#NHLCn.away_toi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.nhlreq.NHLCn.away_toi" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">raw HTML for away TOI by player (TV)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.nhlreq.NHLCn.event_summary">
+<code class="descname">event_summary</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/nhlreq.html#NHLCn.event_summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.nhlreq.NHLCn.event_summary" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">raw HTML for the event summary report (ES)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.nhlreq.NHLCn.face_offs">
+<code class="descname">face_offs</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/nhlreq.html#NHLCn.face_offs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.nhlreq.NHLCn.face_offs" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">raw HTML for face off comparisons (FC)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.nhlreq.NHLCn.game_roster">
+<code class="descname">game_roster</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/nhlreq.html#NHLCn.game_roster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.nhlreq.NHLCn.game_roster" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">raw HTML for game rosters (RO)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.nhlreq.NHLCn.game_summary">
+<code class="descname">game_summary</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/nhlreq.html#NHLCn.game_summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.nhlreq.NHLCn.game_summary" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">raw HTML for game summary report (GS)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.nhlreq.NHLCn.home_toi">
+<code class="descname">home_toi</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/nhlreq.html#NHLCn.home_toi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.nhlreq.NHLCn.home_toi" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">raw HTML for home TOI by player (TH)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.scrapr.nhlreq.NHLCn.html_src">
+<code class="descname">html_src</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.scrapr.nhlreq.NHLCn.html_src" title="Permalink to this definition">¶</a></dt>
+<dd><p>The HTML source of the last NHL page requested.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.scrapr.nhlreq.NHLCn.req_err">
+<code class="descname">req_err</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.scrapr.nhlreq.NHLCn.req_err" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error from the last HTTP request.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.nhlreq.NHLCn.rtss">
+<code class="descname">rtss</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/nhlreq.html#NHLCn.rtss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.nhlreq.NHLCn.rtss" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">raw HTML for RTSS play by play (PL)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.nhlreq.NHLCn.shootout">
+<code class="descname">shootout</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/nhlreq.html#NHLCn.shootout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.nhlreq.NHLCn.shootout" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">raw HTML for the game&#8217;s shootout (SO)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.nhlreq.NHLCn.shot_summary">
+<code class="descname">shot_summary</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/nhlreq.html#NHLCn.shot_summary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.nhlreq.NHLCn.shot_summary" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">raw HTML for the shot summary report (SS)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nhlscrapi.scrapr.reportloader">
+<span id="nhlscrapi-scrapr-reportloader-module"></span><h2>nhlscrapi.scrapr.reportloader module<a class="headerlink" href="#module-nhlscrapi.scrapr.reportloader" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nhlscrapi.scrapr.reportloader.ReportLoader">
+<em class="property">class </em><code class="descclassname">nhlscrapi.scrapr.reportloader.</code><code class="descname">ReportLoader</code><span class="sig-paren">(</span><em>game_key</em>, <em>report_type=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/reportloader.html#ReportLoader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.reportloader.ReportLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Base class for objects that load full reports. Manages html request and extracts match up from banner</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>game_key</strong> &#8211; unique game identifier of type <a class="reference internal" href="nhlscrapi.games.html#nhlscrapi.games.game.GameKey" title="nhlscrapi.games.game.GameKey"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.game.GameKey</span></code></a></li>
+<li><strong>report_type</strong> &#8211; str, type of report being loaded. Must be a method of <a class="reference internal" href="#nhlscrapi.scrapr.nhlreq.NHLCn" title="nhlscrapi.scrapr.nhlreq.NHLCn"><code class="xref py py-class docutils literal"><span class="pre">NHLCn</span></code></a></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="nhlscrapi.scrapr.reportloader.ReportLoader.game_key">
+<code class="descname">game_key</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.scrapr.reportloader.ReportLoader.game_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Game key being retrieved of type <a class="reference internal" href="nhlscrapi.games.html#nhlscrapi.games.game.GameKey" title="nhlscrapi.games.game.GameKey"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.game.GameKey</span></code></a></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.reportloader.ReportLoader.html_doc">
+<code class="descname">html_doc</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/reportloader.html#ReportLoader.html_doc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.reportloader.ReportLoader.html_doc" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the lxml processed html document</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body"><code class="docutils literal"><span class="pre">lxml.html.document_fromstring</span></code> output</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.scrapr.reportloader.ReportLoader.matchup">
+<code class="descname">matchup</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.scrapr.reportloader.ReportLoader.matchup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fame meta information displayed in report banners including team names,
+final score, game date, location, and attendance. Data format is</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&#39;home&#39;</span><span class="p">:</span> <span class="n">home</span><span class="p">,</span>
+    <span class="s">&#39;away&#39;</span><span class="p">:</span> <span class="n">away</span><span class="p">,</span>
+    <span class="s">&#39;final&#39;</span><span class="p">:</span> <span class="n">final</span><span class="p">,</span>
+    <span class="s">&#39;attendance&#39;</span><span class="p">:</span> <span class="n">att</span><span class="p">,</span>
+    <span class="s">&#39;date&#39;</span><span class="p">:</span> <span class="n">date</span><span class="p">,</span>
+    <span class="s">&#39;location&#39;</span><span class="p">:</span> <span class="n">loc</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.reportloader.ReportLoader.parse">
+<code class="descname">parse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/reportloader.html#ReportLoader.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.reportloader.ReportLoader.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fully parses html document.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">self</span></code> on success, <code class="docutils literal"><span class="pre">None</span></code> otherwise</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.reportloader.ReportLoader.parse_matchup">
+<code class="descname">parse_matchup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/reportloader.html#ReportLoader.parse_matchup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.reportloader.ReportLoader.parse_matchup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the banner matchup meta info for the game.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">self</span></code> on success or <code class="docutils literal"><span class="pre">None</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.scrapr.reportloader.ReportLoader.report_type">
+<code class="descname">report_type</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.scrapr.reportloader.ReportLoader.report_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type of report to be loaded. Valid types correspond to the methods of <a class="reference internal" href="#nhlscrapi.scrapr.nhlreq.NHLCn" title="nhlscrapi.scrapr.nhlreq.NHLCn"><code class="xref py py-class docutils literal"><span class="pre">NHLCn</span></code></a></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.scrapr.reportloader.ReportLoader.req_err">
+<code class="descname">req_err</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.scrapr.reportloader.ReportLoader.req_err" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error from http request</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nhlscrapi.scrapr.rtss">
+<span id="nhlscrapi-scrapr-rtss-module"></span><h2>nhlscrapi.scrapr.rtss module<a class="headerlink" href="#module-nhlscrapi.scrapr.rtss" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nhlscrapi.scrapr.rtss.PlayParser">
+<em class="property">class </em><code class="descclassname">nhlscrapi.scrapr.rtss.</code><code class="descname">PlayParser</code><span class="sig-paren">(</span><em>season=2015</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/rtss.html#PlayParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.rtss.PlayParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Interprets a single RTSS play by play table row, i.e. a single play. Constructs a dictionary of play features.</p>
+<dl class="staticmethod">
+<dt id="nhlscrapi.scrapr.rtss.PlayParser.ColMap">
+<em class="property">static </em><code class="descname">ColMap</code><span class="sig-paren">(</span><em>season</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/rtss.html#PlayParser.ColMap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.rtss.PlayParser.ColMap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a dictionary mapping the type of information in the RTSS play row to the
+appropriate column number. The column locations pre/post 2008 are different.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>season</strong> &#8211; int for the season number</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">mapping of RTSS column to info type</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict, keys are <code class="docutils literal"><span class="pre">'play_num',</span> <span class="pre">'per',</span> <span class="pre">'str',</span> <span class="pre">'time',</span> <span class="pre">'event',</span> <span class="pre">'desc',</span> <span class="pre">'vis',</span> <span class="pre">'home'</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.rtss.PlayParser.build_play">
+<code class="descname">build_play</code><span class="sig-paren">(</span><em>pbp_row</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/rtss.html#PlayParser.build_play"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.rtss.PlayParser.build_play" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses table row from RTSS. These are the rows tagged with <code class="docutils literal"><span class="pre">&lt;tr</span> <span class="pre">class='evenColor'</span> <span class="pre">...</span> <span class="pre">&gt;</span></code>. Result set
+contains <a class="reference internal" href="nhlscrapi.games.html#nhlscrapi.games.playbyplay.Strength" title="nhlscrapi.games.playbyplay.Strength"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.playbyplay.Strength</span></code></a> and <a class="reference internal" href="nhlscrapi.games.html#nhlscrapi.games.events.EventType" title="nhlscrapi.games.events.EventType"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.events.EventType</span></code></a>
+objects. Returned play data is in the form</p>
+<div class="code python highlight-python"><div class="highlight"><pre>{
+    &#39;play_num&#39;: num_of_play
+    &#39;period&#39;: curr_period
+    &#39;strength&#39;: strength_enum
+    &#39;time&#39;: { &#39;min&#39;: min, &#39;sec&#39;: sec }
+    &#39;vis_on_ice&#39;: { &#39;player_num&#39;: player }
+    &#39;home_on_ice&#39;: { &#39;player_num&#39;: player }
+    &#39;event&#39;: event_object
+}
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pbp_row</strong> &#8211; table row from RTSS</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">play data</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.scrapr.rtss.RTSS">
+<em class="property">class </em><code class="descclassname">nhlscrapi.scrapr.rtss.</code><code class="descname">RTSS</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/rtss.html#RTSS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.rtss.RTSS" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.scrapr.reportloader.ReportLoader" title="nhlscrapi.scrapr.reportloader.ReportLoader"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.scrapr.reportloader.ReportLoader</span></code></a></p>
+<p>Retrieve and load RTSS play by play game data</p>
+<dl class="method">
+<dt id="nhlscrapi.scrapr.rtss.RTSS.parse">
+<code class="descname">parse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/rtss.html#RTSS.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.rtss.RTSS.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse full document. Plays and matchups.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">self</span></code> on success, <code class="docutils literal"><span class="pre">None</span></code> otherwise</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.rtss.RTSS.parse_plays">
+<code class="descname">parse_plays</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/rtss.html#RTSS.parse_plays"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.rtss.RTSS.parse_plays" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retreive and parse Play by Play data for the given <code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.GameKey</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">self</span></code> on success, <code class="docutils literal"><span class="pre">None</span></code> otherwise</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.rtss.RTSS.parse_plays_stream">
+<code class="descname">parse_plays_stream</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/rtss.html#RTSS.parse_plays_stream"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.rtss.RTSS.parse_plays_stream" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate and yield a stream of parsed plays. Useful for per play processing.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.scrapr.rtss.RTSS.plays">
+<code class="descname">plays</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.scrapr.rtss.RTSS.plays" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of plays loaded. See <a class="reference internal" href="#nhlscrapi.scrapr.rtss.PlayParser" title="nhlscrapi.scrapr.rtss.PlayParser"><code class="xref py py-class docutils literal"><span class="pre">PlayParser</span></code></a> for play data structure.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nhlscrapi.scrapr.rosterrep">
+<span id="nhlscrapi-scrapr-rosterrep-module"></span><h2>nhlscrapi.scrapr.rosterrep module<a class="headerlink" href="#module-nhlscrapi.scrapr.rosterrep" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nhlscrapi.scrapr.rosterrep.RosterRep">
+<em class="property">class </em><code class="descclassname">nhlscrapi.scrapr.rosterrep.</code><code class="descname">RosterRep</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/rosterrep.html#RosterRep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.rosterrep.RosterRep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.scrapr.reportloader.ReportLoader" title="nhlscrapi.scrapr.reportloader.ReportLoader"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.scrapr.reportloader.ReportLoader</span></code></a></p>
+<p>Retrieve and load roster report from nhl.com. This is a base class and not intended to be used directly.</p>
+<dl class="attribute">
+<dt id="nhlscrapi.scrapr.rosterrep.RosterRep.coaches">
+<code class="descname">coaches</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.scrapr.rosterrep.RosterRep.coaches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary of coaches keyed home/away loaded</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.scrapr.rosterrep.RosterRep.officials">
+<code class="descname">officials</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.scrapr.rosterrep.RosterRep.officials" title="Permalink to this definition">¶</a></dt>
+<dd><p>Game officials: <code class="docutils literal"><span class="pre">{</span> <span class="pre">'refs':</span> <span class="pre">{</span> <span class="pre">},</span> <span class="pre">'linesman':</span> <span class="pre">{</span> <span class="pre">}</span> <span class="pre">}</span></code></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.rosterrep.RosterRep.parse">
+<code class="descname">parse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/rosterrep.html#RosterRep.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.rosterrep.RosterRep.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retreive and parse Play by Play data for the given <code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.game.GameKey`</span></code></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">self</span></code> on success, <code class="docutils literal"><span class="pre">None</span></code> otherwise</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.rosterrep.RosterRep.parse_coaches">
+<code class="descname">parse_coaches</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/rosterrep.html#RosterRep.parse_coaches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.rosterrep.RosterRep.parse_coaches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the home and away coaches</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">self</span></code> on success, <code class="docutils literal"><span class="pre">None</span></code> otherwise</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.rosterrep.RosterRep.parse_officials">
+<code class="descname">parse_officials</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/rosterrep.html#RosterRep.parse_officials"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.rosterrep.RosterRep.parse_officials" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the officials</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">self</span></code> on success, <code class="docutils literal"><span class="pre">None</span></code> otherwise</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.rosterrep.RosterRep.parse_rosters">
+<code class="descname">parse_rosters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/rosterrep.html#RosterRep.parse_rosters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.rosterrep.RosterRep.parse_rosters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the home and away game rosters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">self</span></code> on success, <code class="docutils literal"><span class="pre">None</span></code> otherwise</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.rosterrep.RosterRep.parse_scratches">
+<code class="descname">parse_scratches</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/rosterrep.html#RosterRep.parse_scratches"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.rosterrep.RosterRep.parse_scratches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse the home and away healthy scratches</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">self</span></code> on success, <code class="docutils literal"><span class="pre">None</span></code> otherwise</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.scrapr.rosterrep.RosterRep.rosters">
+<code class="descname">rosters</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.scrapr.rosterrep.RosterRep.rosters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rosters for both home and away.
+Data: <code class="docutils literal"><span class="pre">{</span> <span class="pre">'home/away':</span> <span class="pre">{</span> <span class="pre">num:</span> <span class="pre">{</span> <span class="pre">'pos':</span> <span class="pre">'',</span> <span class="pre">'name':</span> <span class="pre">''</span> <span class="pre">}</span> <span class="pre">}</span> <span class="pre">}</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.scrapr.rosterrep.RosterRep.scratches">
+<code class="descname">scratches</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.scrapr.rosterrep.RosterRep.scratches" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary of healthy scratches keyed home/away loaded</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nhlscrapi.scrapr.toirep">
+<span id="nhlscrapi-scrapr-toirep-module"></span><h2>nhlscrapi.scrapr.toirep module<a class="headerlink" href="#module-nhlscrapi.scrapr.toirep" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nhlscrapi.scrapr.toirep.AwayTOIRep">
+<em class="property">class </em><code class="descclassname">nhlscrapi.scrapr.toirep.</code><code class="descname">AwayTOIRep</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/toirep.html#AwayTOIRep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.toirep.AwayTOIRep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.scrapr.toirep.TOIRepBase" title="nhlscrapi.scrapr.toirep.TOIRepBase"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.scrapr.toirep.TOIRepBase</span></code></a></p>
+<p>Scrapes the home team TOI report</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.scrapr.toirep.HomeTOIRep">
+<em class="property">class </em><code class="descclassname">nhlscrapi.scrapr.toirep.</code><code class="descname">HomeTOIRep</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/toirep.html#HomeTOIRep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.toirep.HomeTOIRep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.scrapr.toirep.TOIRepBase" title="nhlscrapi.scrapr.toirep.TOIRepBase"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.scrapr.toirep.TOIRepBase</span></code></a></p>
+<p>Scrapes the home team TOI report</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.scrapr.toirep.TOIRepBase">
+<em class="property">class </em><code class="descclassname">nhlscrapi.scrapr.toirep.</code><code class="descname">TOIRepBase</code><span class="sig-paren">(</span><em>game_key</em>, <em>rep_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/toirep.html#TOIRepBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.toirep.TOIRepBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.scrapr.reportloader.ReportLoader" title="nhlscrapi.scrapr.reportloader.ReportLoader"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.scrapr.reportloader.ReportLoader</span></code></a></p>
+<p>Scrapes TOI reports. (home/away are same format).</p>
+<dl class="attribute">
+<dt id="nhlscrapi.scrapr.toirep.TOIRepBase.by_player">
+<code class="descname">by_player</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.scrapr.toirep.TOIRepBase.by_player" title="Permalink to this definition">¶</a></dt>
+<dd><p>By player dictionary of shift summaries. The only events recorded per shift are <code class="xref py py-class docutils literal"><span class="pre">EventType.Goal</span></code>
+or <code class="xref py py-class docutils literal"><span class="pre">EventType.Penalty</span></code>. For <code class="docutils literal"><span class="pre">period</span> <span class="pre">=</span> <span class="pre">0</span></code>, the game totals are returned. Format is</p>
+<div class="code python highlight-python"><div class="highlight"><pre>{
+    player_num: {
+        &#39;player_name&#39;: { &#39;first&#39;: &#39;&#39;, &#39;last&#39;: &#39;&#39; },
+        &#39;shifts&#39;: [
+            {
+                &#39;shift_num&#39;: shift_num,
+                &#39;period&#39;: period_num,
+                &#39;start&#39;: start_time (elapsed)
+                &#39;end&#39;: end_time (elapsed)
+                &#39;dur&#39;: length_of_shift,
+                &#39;event&#39;: event_enum_goal_or_penalty
+            }
+        ],
+        &#39;by_period&#39;: {
+            &#39;period&#39;: period_num,
+            &#39;shifts&#39;: shift_count,
+            &#39;avg&#39;: { &#39;min&#39;: min, &#39;sec&#39;: sec },
+            &#39;toi&#39;: { &#39;min&#39;: min, &#39;sec&#39;: sec },
+            &#39;ev_toi&#39;: { &#39;min&#39;: min, &#39;sec&#39;: sec },
+            &#39;pp_toi&#39;: { &#39;min&#39;: min, &#39;sec&#39;: sec },
+            &#39;sh_toi&#39;: { &#39;min&#39;: min, &#39;sec&#39;: sec }
+        }
+    }
+}
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.toirep.TOIRepBase.parse">
+<code class="descname">parse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/toirep.html#TOIRepBase.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.toirep.TOIRepBase.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse full TOI document.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">self</span></code> if successful else <code class="docutils literal"><span class="pre">None</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.toirep.TOIRepBase.parse_shifts">
+<code class="descname">parse_shifts</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/toirep.html#TOIRepBase.parse_shifts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.toirep.TOIRepBase.parse_shifts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse shifts from TOI report</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">self if successfule else None</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nhlscrapi.scrapr.faceoffrep">
+<span id="nhlscrapi-scrapr-faceoffrep-module"></span><h2>nhlscrapi.scrapr.faceoffrep module<a class="headerlink" href="#module-nhlscrapi.scrapr.faceoffrep" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nhlscrapi.scrapr.faceoffrep.FaceOffRep">
+<em class="property">class </em><code class="descclassname">nhlscrapi.scrapr.faceoffrep.</code><code class="descname">FaceOffRep</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/faceoffrep.html#FaceOffRep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.faceoffrep.FaceOffRep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.scrapr.reportloader.ReportLoader" title="nhlscrapi.scrapr.reportloader.ReportLoader"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.scrapr.reportloader.ReportLoader</span></code></a></p>
+<p>Retrieve and load face-off comparison report from nhl.com</p>
+<dl class="attribute">
+<dt id="nhlscrapi.scrapr.faceoffrep.FaceOffRep.face_offs">
+<code class="descname">face_offs</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.scrapr.faceoffrep.FaceOffRep.face_offs" title="Permalink to this definition">¶</a></dt>
+<dd><p>report in dictionary format</p>
+<div class="code python highlight-python"><div class="highlight"><pre>{
+    home/away: {
+        player_nums: {
+            &#39;name&#39;: name,
+            &#39;pos&#39;: position,
+            &#39;off/def/neut/all&#39;: {
+                &#39;won&#39;: won, &#39;total&#39;: total
+            },
+            &#39;opps&#39;: {
+                basically same info as above.
+                name, pos, and zone info of opponents
+            }
+        }
+    }
+}
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.faceoffrep.FaceOffRep.parse">
+<code class="descname">parse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/faceoffrep.html#FaceOffRep.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.faceoffrep.FaceOffRep.parse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retreive and parse Play by Play data for the given nhlscrapi.GameKey</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">self</span></code> on success, <code class="docutils literal"><span class="pre">None</span></code> otherwise</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.faceoffrep.FaceOffRep.parse_away_face_offs">
+<code class="descname">parse_away_face_offs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/faceoffrep.html#FaceOffRep.parse_away_face_offs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.faceoffrep.FaceOffRep.parse_away_face_offs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse only the away faceoffs</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">self</span></code> on success, <code class="docutils literal"><span class="pre">None</span></code> otherwise</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.scrapr.faceoffrep.FaceOffRep.parse_home_face_offs">
+<code class="descname">parse_home_face_offs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/faceoffrep.html#FaceOffRep.parse_home_face_offs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.faceoffrep.FaceOffRep.parse_home_face_offs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse only the home faceoffs</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">self</span></code> on success, <code class="docutils literal"><span class="pre">None</span></code> otherwise</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="nhlscrapi-scrapr-gamesummrep-module">
+<h2>nhlscrapi.scrapr.gamesummrep module<a class="headerlink" href="#nhlscrapi-scrapr-gamesummrep-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-nhlscrapi.scrapr.eventsummrep">
+<span id="nhlscrapi-scrapr-eventsummrep-module"></span><h2>nhlscrapi.scrapr.eventsummrep module<a class="headerlink" href="#module-nhlscrapi.scrapr.eventsummrep" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nhlscrapi.scrapr.eventsummrep.EventSummRep">
+<em class="property">class </em><code class="descclassname">nhlscrapi.scrapr.eventsummrep.</code><code class="descname">EventSummRep</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/eventsummrep.html#EventSummRep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.eventsummrep.EventSummRep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.scrapr.reportloader.ReportLoader" title="nhlscrapi.scrapr.reportloader.ReportLoader"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.scrapr.reportloader.ReportLoader</span></code></a></p>
+<p>Retrieve and load event summary report from nhl.com</p>
+<dl class="method">
+<dt id="nhlscrapi.scrapr.eventsummrep.EventSummRep.parse">
+<code class="descname">parse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/eventsummrep.html#EventSummRep.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.eventsummrep.EventSummRep.parse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nhlscrapi.scrapr.shotsummrep">
+<span id="nhlscrapi-scrapr-shotsummrep-module"></span><h2>nhlscrapi.scrapr.shotsummrep module<a class="headerlink" href="#module-nhlscrapi.scrapr.shotsummrep" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nhlscrapi.scrapr.shotsummrep.ShotSummRep">
+<em class="property">class </em><code class="descclassname">nhlscrapi.scrapr.shotsummrep.</code><code class="descname">ShotSummRep</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/shotsummrep.html#ShotSummRep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.shotsummrep.ShotSummRep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.scrapr.reportloader.ReportLoader" title="nhlscrapi.scrapr.reportloader.ReportLoader"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.scrapr.reportloader.ReportLoader</span></code></a></p>
+<p>Retrieve and load shot summary report from nhl.com</p>
+<dl class="method">
+<dt id="nhlscrapi.scrapr.shotsummrep.ShotSummRep.parse">
+<code class="descname">parse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/shotsummrep.html#ShotSummRep.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.shotsummrep.ShotSummRep.parse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nhlscrapi.scrapr.shootoutrep">
+<span id="nhlscrapi-scrapr-shootoutrep-module"></span><h2>nhlscrapi.scrapr.shootoutrep module<a class="headerlink" href="#module-nhlscrapi.scrapr.shootoutrep" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nhlscrapi.scrapr.shootoutrep.ShootoutRep">
+<em class="property">class </em><code class="descclassname">nhlscrapi.scrapr.shootoutrep.</code><code class="descname">ShootoutRep</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/shootoutrep.html#ShootoutRep"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.shootoutrep.ShootoutRep" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.scrapr.reportloader.ReportLoader" title="nhlscrapi.scrapr.reportloader.ReportLoader"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.scrapr.reportloader.ReportLoader</span></code></a></p>
+<p>Retrieve and load shot summary report from nhl.com</p>
+<dl class="method">
+<dt id="nhlscrapi.scrapr.shootoutrep.ShootoutRep.parse">
+<code class="descname">parse</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/shootoutrep.html#ShootoutRep.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.shootoutrep.ShootoutRep.parse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nhlscrapi.scrapr.eventparser">
+<span id="nhlscrapi-scrapr-eventparser-module"></span><h2>nhlscrapi.scrapr.eventparser module<a class="headerlink" href="#module-nhlscrapi.scrapr.eventparser" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nhlscrapi.scrapr.eventparser.event_type_mapper">
+<code class="descclassname">nhlscrapi.scrapr.eventparser.</code><code class="descname">event_type_mapper</code><span class="sig-paren">(</span><em>event_str</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/eventparser.html#event_type_mapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.eventparser.event_type_mapper" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.scrapr.eventparser.parse_event_desc">
+<code class="descclassname">nhlscrapi.scrapr.eventparser.</code><code class="descname">parse_event_desc</code><span class="sig-paren">(</span><em>event</em>, <em>season=2008</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/eventparser.html#parse_event_desc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.eventparser.parse_event_desc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-nhlscrapi.scrapr.descparser">
+<span id="nhlscrapi-scrapr-descparser-module"></span><h2>nhlscrapi.scrapr.descparser module<a class="headerlink" href="#module-nhlscrapi.scrapr.descparser" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nhlscrapi.scrapr.descparser.assist_from">
+<code class="descclassname">nhlscrapi.scrapr.descparser.</code><code class="descname">assist_from</code><span class="sig-paren">(</span><em>a</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/descparser.html#assist_from"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.descparser.assist_from" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.scrapr.descparser.default_desc_parser">
+<code class="descclassname">nhlscrapi.scrapr.descparser.</code><code class="descname">default_desc_parser</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/descparser.html#default_desc_parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.descparser.default_desc_parser" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.scrapr.descparser.get_ft">
+<code class="descclassname">nhlscrapi.scrapr.descparser.</code><code class="descname">get_ft</code><span class="sig-paren">(</span><em>s</em>, <em>def_dist=-1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/descparser.html#get_ft"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.descparser.get_ft" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.scrapr.descparser.parse_block_08">
+<code class="descclassname">nhlscrapi.scrapr.descparser.</code><code class="descname">parse_block_08</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/descparser.html#parse_block_08"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.descparser.parse_block_08" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.scrapr.descparser.parse_faceoff_08">
+<code class="descclassname">nhlscrapi.scrapr.descparser.</code><code class="descname">parse_faceoff_08</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/descparser.html#parse_faceoff_08"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.descparser.parse_faceoff_08" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.scrapr.descparser.parse_giveaway_08">
+<code class="descclassname">nhlscrapi.scrapr.descparser.</code><code class="descname">parse_giveaway_08</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/descparser.html#parse_giveaway_08"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.descparser.parse_giveaway_08" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.scrapr.descparser.parse_goal_desc_08">
+<code class="descclassname">nhlscrapi.scrapr.descparser.</code><code class="descname">parse_goal_desc_08</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/descparser.html#parse_goal_desc_08"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.descparser.parse_goal_desc_08" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.scrapr.descparser.parse_hit_08">
+<code class="descclassname">nhlscrapi.scrapr.descparser.</code><code class="descname">parse_hit_08</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/descparser.html#parse_hit_08"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.descparser.parse_hit_08" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.scrapr.descparser.parse_miss_08">
+<code class="descclassname">nhlscrapi.scrapr.descparser.</code><code class="descname">parse_miss_08</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/descparser.html#parse_miss_08"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.descparser.parse_miss_08" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.scrapr.descparser.parse_shootout">
+<code class="descclassname">nhlscrapi.scrapr.descparser.</code><code class="descname">parse_shootout</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/descparser.html#parse_shootout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.descparser.parse_shootout" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.scrapr.descparser.parse_shot_desc_08">
+<code class="descclassname">nhlscrapi.scrapr.descparser.</code><code class="descname">parse_shot_desc_08</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/descparser.html#parse_shot_desc_08"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.descparser.parse_shot_desc_08" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.scrapr.descparser.parse_takeaway_08">
+<code class="descclassname">nhlscrapi.scrapr.descparser.</code><code class="descname">parse_takeaway_08</code><span class="sig-paren">(</span><em>event</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/descparser.html#parse_takeaway_08"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.descparser.parse_takeaway_08" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.scrapr.descparser.rem_char">
+<code class="descclassname">nhlscrapi.scrapr.descparser.</code><code class="descname">rem_char</code><span class="sig-paren">(</span><em>s</em>, <em>c</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/descparser.html#rem_char"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.descparser.rem_char" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.scrapr.descparser.rem_penalty_shot_desc">
+<code class="descclassname">nhlscrapi.scrapr.descparser.</code><code class="descname">rem_penalty_shot_desc</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/descparser.html#rem_penalty_shot_desc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.descparser.rem_penalty_shot_desc" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.scrapr.descparser.split_and_strip">
+<code class="descclassname">nhlscrapi.scrapr.descparser.</code><code class="descname">split_and_strip</code><span class="sig-paren">(</span><em>s</em>, <em>by</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/descparser.html#split_and_strip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.descparser.split_and_strip" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.scrapr.descparser.team_num_name">
+<code class="descclassname">nhlscrapi.scrapr.descparser.</code><code class="descname">team_num_name</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/descparser.html#team_num_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.descparser.team_num_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-nhlscrapi.scrapr.officialsparser">
+<span id="nhlscrapi-scrapr-officialsparser-module"></span><h2>nhlscrapi.scrapr.officialsparser module<a class="headerlink" href="#module-nhlscrapi.scrapr.officialsparser" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nhlscrapi.scrapr.officialsparser.official_parser_10">
+<code class="descclassname">nhlscrapi.scrapr.officialsparser.</code><code class="descname">official_parser_10</code><span class="sig-paren">(</span><em>lx_doc</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/officialsparser.html#official_parser_10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.officialsparser.official_parser_10" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.scrapr.officialsparser.official_parser_mapper">
+<code class="descclassname">nhlscrapi.scrapr.officialsparser.</code><code class="descname">official_parser_mapper</code><span class="sig-paren">(</span><em>season</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/officialsparser.html#official_parser_mapper"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.officialsparser.official_parser_mapper" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.scrapr.officialsparser.official_parser_pre_09">
+<code class="descclassname">nhlscrapi.scrapr.officialsparser.</code><code class="descname">official_parser_pre_09</code><span class="sig-paren">(</span><em>lx_doc</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/officialsparser.html#official_parser_pre_09"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.officialsparser.official_parser_pre_09" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-nhlscrapi.scrapr.teamnameparser">
+<span id="nhlscrapi-scrapr-teamnameparser-module"></span><h2>nhlscrapi.scrapr.teamnameparser module<a class="headerlink" href="#module-nhlscrapi.scrapr.teamnameparser" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="nhlscrapi.scrapr.teamnameparser.team_abbr_parser">
+<code class="descclassname">nhlscrapi.scrapr.teamnameparser.</code><code class="descname">team_abbr_parser</code><span class="sig-paren">(</span><em>abr</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/teamnameparser.html#team_abbr_parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.teamnameparser.team_abbr_parser" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.scrapr.teamnameparser.team_name_parser">
+<code class="descclassname">nhlscrapi.scrapr.teamnameparser.</code><code class="descname">team_name_parser</code><span class="sig-paren">(</span><em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/scrapr/teamnameparser.html#team_name_parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.scrapr.teamnameparser.team_name_parser" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-nhlscrapi.scrapr">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nhlscrapi.scrapr" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">nhlscrapi.scrapr package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.scrapr.nhlreq">nhlscrapi.scrapr.nhlreq module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.scrapr.reportloader">nhlscrapi.scrapr.reportloader module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.scrapr.rtss">nhlscrapi.scrapr.rtss module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.scrapr.rosterrep">nhlscrapi.scrapr.rosterrep module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.scrapr.toirep">nhlscrapi.scrapr.toirep module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.scrapr.faceoffrep">nhlscrapi.scrapr.faceoffrep module</a></li>
+<li><a class="reference internal" href="#nhlscrapi-scrapr-gamesummrep-module">nhlscrapi.scrapr.gamesummrep module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.scrapr.eventsummrep">nhlscrapi.scrapr.eventsummrep module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.scrapr.shotsummrep">nhlscrapi.scrapr.shotsummrep module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.scrapr.shootoutrep">nhlscrapi.scrapr.shootoutrep module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.scrapr.eventparser">nhlscrapi.scrapr.eventparser module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.scrapr.descparser">nhlscrapi.scrapr.descparser module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.scrapr.officialsparser">nhlscrapi.scrapr.officialsparser module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.scrapr.teamnameparser">nhlscrapi.scrapr.teamnameparser module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.scrapr">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="nhlscrapi.html">nhlscrapi package</a><ul>
+      <li>Previous: <a href="nhlscrapi.games.html" title="previous chapter">nhlscrapi.games package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/nhlscrapi.scrapr.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+      |
+      <a href="_sources/nhlscrapi.scrapr.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

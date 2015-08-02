@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nhlscrapi.scrapr.reportloader &mdash; nhlscrapi  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="nhlscrapi  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for nhlscrapi.scrapr.reportloader</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">lxml.html</span> <span class="kn">import</span> <span class="n">fromstring</span>
+
+<span class="kn">from</span> <span class="nn">nhlreq</span> <span class="kn">import</span> <span class="n">NHLCn</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi.scrapr</span> <span class="kn">import</span> <span class="n">teamnameparser</span> <span class="k">as</span> <span class="n">TP</span>
+
+<span class="c"># enforce one method interface that fully parses doc</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+
+<span class="k">class</span> <span class="nc">ReportLoader</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="ReportLoader"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.reportloader.ReportLoader">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for objects that load full reports. Manages html request and extracts match up from banner</span>
+<span class="sd">    </span>
+<span class="sd">    :param game_key: unique game identifier of type :py:class:`nhlscrapi.games.game.GameKey`</span>
+<span class="sd">    :param report_type: str, type of report being loaded. Must be a method of :py:class:`.NHLCn`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+  
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+    <span class="n">__lx_doc</span> <span class="o">=</span> <span class="bp">None</span>
+ 
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">,</span> <span class="n">report_type</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">game_key</span> <span class="o">=</span> <span class="n">game_key</span>
+        <span class="sd">&quot;&quot;&quot;Game key being retrieved of type :py:class:`nhlscrapi.games.game.GameKey` &quot;&quot;&quot;</span>
+      
+        <span class="bp">self</span><span class="o">.</span><span class="n">report_type</span> <span class="o">=</span> <span class="n">report_type</span>
+        <span class="sd">&quot;&quot;&quot;Type of report to be loaded. Valid types correspond to the methods of :py:class:`.NHLCn`&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">matchup</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fame meta information displayed in report banners including team names,</span>
+<span class="sd">        final score, game date, location, and attendance. Data format is</span>
+<span class="sd">        </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">        </span>
+<span class="sd">            {</span>
+<span class="sd">                &#39;home&#39;: home,</span>
+<span class="sd">                &#39;away&#39;: away,</span>
+<span class="sd">                &#39;final&#39;: final,</span>
+<span class="sd">                &#39;attendance&#39;: att,</span>
+<span class="sd">                &#39;date&#39;: date,</span>
+<span class="sd">                &#39;location&#39;: loc</span>
+<span class="sd">            }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">req_err</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="sd">&quot;&quot;&quot;Error from http request&quot;&quot;&quot;</span>
+      
+    
+    <span class="k">def</span> <span class="nf">html_doc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ReportLoader.html_doc"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.reportloader.ReportLoader.html_doc">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: the lxml processed html document</span>
+<span class="sd">        :rtype: ``lxml.html.document_fromstring`` output</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__lx_doc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">cn</span> <span class="o">=</span> <span class="n">NHLCn</span><span class="p">()</span>
+          
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_type</span><span class="p">):</span>
+                <span class="n">html</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_type</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">game_key</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Invalid report type: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">report_type</span><span class="p">)</span>
+          
+            <span class="k">if</span> <span class="n">cn</span><span class="o">.</span><span class="n">req_err</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__lx_doc</span> <span class="o">=</span> <span class="n">fromstring</span><span class="p">(</span><span class="n">html</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">req_err</span> <span class="o">=</span> <span class="n">cn</span><span class="o">.</span><span class="n">req_err</span>
+            
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__lx_doc</span>
+    
+    
+    <span class="k">def</span> <span class="nf">parse_matchup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="ReportLoader.parse_matchup"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.reportloader.ReportLoader.parse_matchup">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse the banner matchup meta info for the game.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: ``self`` on success or ``None``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lx_doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">html_doc</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">matchup</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">matchup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fill_meta</span><span class="p">(</span><span class="n">lx_doc</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        
+        
+    <span class="nd">@abstractmethod</span></div>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ReportLoader.parse"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.reportloader.ReportLoader.parse">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fully parses html document.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: ``self`` on success, ``None`` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_matchup</span><span class="p">()</span>
+    
+    
+    <span class="k">def</span> <span class="nf">_fill_meta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">doc</span><span class="p">):</span></div>
+        <span class="k">def</span> <span class="nf">team_scr</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+            <span class="n">xp</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s">&#39;//table[@id=&quot;&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="s">&#39;&quot;]&#39;</span><span class="p">])</span>
+            <span class="n">team</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="n">xp</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">team</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">team</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;.//text()&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="n">t</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">and</span> <span class="s">&#39;</span><span class="se">\r\n</span><span class="s">&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s</span> <span class="ow">and</span> <span class="s">&#39;game&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
+      
+            <span class="k">return</span> <span class="n">team</span>
+      
+        <span class="n">final</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="n">final</span><span class="p">[</span><span class="s">&#39;away&#39;</span><span class="p">],</span> <span class="n">at</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">team_scr</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="s">&#39;Visitor&#39;</span><span class="p">))</span>
+        <span class="n">final</span><span class="p">[</span><span class="s">&#39;home&#39;</span><span class="p">],</span> <span class="n">ht</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">team_scr</span><span class="p">(</span><span class="n">doc</span><span class="p">,</span> <span class="s">&#39;Home&#39;</span><span class="p">))</span>
+    
+        <span class="c"># clean team names</span>
+        <span class="n">away</span> <span class="o">=</span> <span class="n">TP</span><span class="o">.</span><span class="n">team_name_parser</span><span class="p">(</span><span class="n">at</span><span class="p">)</span>
+        <span class="n">home</span> <span class="o">=</span> <span class="n">TP</span><span class="o">.</span><span class="n">team_name_parser</span><span class="p">(</span><span class="n">ht</span><span class="p">)</span>
+        
+        <span class="n">game_info</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;//table[@id=&quot;GameInfo&quot;]&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;.//text()&#39;</span><span class="p">)</span>
+        <span class="n">game_info</span> <span class="o">=</span> <span class="s">&#39;; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">game_info</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        
+        <span class="n">att</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">r&#39;(?&lt;=[aA]ttendance\s)(\d*\,?\d*)&#39;</span><span class="p">,</span> <span class="n">game_info</span><span class="p">)</span>
+        <span class="n">att</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">att</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">))</span> <span class="k">if</span> <span class="n">att</span> <span class="k">else</span> <span class="mi">0</span>
+        
+        <span class="n">date</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">r&#39;\w+\,?\s\w+\s\d+\,?\s\d+&#39;</span><span class="p">,</span> <span class="n">game_info</span><span class="p">)</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="n">date</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">date</span> <span class="k">else</span> <span class="s">&#39;&#39;</span>
+        
+        <span class="n">loc</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="s">r&#39;(?&lt;=at\W)([^\;]*)&#39;</span><span class="p">,</span> <span class="n">game_info</span><span class="p">)</span>
+        <span class="n">loc</span> <span class="o">=</span> <span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">loc</span> <span class="k">else</span> <span class="s">&#39;&#39;</span>
+    
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">&#39;home&#39;</span><span class="p">:</span> <span class="n">home</span><span class="p">,</span>
+            <span class="s">&#39;away&#39;</span><span class="p">:</span> <span class="n">away</span><span class="p">,</span>
+            <span class="s">&#39;final&#39;</span><span class="p">:</span> <span class="n">final</span><span class="p">,</span>
+            <span class="s">&#39;attendance&#39;</span><span class="p">:</span> <span class="n">att</span><span class="p">,</span>
+            <span class="s">&#39;date&#39;</span><span class="p">:</span> <span class="n">date</span><span class="p">,</span>
+            <span class="s">&#39;location&#39;</span><span class="p">:</span> <span class="n">loc</span>
+        <span class="p">}</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nhlscrapi.scrapr.toirep &mdash; nhlscrapi  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="nhlscrapi  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for nhlscrapi.scrapr.toirep</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">nhlscrapi._tools</span> <span class="kn">import</span> <span class="n">to_int</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi._tools</span> <span class="kn">import</span> <span class="n">exclude_from</span> <span class="k">as</span> <span class="n">ex_junk</span>
+
+<span class="kn">from</span> <span class="nn">nhlscrapi.scrapr.reportloader</span> <span class="kn">import</span> <span class="n">ReportLoader</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi.games.events</span> <span class="kn">import</span> <span class="n">EventType</span> <span class="k">as</span> <span class="n">ET</span>
+
+
+<span class="k">class</span> <span class="nc">TOIRepBase</span><span class="p">(</span><span class="n">ReportLoader</span><span class="p">):</span>
+<div class="viewcode-block" id="TOIRepBase"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.toirep.TOIRepBase">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Scrapes TOI reports. (home/away are same format).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+  
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">,</span> <span class="n">rep_type</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TOIRepBase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="n">rep_type</span><span class="p">)</span>
+    
+        <span class="bp">self</span><span class="o">.</span><span class="n">by_player</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        By player dictionary of shift summaries. The only events recorded per shift are :py:class:`.EventType.Goal`</span>
+<span class="sd">        or :py:class:`.EventType.Penalty`. For ``period = 0``, the game totals are returned. Format is</span>
+<span class="sd">        </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">        </span>
+<span class="sd">            {</span>
+<span class="sd">                player_num: {</span>
+<span class="sd">                    &#39;player_name&#39;: { &#39;first&#39;: &#39;&#39;, &#39;last&#39;: &#39;&#39; },</span>
+<span class="sd">                    &#39;shifts&#39;: [</span>
+<span class="sd">                        {</span>
+<span class="sd">                            &#39;shift_num&#39;: shift_num,</span>
+<span class="sd">                            &#39;period&#39;: period_num,</span>
+<span class="sd">                            &#39;start&#39;: start_time (elapsed)</span>
+<span class="sd">                            &#39;end&#39;: end_time (elapsed)</span>
+<span class="sd">                            &#39;dur&#39;: length_of_shift,</span>
+<span class="sd">                            &#39;event&#39;: event_enum_goal_or_penalty</span>
+<span class="sd">                        }</span>
+<span class="sd">                    ],</span>
+<span class="sd">                    &#39;by_period&#39;: {</span>
+<span class="sd">                        &#39;period&#39;: period_num,</span>
+<span class="sd">                        &#39;shifts&#39;: shift_count,</span>
+<span class="sd">                        &#39;avg&#39;: { &#39;min&#39;: min, &#39;sec&#39;: sec },</span>
+<span class="sd">                        &#39;toi&#39;: { &#39;min&#39;: min, &#39;sec&#39;: sec },</span>
+<span class="sd">                        &#39;ev_toi&#39;: { &#39;min&#39;: min, &#39;sec&#39;: sec },</span>
+<span class="sd">                        &#39;pp_toi&#39;: { &#39;min&#39;: min, &#39;sec&#39;: sec },</span>
+<span class="sd">                        &#39;sh_toi&#39;: { &#39;min&#39;: min, &#39;sec&#39;: sec }</span>
+<span class="sd">                    }</span>
+<span class="sd">                }</span>
+<span class="sd">            }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__player_shifts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shift</span><span class="p">):</span>
+        <span class="n">parsed_shifts</span> <span class="o">=</span> <span class="p">[]</span>
+    
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">sh_arr</span> <span class="o">=</span> <span class="n">ex_junk</span><span class="p">(</span><span class="n">shift</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;.//text()&#39;</span><span class="p">),</span> <span class="p">[</span><span class="s">&#39;</span><span class="se">\r</span><span class="s">&#39;</span><span class="p">,</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">])</span>
+            <span class="n">parsed_shifts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__build_shift</span><span class="p">(</span><span class="n">sh_arr</span><span class="p">))</span>
+
+            <span class="c"># get next row</span>
+            <span class="n">shift</span> <span class="o">=</span> <span class="n">shift</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;following-sibling::tr&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">cl</span> <span class="o">=</span> <span class="n">shift</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;class&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cl</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">cl</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;oddColor&#39;</span><span class="p">,</span> <span class="s">&#39;evenColor&#39;</span><span class="p">]:</span>
+                <span class="k">break</span>
+      
+        <span class="k">return</span> <span class="n">parsed_shifts</span><span class="p">,</span> <span class="n">shift</span>
+  
+    <span class="k">def</span> <span class="nf">__get_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_str</span><span class="p">):</span>
+        <span class="n">mins</span><span class="p">,</span> <span class="n">secs</span> <span class="o">=</span> <span class="n">time_str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span> <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="n">to_int</span><span class="p">(</span><span class="n">mins</span><span class="p">),</span> <span class="s">&#39;sec&#39;</span><span class="p">:</span> <span class="n">to_int</span><span class="p">(</span><span class="n">secs</span><span class="p">)</span> <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">__build_shift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shift</span><span class="p">):</span>
+        <span class="n">shift</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">shift</span><span class="p">]</span>
+    
+        <span class="n">ev</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">if</span> <span class="n">shift</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;G&#39;</span><span class="p">:</span>
+            <span class="n">ev</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Goal</span>
+        <span class="k">elif</span> <span class="n">shift</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;P&#39;</span><span class="p">:</span>
+            <span class="n">ev</span> <span class="o">=</span> <span class="n">ET</span><span class="o">.</span><span class="n">Penalty</span>
+    
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">&#39;shift_num&#39;</span><span class="p">:</span> <span class="n">to_int</span><span class="p">(</span><span class="n">shift</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span>
+            <span class="s">&#39;period&#39;</span><span class="p">:</span> <span class="mi">4</span> <span class="k">if</span> <span class="n">shift</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;OT&#39;</span> <span class="k">else</span> <span class="n">to_int</span><span class="p">(</span><span class="n">shift</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+            <span class="s">&#39;start&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_time</span><span class="p">(</span><span class="n">shift</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; / &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span>
+            <span class="s">&#39;end&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_time</span><span class="p">(</span><span class="n">shift</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; / &#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]),</span>
+            <span class="s">&#39;dur&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_time</span><span class="p">(</span><span class="n">shift</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span>
+            <span class="s">&#39;event&#39;</span><span class="p">:</span> <span class="n">ev</span>
+        <span class="p">}</span>
+    
+    <span class="k">def</span> <span class="nf">__get_by_per_summ</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">per_summ</span><span class="p">):</span>
+        <span class="n">summ</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">cl</span> <span class="o">=</span> <span class="n">per_summ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;class&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">cl</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;oddColor&#39;</span><span class="p">,</span> <span class="s">&#39;evenColor&#39;</span><span class="p">]:</span>
+                <span class="n">txt</span> <span class="o">=</span> <span class="n">ex_junk</span><span class="p">(</span><span class="n">per_summ</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;.//text()&#39;</span><span class="p">),</span> <span class="p">[</span><span class="s">&#39;</span><span class="se">\r</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">txt</span><span class="p">:</span>
+                    <span class="n">per</span> <span class="o">=</span> <span class="n">to_int</span><span class="p">(</span><span class="n">txt</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">per</span> <span class="o">=</span> <span class="n">per</span> <span class="k">if</span> <span class="n">per</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">4</span> <span class="k">if</span> <span class="n">txt</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;OT&#39;</span> <span class="k">else</span> <span class="mi">0</span>
+                    <span class="n">ps</span> <span class="o">=</span> <span class="p">{</span>
+                        <span class="s">&#39;shifts&#39;</span><span class="p">:</span> <span class="n">to_int</span><span class="p">(</span><span class="n">txt</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span>
+                        <span class="s">&#39;avg&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_time</span><span class="p">(</span><span class="n">txt</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                        <span class="s">&#39;toi&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_time</span><span class="p">(</span><span class="n">txt</span><span class="p">[</span><span class="mi">3</span><span class="p">]),</span>
+                        <span class="s">&#39;ev_toi&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_time</span><span class="p">(</span><span class="n">txt</span><span class="p">[</span><span class="mi">4</span><span class="p">]),</span>
+                        <span class="s">&#39;pp_toi&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_time</span><span class="p">(</span><span class="n">txt</span><span class="p">[</span><span class="mi">5</span><span class="p">]),</span>
+                        <span class="s">&#39;sh_toi&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_time</span><span class="p">(</span><span class="n">txt</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
+                    <span class="p">}</span>
+              
+                <span class="n">summ</span><span class="p">[</span><span class="n">per</span><span class="p">]</span> <span class="o">=</span> <span class="n">ps</span>
+        
+            <span class="n">per_summ</span> <span class="o">=</span> <span class="n">per_summ</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;following-sibling::tr&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">per_summ</span><span class="p">:</span>
+                <span class="n">per_summ</span> <span class="o">=</span> <span class="n">per_summ</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+      
+        <span class="k">return</span> <span class="n">summ</span><span class="p">,</span> <span class="n">per_summ</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TOIRepBase.parse"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.toirep.TOIRepBase.parse">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse full TOI document.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: ``self`` if successful else ``None``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">TOIRepBase</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span><span class="o">.</span><span class="n">self</span><span class="o">.</span><span class="n">parse_shifts</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+    <span class="k">def</span> <span class="nf">parse_shifts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="TOIRepBase.parse_shifts"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.toirep.TOIRepBase.parse_shifts">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse shifts from TOI report</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: self if successfule else None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="n">lx_doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">html_doc</span><span class="p">()</span>
+        <span class="n">pl_heads</span> <span class="o">=</span> <span class="n">lx_doc</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;//td[contains(@class, &quot;playerHeading&quot;)]&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">pl</span> <span class="ow">in</span> <span class="n">pl_heads</span><span class="p">:</span>
+            <span class="n">sh_sum</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+              
+            <span class="n">pl_text</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;text()&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">num_name</span> <span class="o">=</span> <span class="n">pl_text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
+            <span class="n">sh_sum</span><span class="p">[</span><span class="s">&#39;player_num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">num_name</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="k">if</span> <span class="n">num_name</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">sh_sum</span><span class="p">[</span><span class="s">&#39;player_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;first&#39;</span><span class="p">:</span> <span class="n">num_name</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="s">&#39;last&#39;</span><span class="p">:</span> <span class="n">num_name</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="p">}</span>
+              
+            <span class="n">first_shift</span> <span class="o">=</span> <span class="n">pl</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;../following-sibling::tr&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">sh_sum</span><span class="p">[</span><span class="s">&#39;shifts&#39;</span><span class="p">],</span> <span class="n">last_shift</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__player_shifts</span><span class="p">(</span><span class="n">first_shift</span><span class="p">)</span>
+              
+            <span class="k">while</span> <span class="p">(</span><span class="s">&#39;Per&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">last_shift</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;.//text()&#39;</span><span class="p">)):</span>
+                <span class="n">last_shift</span> <span class="o">=</span> <span class="n">last_shift</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;following-sibling::tr&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                
+            <span class="n">per_summ</span> <span class="o">=</span> <span class="n">last_shift</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;.//tr&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">sh_sum</span><span class="p">[</span><span class="s">&#39;by_period&#39;</span><span class="p">],</span> <span class="n">last_sum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_by_per_summ</span><span class="p">(</span><span class="n">per_summ</span><span class="p">)</span>
+            
+            
+            <span class="bp">self</span><span class="o">.</span><span class="n">by_player</span><span class="p">[</span><span class="n">sh_sum</span><span class="p">[</span><span class="s">&#39;player_num&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">sh_sum</span>
+        
+        <span class="k">return</span> <span class="bp">self</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">by_player</span> <span class="k">else</span> <span class="bp">None</span>
+      
+
+<span class="k">class</span> <span class="nc">HomeTOIRep</span><span class="p">(</span><span class="n">TOIRepBase</span><span class="p">):</span></div></div>
+<div class="viewcode-block" id="HomeTOIRep"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.toirep.HomeTOIRep">[docs]</a>    <span class="sd">&quot;&quot;&quot;Scrapes the home team TOI report&quot;&quot;&quot;</span>
+  
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">HomeTOIRep</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&quot;home_toi&quot;</span><span class="p">)</span>
+    
+
+<span class="k">class</span> <span class="nc">AwayTOIRep</span><span class="p">(</span><span class="n">TOIRepBase</span><span class="p">):</span></div>
+<div class="viewcode-block" id="AwayTOIRep"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.toirep.AwayTOIRep">[docs]</a>    <span class="sd">&quot;&quot;&quot;Scrapes the home team TOI report&quot;&quot;&quot;</span>
+  
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AwayTOIRep</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&quot;away_toi&quot;</span><span class="p">)</span>
+    
+  
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

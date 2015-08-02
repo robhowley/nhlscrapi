@@ -1,0 +1,267 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nhlscrapi.games.events &mdash; nhlscrapi  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="nhlscrapi  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for nhlscrapi.games.events</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">nhlscrapi._tools</span> <span class="kn">import</span> <span class="n">build_enum</span>
+
+
+<span class="n">EventType</span> <span class="o">=</span> <span class="n">build_enum</span><span class="p">(</span><span class="s">&#39;Event&#39;</span><span class="p">,</span> <span class="s">&#39;ShotAttempt&#39;</span><span class="p">,</span> <span class="s">&#39;Shot&#39;</span><span class="p">,</span> <span class="s">&#39;Block&#39;</span><span class="p">,</span> <span class="s">&#39;Miss&#39;</span><span class="p">,</span> <span class="s">&#39;Goal&#39;</span><span class="p">,</span>
+    <span class="s">&#39;Hit&#39;</span><span class="p">,</span> <span class="s">&#39;FaceOff&#39;</span><span class="p">,</span> <span class="s">&#39;Giveaway&#39;</span><span class="p">,</span> <span class="s">&#39;Takeaway&#39;</span><span class="p">,</span> <span class="s">&#39;Penalty&#39;</span><span class="p">,</span> <span class="s">&#39;Stoppage&#39;</span><span class="p">,</span> <span class="s">&#39;ShootOutAtt&#39;</span><span class="p">,</span>
+    <span class="s">&#39;ShootOutGoal&#39;</span><span class="p">,</span> <span class="s">&#39;PeriodEnd&#39;</span><span class="p">,</span> <span class="s">&#39;GameEnd&#39;</span><span class="p">,</span> <span class="s">&#39;ShootOutEnd&#39;</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;Enum indicating event type.&quot;&quot;&quot;</span>
+  
+  
+<span class="k">class</span> <span class="nc">Event</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class for event codes in the RTSS play-by-play reports&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Event"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.Event">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_type</span> <span class="o">=</span> <span class="n">EventType</span><span class="o">.</span><span class="n">Event</span><span class="p">,</span> <span class="n">desc</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_type</span> <span class="o">=</span> <span class="n">event_type</span>
+        <span class="sd">&quot;&quot;&quot;The :py:class:`.EventType` enum values corresponding to the event.&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">desc</span> <span class="o">=</span> <span class="n">desc</span>
+        <span class="sd">&quot;&quot;&quot;The RTSS description of the play.&quot;&quot;&quot;</span>
+        
+        
+<span class="k">class</span> <span class="nc">ShotAttempt</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_type</span> <span class="o">=</span> <span class="n">EventType</span><span class="o">.</span><span class="n">ShotAttempt</span><span class="p">):</span></div>
+<div class="viewcode-block" id="ShotAttempt"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.ShotAttempt">[docs]</a>        <span class="nb">super</span><span class="p">(</span><span class="n">ShotAttempt</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">event_type</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shooter</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;team&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;num&#39;</span><span class="p">:</span> <span class="mi">0</span> <span class="p">}</span>
+        <span class="sd">&quot;&quot;&quot;Shooter info ``{ &#39;team&#39;: team, &#39;name&#39;: name, &#39;num&#39;: num }``&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">shot_type</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Description of shot, e.g. Wrist Shot, et c&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">dist</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="sd">&quot;&quot;&quot;Distance of shot in feet&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_penalty_shot</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="sd">&quot;&quot;&quot;Flag indicating if it was a penalty shot&quot;&quot;&quot;</span>
+        
+        
+<span class="k">class</span> <span class="nc">Shot</span><span class="p">(</span><span class="n">ShotAttempt</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="Shot"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.Shot">[docs]</a>        <span class="nb">super</span><span class="p">(</span><span class="n">Shot</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">EventType</span><span class="o">.</span><span class="n">Shot</span><span class="p">)</span>
+        
+        
+<span class="k">class</span> <span class="nc">Goal</span><span class="p">(</span><span class="n">Shot</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="Goal"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.Goal">[docs]</a>        <span class="nb">super</span><span class="p">(</span><span class="n">Goal</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">event_type</span> <span class="o">=</span> <span class="n">EventType</span><span class="o">.</span><span class="n">Goal</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assists</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        
+<span class="k">class</span> <span class="nc">Miss</span><span class="p">(</span><span class="n">ShotAttempt</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="Miss"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.Miss">[docs]</a>        <span class="nb">super</span><span class="p">(</span><span class="n">Miss</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">EventType</span><span class="o">.</span><span class="n">Miss</span><span class="p">)</span>
+        
+        
+<span class="k">class</span> <span class="nc">Block</span><span class="p">(</span><span class="n">ShotAttempt</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="Block"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.Block">[docs]</a>        <span class="nb">super</span><span class="p">(</span><span class="n">Block</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">EventType</span><span class="o">.</span><span class="n">Block</span><span class="p">)</span>
+        
+        
+<span class="k">class</span> <span class="nc">Hit</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="Hit"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.Hit">[docs]</a>        <span class="nb">super</span><span class="p">(</span><span class="n">Hit</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">EventType</span><span class="o">.</span><span class="n">Hit</span><span class="p">)</span>
+        
+        
+<span class="k">class</span> <span class="nc">FaceOff</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="FaceOff"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.FaceOff">[docs]</a>        <span class="nb">super</span><span class="p">(</span><span class="n">FaceOff</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">EventType</span><span class="o">.</span><span class="n">FaceOff</span><span class="p">)</span>
+        
+        
+<span class="k">class</span> <span class="nc">Stoppage</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_type</span><span class="o">=</span><span class="n">EventType</span><span class="o">.</span><span class="n">Stoppage</span><span class="p">):</span></div>
+<div class="viewcode-block" id="Stoppage"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.Stoppage">[docs]</a>        <span class="nb">super</span><span class="p">(</span><span class="n">Stoppage</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">event_type</span><span class="p">)</span>
+        
+        
+<span class="k">class</span> <span class="nc">PeriodEnd</span><span class="p">(</span><span class="n">Stoppage</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="PeriodEnd"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.PeriodEnd">[docs]</a>        <span class="nb">super</span><span class="p">(</span><span class="n">PeriodEnd</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">EventType</span><span class="o">.</span><span class="n">PeriodEnd</span><span class="p">)</span>
+        
+        
+<span class="k">class</span> <span class="nc">GameEnd</span><span class="p">(</span><span class="n">Stoppage</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="GameEnd"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.GameEnd">[docs]</a>        <span class="nb">super</span><span class="p">(</span><span class="n">GameEnd</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">EventType</span><span class="o">.</span><span class="n">GameEnd</span><span class="p">)</span>
+        
+        
+<span class="k">class</span> <span class="nc">ShootOutEnd</span><span class="p">(</span><span class="n">Stoppage</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="ShootOutEnd"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.ShootOutEnd">[docs]</a>        <span class="nb">super</span><span class="p">(</span><span class="n">ShootOutEnd</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">EventType</span><span class="o">.</span><span class="n">ShootOutEnd</span><span class="p">)</span>
+        
+        
+<span class="k">class</span> <span class="nc">Penalty</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="Penalty"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.Penalty">[docs]</a>        <span class="nb">super</span><span class="p">(</span><span class="n">Penalty</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">EventType</span><span class="o">.</span><span class="n">Penalty</span><span class="p">)</span>
+        
+        
+<span class="k">class</span> <span class="nc">Turnover</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class for Takeaway and Giveaway events. Not meant to be used directly&quot;&quot;&quot;</span></div>
+<div class="viewcode-block" id="Turnover"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.Turnover">[docs]</a>    <span class="k">class</span> <span class="nc">TOType</span><span class="p">:</span>
+        <span class="n">Takeaway</span> <span class="o">=</span> <span class="mi">0</span>
+<div class="viewcode-block" id="Turnover.TOType"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.Turnover.TOType">[docs]</a>        <span class="n">Giveaway</span> <span class="o">=</span> <span class="mi">1</span>
+        
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">to_type</span> <span class="o">=</span> <span class="n">TOType</span><span class="o">.</span><span class="n">Takeaway</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">to_type</span> <span class="o">=</span> <span class="n">to_type</span></div>
+        <span class="k">if</span> <span class="n">to_type</span> <span class="o">==</span> <span class="n">Turnover</span><span class="o">.</span><span class="n">TOType</span><span class="o">.</span><span class="n">Giveaway</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">Turnover</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">EventType</span><span class="o">.</span><span class="n">Giveaway</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">Turnover</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">EventType</span><span class="o">.</span><span class="n">Takeaway</span><span class="p">)</span>
+            
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">turnover_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_turnover_type</span>
+        
+    <span class="nd">@turnover_type.setter</span>
+    <span class="k">def</span> <span class="nf">turnover_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">TOType</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_turnover_type</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; is not of type Turnover.TOType&quot;</span><span class="p">)</span>
+            
+            
+<span class="k">class</span> <span class="nc">Takeaway</span><span class="p">(</span><span class="n">Turnover</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="Takeaway"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.Takeaway">[docs]</a>        <span class="nb">super</span><span class="p">(</span><span class="n">Takeaway</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">Turnover</span><span class="o">.</span><span class="n">TOType</span><span class="o">.</span><span class="n">Takeaway</span><span class="p">)</span>
+        
+        
+<span class="k">class</span> <span class="nc">Giveaway</span><span class="p">(</span><span class="n">Turnover</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="Giveaway"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.Giveaway">[docs]</a>        <span class="nb">super</span><span class="p">(</span><span class="n">Giveaway</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">Turnover</span><span class="o">.</span><span class="n">TOType</span><span class="o">.</span><span class="n">Giveaway</span><span class="p">)</span>
+        
+        
+<span class="c"># accumulators are based upon inheritance</span>
+<span class="c"># shoot outs don&#39;t count as a shot attempts</span>
+<span class="k">class</span> <span class="nc">ShootOutAtt</span><span class="p">(</span><span class="n">Event</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_type</span> <span class="o">=</span> <span class="n">EventType</span><span class="o">.</span><span class="n">ShootOutAtt</span><span class="p">):</span></div>
+<div class="viewcode-block" id="ShootOutAtt"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.ShootOutAtt">[docs]</a>        <span class="nb">super</span><span class="p">(</span><span class="n">ShootOutAtt</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">event_type</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shooter</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;team&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;num&#39;</span><span class="p">:</span> <span class="mi">0</span> <span class="p">}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shot_type</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dist</span> <span class="o">=</span> <span class="mi">0</span>
+        
+        
+<span class="k">class</span> <span class="nc">ShootOutGoal</span><span class="p">(</span><span class="n">ShootOutAtt</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="ShootOutGoal"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.ShootOutGoal">[docs]</a>        <span class="nb">super</span><span class="p">(</span><span class="n">ShootOutGoal</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">EventType</span><span class="o">.</span><span class="n">ShootOutGoal</span><span class="p">)</span>
+        
+        
+<span class="k">def</span> <span class="nf">_get_class_hierarchy</span><span class="p">(</span><span class="n">base</span><span class="p">):</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="n">base</span><span class="p">]</span></div>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">base</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">():</span>
+        <span class="n">grandchildren</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">grandchildren</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">l</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_get_class_hierarchy</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+            
+    <span class="k">return</span> <span class="n">l</span>
+    
+    
+<span class="k">class</span> <span class="nc">EventFactory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="EventFactory"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.EventFactory">[docs]</a><span class="sd">    Factory for creating event objects corresponding to the different types of plays (events) in RTSS play by play data.</span>
+<span class="sd">    Constructor selected based upon the event enum :py:class:`.EventType.Events` passed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">event_list</span> <span class="o">=</span> <span class="n">_get_class_hierarchy</span><span class="p">(</span><span class="n">Event</span><span class="p">)</span>
+    <span class="sd">&quot;&quot;&quot;List of available events loaded dynamically by following the subclass structure of :py:class:`.Event`.&quot;&quot;&quot;</span>
+    
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">Create</span><span class="p">(</span><span class="n">event_type</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="EventFactory.Create"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.events.EventFactory.Create">[docs]</a><span class="sd">        Factory method creates objects derived from :py:class`.Event` with class name matching the :py:class`.EventType`.</span>
+<span class="sd">        </span>
+<span class="sd">        :param event_type: number for type of event</span>
+<span class="sd">        :returns: constructed event corresponding to ``event_type``</span>
+<span class="sd">        :rtype: :py:class:`.Event`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">event_type</span> <span class="ow">in</span> <span class="n">EventType</span><span class="o">.</span><span class="n">Name</span><span class="p">:</span>
+            <span class="c"># unknown event type gets base class</span>
+            <span class="k">if</span> <span class="n">EventType</span><span class="o">.</span><span class="n">Name</span><span class="p">[</span><span class="n">event_type</span><span class="p">]</span> <span class="o">==</span> <span class="n">Event</span><span class="o">.</span><span class="n">__name__</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">Event</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c"># instantiate Event subclass with same name as EventType name</span>
+                <span class="k">return</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">EventFactory</span><span class="o">.</span><span class="n">event_list</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">__name__</span> <span class="o">==</span> <span class="n">EventType</span><span class="o">.</span><span class="n">Name</span><span class="p">[</span><span class="n">event_type</span><span class="p">]][</span><span class="mi">0</span><span class="p">]()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;EventFactory.Create: Invalid EventType&quot;</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

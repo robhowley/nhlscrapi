@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nhlscrapi.games.repscrwrap &mdash; nhlscrapi  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="nhlscrapi  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for nhlscrapi.games.repscrwrap</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="k">def</span> <span class="nf">dispatch_loader</span><span class="p">(</span><span class="n">scraper</span><span class="p">,</span> <span class="n">loader_name</span><span class="p">):</span>
+<div class="viewcode-block" id="dispatch_loader"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.repscrwrap.dispatch_loader">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decorator that enforces one time loading for scrapers. The one time loading is applied</span>
+<span class="sd">    to partial loaders, e.g. only parse and load the home team roster once. This is not</span>
+<span class="sd">    meant to be used directly.</span>
+<span class="sd">    </span>
+<span class="sd">    :param scraper: property name (string) containing an object of type :py:class:`scrapr.ReportLoader`</span>
+<span class="sd">    :param loader_name: name of method that does the scraping/parsing</span>
+<span class="sd">    :returns: function wrapper</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">l</span> <span class="o">=</span> <span class="s">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">scraper</span><span class="p">,</span> <span class="n">loader_name</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">f_args</span><span class="p">,</span> <span class="o">**</span><span class="n">f_kwargs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_loaded&#39;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_loaded</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+                
+            <span class="n">already_loaded</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_loaded</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">already_loaded</span><span class="p">:</span>
+                <span class="n">attr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scraper</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_loaded</span><span class="p">[</span><span class="n">l</span><span class="p">]</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">loader_name</span><span class="p">)()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+            <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">f_args</span><span class="p">,</span> <span class="o">**</span><span class="n">f_kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">wrapped</span>
+    <span class="k">return</span> <span class="n">wrapper</span>
+        
+        
+<span class="k">class</span> <span class="nc">RepScrWrap</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span></div>
+<div class="viewcode-block" id="RepScrWrap"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.repscrwrap.RepScrWrap">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Lazy matchup reader base. Reports can be read in pieces. Only need to read matchup on read of first part. Serves</span>
+<span class="sd">    as the base class for all wrappers of report scrapers.</span>
+<span class="sd">    </span>
+<span class="sd">    :param game_key: :py:class:`.GameKey` of the game being loaded</span>
+<span class="sd">    :param rep_reader: object of type :py:class:`nhlscrapi.scrapr.ReportLoader`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">,</span> <span class="n">rep_reader</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__have_matchup</span> <span class="o">=</span> <span class="bp">False</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">game_key</span> <span class="o">=</span> <span class="n">game_key</span>
+        <span class="sd">&quot;&quot;&quot;Game key identifier of type :py:class:`.GameKey`&quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rep_reader</span> <span class="o">=</span> <span class="n">rep_reader</span>
+    
+    
+    <span class="nd">@property</span>
+    <span class="nd">@dispatch_loader</span><span class="p">(</span><span class="s">&#39;_rep_reader&#39;</span><span class="p">,</span> <span class="s">&#39;parse_matchup&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">matchup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the game meta information displayed in report banners including team names,</span>
+<span class="sd">        final score, game date, location, and attendance. Data format is</span>
+<span class="sd">        </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">        </span>
+<span class="sd">            {</span>
+<span class="sd">                &#39;home&#39;: home,</span>
+<span class="sd">                &#39;away&#39;: away,</span>
+<span class="sd">                &#39;final&#39;: final,</span>
+<span class="sd">                &#39;attendance&#39;: att,</span>
+<span class="sd">                &#39;date&#39;: date,</span>
+<span class="sd">                &#39;location&#39;: loc</span>
+<span class="sd">            }</span>
+<span class="sd">            </span>
+<span class="sd">        :returns: matchup banner info</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rep_reader</span><span class="o">.</span><span class="n">matchup</span>
+        
+    <span class="k">def</span> <span class="nf">load_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="RepScrWrap.load_all"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.repscrwrap.RepScrWrap.load_all">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads all parts of the report.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: ``self`` or ``None`` if load fails</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rep_reader</span><span class="o">.</span><span class="n">parse</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

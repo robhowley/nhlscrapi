@@ -1,0 +1,218 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nhlscrapi.scrapr.faceoffrep &mdash; nhlscrapi  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="nhlscrapi  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for nhlscrapi.scrapr.faceoffrep</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">from</span> <span class="nn">nhlscrapi._tools</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">to_int</span><span class="p">,</span>
+    <span class="n">re_comp_num_pos_name</span><span class="p">,</span>
+    <span class="n">exclude_from</span> <span class="k">as</span> <span class="n">ex_junk</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi.scrapr.reportloader</span> <span class="kn">import</span> <span class="n">ReportLoader</span>
+
+
+<span class="k">class</span> <span class="nc">FaceOffRep</span><span class="p">(</span><span class="n">ReportLoader</span><span class="p">):</span>
+<div class="viewcode-block" id="FaceOffRep"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.faceoffrep.FaceOffRep">[docs]</a>    <span class="sd">&quot;&quot;&quot;Retrieve and load face-off comparison report from nhl.com&quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FaceOffRep</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;face_offs&#39;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">face_offs</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        report in dictionary format</span>
+<span class="sd">        </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">        </span>
+<span class="sd">            {</span>
+<span class="sd">                home/away: {</span>
+<span class="sd">                    player_nums: {</span>
+<span class="sd">                        &#39;name&#39;: name,</span>
+<span class="sd">                        &#39;pos&#39;: position,</span>
+<span class="sd">                        &#39;off/def/neut/all&#39;: {</span>
+<span class="sd">                            &#39;won&#39;: won, &#39;total&#39;: total</span>
+<span class="sd">                        },</span>
+<span class="sd">                        &#39;opps&#39;: {</span>
+<span class="sd">                            basically same info as above.</span>
+<span class="sd">                            name, pos, and zone info of opponents</span>
+<span class="sd">                        }</span>
+<span class="sd">                    }</span>
+<span class="sd">                }</span>
+<span class="sd">            }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">__vis_doc</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__home_doc</span> <span class="o">=</span> <span class="bp">None</span>
+    
+    <span class="k">def</span> <span class="nf">__set_team_docs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__vis_doc</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">__home_doc</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">lx_doc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">html_doc</span><span class="p">()</span>
+            <span class="c"># report banner as reference</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="n">lx_doc</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&quot;//table[@id=&#39;StdHeader&#39;]/../..&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">header_sibs</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;following-sibling::tr&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__vis_doc</span> <span class="o">=</span> <span class="n">header_sibs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__home_doc</span> <span class="o">=</span> <span class="n">header_sibs</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="FaceOffRep.parse"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.faceoffrep.FaceOffRep.parse">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retreive and parse Play by Play data for the given nhlscrapi.GameKey</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: ``self`` on success, ``None`` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="nb">super</span><span class="p">(</span><span class="n">FaceOffRep</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_home_face_offs</span><span class="p">()</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_away_face_offs</span><span class="p">()</span>
+            <span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+    
+    <span class="k">def</span> <span class="nf">parse_home_face_offs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="FaceOffRep.parse_home_face_offs"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.faceoffrep.FaceOffRep.parse_home_face_offs">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse only the home faceoffs</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: ``self`` on success, ``None`` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__set_team_docs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">face_offs</span><span class="p">[</span><span class="s">&#39;home&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">FaceOffRep</span><span class="o">.</span><span class="n">__read_team_doc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__home_doc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+        
+    <span class="k">def</span> <span class="nf">parse_away_face_offs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="FaceOffRep.parse_away_face_offs"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.faceoffrep.FaceOffRep.parse_away_face_offs">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse only the away faceoffs</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: ``self`` on success, ``None`` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__set_team_docs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">face_offs</span><span class="p">[</span><span class="s">&#39;away&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">FaceOffRep</span><span class="o">.</span><span class="n">__read_team_doc</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__vis_doc</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span>
+    
+    <span class="nd">@staticmethod</span></div>
+    <span class="k">def</span> <span class="nf">__tot_pct</span><span class="p">(</span><span class="n">res</span><span class="p">):</span>
+        <span class="n">ct</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">won</span><span class="p">,</span> <span class="n">tot</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">to_int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ct</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">{</span> <span class="s">&#39;won&#39;</span><span class="p">:</span> <span class="n">won</span><span class="p">,</span> <span class="s">&#39;total&#39;</span><span class="p">:</span> <span class="n">tot</span> <span class="p">}</span>
+    
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__player_fo_rec</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">zone_raw</span><span class="p">):</span>
+        <span class="n">off</span><span class="p">,</span> <span class="n">defz</span><span class="p">,</span> <span class="n">neut</span><span class="p">,</span> <span class="n">tot</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="n">FaceOffRep</span><span class="o">.</span><span class="n">__tot_pct</span><span class="p">(</span><span class="n">ri</span><span class="p">)</span> <span class="k">if</span> <span class="nb">ord</span><span class="p">(</span><span class="n">ri</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mi">128</span> <span class="k">else</span> <span class="p">{</span> <span class="s">&#39;won&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;total&#39;</span><span class="p">:</span> <span class="mi">0</span> <span class="p">}</span>
+            <span class="k">for</span> <span class="n">ri</span> <span class="ow">in</span> <span class="n">zone_raw</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+            <span class="s">&#39;pos&#39;</span><span class="p">:</span> <span class="n">pos</span><span class="p">,</span>
+            <span class="s">&#39;off&#39;</span><span class="p">:</span> <span class="n">off</span><span class="p">,</span>
+            <span class="s">&#39;def&#39;</span><span class="p">:</span> <span class="n">defz</span><span class="p">,</span>
+            <span class="s">&#39;neut&#39;</span><span class="p">:</span> <span class="n">neut</span><span class="p">,</span>
+            <span class="s">&#39;all&#39;</span><span class="p">:</span> <span class="n">tot</span>
+        <span class="p">}</span>
+    
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__read_team_doc</span><span class="p">(</span><span class="n">lx_doc</span><span class="p">):</span>
+        <span class="n">fo</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="n">re_opp</span> <span class="o">=</span> <span class="n">re_comp_num_pos_name</span><span class="p">()</span>
+        
+        <span class="n">took_draw</span> <span class="o">=</span> <span class="n">lx_doc</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&quot;.//td[contains(@class,&#39;playerHeading&#39;)]/..&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">cent</span> <span class="ow">in</span> <span class="n">took_draw</span><span class="p">:</span>
+            <span class="c"># extract info of center taking the draw</span>
+            <span class="n">rec</span> <span class="o">=</span> <span class="n">ex_junk</span><span class="p">(</span><span class="n">cent</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;.//text()&#39;</span><span class="p">),</span> <span class="n">containing</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span><span class="s">&#39;</span><span class="se">\r</span><span class="s">&#39;</span><span class="p">])</span>
+            
+            <span class="n">num</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">to_int</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="n">rec</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ri</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">ri</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)))</span>
+            <span class="n">fo</span><span class="p">[</span><span class="n">num</span><span class="p">]</span> <span class="o">=</span> <span class="n">FaceOffRep</span><span class="o">.</span><span class="n">__player_fo_rec</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">rec</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">7</span><span class="p">])</span>
+            <span class="n">fo</span><span class="p">[</span><span class="n">num</span><span class="p">][</span><span class="s">&#39;opps&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+            
+            <span class="k">for</span> <span class="n">vs</span> <span class="ow">in</span> <span class="n">cent</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;following-sibling::tr&#39;</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">vs</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&quot;.//td[contains(@class,&#39;space&#39;)]&quot;</span><span class="p">):</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">opp_rec</span> <span class="o">=</span> <span class="n">ex_junk</span><span class="p">(</span><span class="n">vs</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;.//text()&#39;</span><span class="p">),</span> <span class="n">containing</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span><span class="s">&#39;</span><span class="se">\r</span><span class="s">&#39;</span><span class="p">])</span>
+                    <span class="n">reg_res</span> <span class="o">=</span> <span class="n">re_opp</span><span class="o">.</span><span class="n">findall</span><span class="p">(</span><span class="n">opp_rec</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+                    <span class="n">opp_num</span><span class="p">,</span> <span class="n">opp_pos</span><span class="p">,</span> <span class="n">opp_last</span><span class="p">,</span> <span class="n">opp_first</span> <span class="o">=</span> <span class="n">reg_res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">reg_res</span> <span class="k">else</span> <span class="p">(</span><span class="s">&#39;-1&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+                    <span class="n">opp_name</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">oi</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">oi</span> <span class="ow">in</span> <span class="p">[</span> <span class="n">opp_first</span><span class="p">,</span> <span class="n">opp_last</span> <span class="p">])</span>
+                    <span class="n">fo</span><span class="p">[</span><span class="n">num</span><span class="p">][</span><span class="s">&#39;opps&#39;</span><span class="p">][</span><span class="n">to_int</span><span class="p">(</span><span class="n">opp_num</span><span class="p">)]</span> <span class="o">=</span> <span class="n">FaceOffRep</span><span class="o">.</span><span class="n">__player_fo_rec</span><span class="p">(</span><span class="n">opp_name</span><span class="p">,</span> <span class="n">opp_pos</span><span class="p">,</span> <span class="n">opp_rec</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">7</span><span class="p">])</span>
+        
+        <span class="k">return</span> <span class="n">fo</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

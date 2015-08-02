@@ -1,0 +1,378 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nhlscrapi.games.game &mdash; nhlscrapi  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="nhlscrapi  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for nhlscrapi.games.game</h1><div class="highlight"><pre>
+<span class="c"># used by GameKey</span>
+<span class="kn">import</span> <span class="nn">nhlscrapi.constants</span> <span class="kn">as</span> <span class="nn">C</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi._tools</span> <span class="kn">import</span> <span class="n">build_enum</span>
+
+<span class="c"># used by Game</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi.games.toi</span> <span class="kn">import</span> <span class="n">TOI</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi.games.rosters</span> <span class="kn">import</span> <span class="n">Rosters</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi.games.playbyplay</span> <span class="kn">import</span> <span class="n">PlayByPlay</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi.games.faceoffcomp</span> <span class="kn">import</span> <span class="n">FaceOffComparison</span>
+
+
+<span class="sd">&quot;&quot;&quot;Enum denoting whether the game is regular season or playoff&quot;&quot;&quot;</span>
+<span class="n">GameType</span> <span class="o">=</span> <span class="n">build_enum</span><span class="p">(</span><span class="n">PreSeason</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">Regular</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">Playoffs</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">GameKey</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="GameKey"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.game.GameKey">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Unique identifier for a game. See constants for acceptable seasons and game counts. The key can</span>
+<span class="sd">    be initialized by setting key_tup or the set of season, game type and game number.</span>
+<span class="sd">        </span>
+<span class="sd">    :param season: the season number denoted by year season ends</span>
+<span class="sd">    :param game_type: enum, (1) pre season, (2) regular season or (3) playoffs</span>
+<span class="sd">    :param game_num: the index number of the game</span>
+<span class="sd">    :param key_tup: tuple (season, game_type, game_num)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+  
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">season</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">MIN_SEASON</span><span class="p">,</span> <span class="n">game_type</span> <span class="o">=</span> <span class="n">GameType</span><span class="o">.</span><span class="n">Regular</span><span class="p">,</span> <span class="n">game_num</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">key_tup</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key_tup</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">season</span> <span class="o">=</span> <span class="n">season</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">game_num</span> <span class="o">=</span> <span class="n">game_num</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">game_type</span> <span class="o">=</span> <span class="n">game_type</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">season</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">game_num</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">game_type</span> <span class="o">=</span> <span class="n">key_tup</span>
+      
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">season</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Season of the keyed game. Season year is denoted by when the season ends. See constants for acceptable</span>
+<span class="sd">        range of seasons considered. Not all years have supported summary reports ... or any reports at all.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_season</span>
+    
+    <span class="nd">@season.setter</span>
+    <span class="k">def</span> <span class="nf">season</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="n">C</span><span class="o">.</span><span class="n">MIN_SEASON</span> <span class="ow">or</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="n">C</span><span class="o">.</span><span class="n">MAX_SEASON</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&quot;Only seasons starting from &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">MIN_SEASON</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot; until &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">C</span><span class="o">.</span><span class="n">MAX_SEASON</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_season</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+  
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">game_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Code indicating pre season (1), regular season (2) or playoffs (3)</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: int</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_game_type</span>
+    
+    <span class="nd">@game_type.setter</span>
+    <span class="k">def</span> <span class="nf">game_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">GameType</span><span class="o">.</span><span class="n">Name</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_game_type</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;GameKey.game_type must be of type GameType&quot;</span><span class="p">)</span>
+      
+    <span class="k">def</span> <span class="nf">to_tuple</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="GameKey.to_tuple"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.game.GameKey.to_tuple">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return tuple version of the game key</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: tuple(season, game_type, game_num)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">season</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">game_type</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">game_num</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">Game</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span></div></div>
+<div class="viewcode-block" id="Game"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.game.Game">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This the primary interface to the collection of summary reports associated with every game. The</span>
+<span class="sd">    supported reports include :py:class:`.PlayByPlay`, :py:class:`.TOI`, :py:class:`.Rosters`,</span>
+<span class="sd">    and :py:class:`.FaceOffComparison`.</span>
+<span class="sd">    </span>
+<span class="sd">    Reports can be either lazy loaded at time of property calls or all loaded at once by calling ``load_all()``.</span>
+<span class="sd">    </span>
+<span class="sd">    :param game_key: either object :py:class:`.GameKey` or (season, game_type, game_num) tuple</span>
+<span class="sd">    :param cum_stats: dict, values are of type :py:class:`.AccumulateStats` to be collected in play-by-play</span>
+<span class="sd">    </span>
+<span class="sd">    :Example:</span>
+<span class="sd">    </span>
+<span class="sd">    .. code:: python</span>
+<span class="sd">    </span>
+<span class="sd">        #</span>
+<span class="sd">        # example: using the Game object</span>
+<span class="sd">        #</span>
+<span class="sd">        from nhlscrapi.games.game import GameKey, Game</span>
+<span class="sd">        from nhlscrapi.games.cumstats import Corsi</span>
+<span class="sd">        </span>
+<span class="sd">        gk = GameKey(2015, 2, 224)</span>
+<span class="sd">        g = Game(gk, { &#39;Corsi&#39;: Corsi() })</span>
+<span class="sd">        </span>
+<span class="sd">        # since play-by-play hasn&#39;t yet been loaded the RTSS report will</span>
+<span class="sd">        # be parsed and the Corsi computed for each team</span>
+<span class="sd">        print(g.cum_stats[&#39;Corsi&#39;].share())</span>
+<span class="sd">        </span>
+<span class="sd">        # load the rest of the reports</span>
+<span class="sd">        g.load_all()</span>
+<span class="sd">        </span>
+<span class="sd">        # report back the game&#39;s linesman</span>
+<span class="sd">        print(g.linesman)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">cum_stats</span> <span class="o">=</span> <span class="p">{}):</span>
+        
+        <span class="c"># conversion to GameKey from tuple allowed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">game_key</span> <span class="o">=</span> <span class="n">game_key</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;to_tuple&#39;</span><span class="p">)</span> <span class="k">else</span> <span class="n">GameKey</span><span class="p">(</span><span class="n">key_tup</span><span class="o">=</span><span class="n">game_key</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">toi</span> <span class="o">=</span> <span class="n">TOI</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game_key</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rosters</span> <span class="o">=</span> <span class="n">Rosters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game_key</span><span class="p">)</span>
+        <span class="c">#self.summary = GameSummary(game_key)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">face_off_comp</span> <span class="o">=</span> <span class="n">FaceOffComparison</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game_key</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">play_by_play</span> <span class="o">=</span> <span class="n">PlayByPlay</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game_key</span><span class="p">,</span> <span class="n">cum_stats</span><span class="p">)</span>
+  
+    
+  
+    <span class="k">def</span> <span class="nf">load_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Game.load_all"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.game.Game.load_all">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Force all reports to be loaded and parsed instead of lazy loading on demand.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: ``self`` or ``None`` if load fails</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toi</span><span class="o">.</span><span class="n">load_all</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rosters</span><span class="o">.</span><span class="n">load_all</span><span class="p">()</span>
+            <span class="c">#self.summary.load_all()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">play_by_play</span><span class="o">.</span><span class="n">load_all</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">face_off_comp</span><span class="o">.</span><span class="n">load_all</span><span class="p">()</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">None</span>
+  
+  
+    <span class="c">#########################################</span>
+    <span class="c">##</span>
+    <span class="c">## convenience wrapper properties</span>
+    <span class="c">##</span>
+    <span class="c">#########################################</span>
+    <span class="nd">@property</span></div>
+    <span class="k">def</span> <span class="nf">matchup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the game meta information displayed in report banners including team names,</span>
+<span class="sd">        final score, game date, location, and attendance. Data format is</span>
+<span class="sd">        </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">        </span>
+<span class="sd">            {</span>
+<span class="sd">                &#39;home&#39;: home,</span>
+<span class="sd">                &#39;away&#39;: away,</span>
+<span class="sd">                &#39;final&#39;: final,</span>
+<span class="sd">                &#39;attendance&#39;: att,</span>
+<span class="sd">                &#39;date&#39;: date,</span>
+<span class="sd">                &#39;location&#39;: loc</span>
+<span class="sd">            }</span>
+<span class="sd">            </span>
+<span class="sd">        :returns: matchup banner info</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">play_by_play</span><span class="o">.</span><span class="n">matchup</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">play_by_play</span><span class="o">.</span><span class="n">matchup</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">rosters</span><span class="o">.</span><span class="n">matchup</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rosters</span><span class="o">.</span><span class="n">matchup</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">toi</span><span class="o">.</span><span class="n">matchup</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">toi</span><span class="o">.</span><span class="n">matchup</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">face_off_comp</span><span class="o">.</span><span class="n">matchup</span>
+  
+  
+    <span class="c">#</span>
+    <span class="c"># play related</span>
+    <span class="c">#</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">plays</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: the plays from the game</span>
+<span class="sd">        :rtype: list</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">play_by_play</span><span class="o">.</span><span class="n">plays</span><span class="p">()</span>
+  
+  
+    <span class="c">#@property</span>
+    <span class="c">#def extractors(self):</span>
+    <span class="c">#    return self.play_by_play.extractors</span>
+    
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cum_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: the computed cumulative stats of :py:class:`.AccumulateStats` from play-by-play</span>
+<span class="sd">        :rtype: dict passed to ctor, values are type</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">play_by_play</span><span class="o">.</span><span class="n">compute_stats</span><span class="p">()</span>
+  
+  
+    <span class="c">#</span>
+    <span class="c"># personnel related</span>
+    <span class="c">#</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">home_skaters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: the skaters that dressed for the home team</span>
+<span class="sd">        :rtype: dict keyed by player number</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rosters</span><span class="o">.</span><span class="n">home_skaters</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">home_coach</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: coach for the home team</span>
+<span class="sd">        :rtype: string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rosters</span><span class="o">.</span><span class="n">home_coach</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">away_skaters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: the skaters that dressed for the away team</span>
+<span class="sd">        :rtype: dict keyed by player number</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rosters</span><span class="o">.</span><span class="n">away_skaters</span>
+  
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">away_coach</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: coach for the away team</span>
+<span class="sd">        :rtype: string</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rosters</span><span class="o">.</span><span class="n">away_coach</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">refs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: refs for the game</span>
+<span class="sd">        :rtype: dict ``{ number: &#39;name&#39; }``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rosters</span><span class="o">.</span><span class="n">refs</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">linesman</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: the linesman for the game</span>
+<span class="sd">        :rtype: dict ``{ number: &#39;name&#39; }``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rosters</span><span class="o">.</span><span class="n">linesman</span>
+  
+  
+    <span class="c">#</span>
+    <span class="c"># toi related</span>
+    <span class="c">#</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">home_toi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: TOI shift summary for skaters on the home team</span>
+<span class="sd">        :rtype: dict keyed by player number, value :py:class:`.ShiftSummary`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">toi</span><span class="o">.</span><span class="n">home_shift_summ</span>
+    
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">away_toi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: TOI shift summary for skaters on the away team</span>
+<span class="sd">        :rtype: dict keyed by player number, value :py:class:`.ShiftSummary`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">toi</span><span class="o">.</span><span class="n">away_shift_summ</span>
+    
+    
+    <span class="c">#</span>
+    <span class="c"># face off related</span>
+    <span class="c">#</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">home_fo_summ</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: home face off summary</span>
+<span class="sd">        :rtype: dict keyed by player number</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">face_off_comp</span><span class="o">.</span><span class="n">home_fo</span>
+        
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">away_fo_summ</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: away face off summary</span>
+<span class="sd">        :rtype: dict keyed by player number</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">face_off_comp</span><span class="o">.</span><span class="n">away_fo</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

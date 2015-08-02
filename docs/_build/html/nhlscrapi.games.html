@@ -1,0 +1,1558 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nhlscrapi.games package &mdash; nhlscrapi  documentation</title>
+    
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="nhlscrapi  documentation" href="index.html" />
+    <link rel="up" title="nhlscrapi package" href="nhlscrapi.html" />
+    <link rel="next" title="nhlscrapi.scrapr package" href="nhlscrapi.scrapr.html" />
+    <link rel="prev" title="nhlscrapi package" href="nhlscrapi.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="nhlscrapi-games-package">
+<h1>nhlscrapi.games package<a class="headerlink" href="#nhlscrapi-games-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-nhlscrapi.games.game">
+<span id="nhlscrapi-games-game-module"></span><h2>nhlscrapi.games.game module<a class="headerlink" href="#module-nhlscrapi.games.game" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nhlscrapi.games.game.Game">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.game.</code><code class="descname">Game</code><span class="sig-paren">(</span><em>game_key=None</em>, <em>cum_stats={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/game.html#Game"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.game.Game" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>This the primary interface to the collection of summary reports associated with every game. The
+supported reports include <a class="reference internal" href="#nhlscrapi.games.playbyplay.PlayByPlay" title="nhlscrapi.games.playbyplay.PlayByPlay"><code class="xref py py-class docutils literal"><span class="pre">PlayByPlay</span></code></a>, <a class="reference internal" href="#nhlscrapi.games.toi.TOI" title="nhlscrapi.games.toi.TOI"><code class="xref py py-class docutils literal"><span class="pre">TOI</span></code></a>, <a class="reference internal" href="#nhlscrapi.games.rosters.Rosters" title="nhlscrapi.games.rosters.Rosters"><code class="xref py py-class docutils literal"><span class="pre">Rosters</span></code></a>,
+and <a class="reference internal" href="#nhlscrapi.games.faceoffcomp.FaceOffComparison" title="nhlscrapi.games.faceoffcomp.FaceOffComparison"><code class="xref py py-class docutils literal"><span class="pre">FaceOffComparison</span></code></a>.</p>
+<p>Reports can be either lazy loaded at time of property calls or all loaded at once by calling <code class="docutils literal"><span class="pre">load_all()</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>game_key</strong> &#8211; either object <a class="reference internal" href="#nhlscrapi.games.game.GameKey" title="nhlscrapi.games.game.GameKey"><code class="xref py py-class docutils literal"><span class="pre">GameKey</span></code></a> or (season, game_type, game_num) tuple</li>
+<li><strong>cum_stats</strong> &#8211; dict, values are of type <a class="reference internal" href="#nhlscrapi.games.cumstats.AccumulateStats" title="nhlscrapi.games.cumstats.AccumulateStats"><code class="xref py py-class docutils literal"><span class="pre">AccumulateStats</span></code></a> to be collected in play-by-play</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="c">#</span>
+<span class="c"># example: using the Game object</span>
+<span class="c">#</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi.games.game</span> <span class="kn">import</span> <span class="n">GameKey</span><span class="p">,</span> <span class="n">Game</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi.games.cumstats</span> <span class="kn">import</span> <span class="n">Corsi</span>
+
+<span class="n">gk</span> <span class="o">=</span> <span class="n">GameKey</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">224</span><span class="p">)</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">Game</span><span class="p">(</span><span class="n">gk</span><span class="p">,</span> <span class="p">{</span> <span class="s">&#39;Corsi&#39;</span><span class="p">:</span> <span class="n">Corsi</span><span class="p">()</span> <span class="p">})</span>
+
+<span class="c"># since play-by-play hasn&#39;t yet been loaded the RTSS report will</span>
+<span class="c"># be parsed and the Corsi computed for each team</span>
+<span class="k">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s">&#39;Corsi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">share</span><span class="p">())</span>
+
+<span class="c"># load the rest of the reports</span>
+<span class="n">g</span><span class="o">.</span><span class="n">load_all</span><span class="p">()</span>
+
+<span class="c"># report back the game&#39;s linesman</span>
+<span class="k">print</span><span class="p">(</span><span class="n">g</span><span class="o">.</span><span class="n">linesman</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="attribute">
+<dt id="nhlscrapi.games.game.Game.away_coach">
+<code class="descname">away_coach</code><a class="headerlink" href="#nhlscrapi.games.game.Game.away_coach" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">coach for the away team</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.game.Game.away_fo_summ">
+<code class="descname">away_fo_summ</code><a class="headerlink" href="#nhlscrapi.games.game.Game.away_fo_summ" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">away face off summary</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict keyed by player number</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.game.Game.away_skaters">
+<code class="descname">away_skaters</code><a class="headerlink" href="#nhlscrapi.games.game.Game.away_skaters" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the skaters that dressed for the away team</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict keyed by player number</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.game.Game.away_toi">
+<code class="descname">away_toi</code><a class="headerlink" href="#nhlscrapi.games.game.Game.away_toi" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">TOI shift summary for skaters on the away team</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict keyed by player number, value <a class="reference internal" href="#nhlscrapi.games.toi.ShiftSummary" title="nhlscrapi.games.toi.ShiftSummary"><code class="xref py py-class docutils literal"><span class="pre">ShiftSummary</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.game.Game.cum_stats">
+<code class="descname">cum_stats</code><a class="headerlink" href="#nhlscrapi.games.game.Game.cum_stats" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the computed cumulative stats of <a class="reference internal" href="#nhlscrapi.games.cumstats.AccumulateStats" title="nhlscrapi.games.cumstats.AccumulateStats"><code class="xref py py-class docutils literal"><span class="pre">AccumulateStats</span></code></a> from play-by-play</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict passed to ctor, values are type</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.game.Game.home_coach">
+<code class="descname">home_coach</code><a class="headerlink" href="#nhlscrapi.games.game.Game.home_coach" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">coach for the home team</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.game.Game.home_fo_summ">
+<code class="descname">home_fo_summ</code><a class="headerlink" href="#nhlscrapi.games.game.Game.home_fo_summ" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">home face off summary</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict keyed by player number</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.game.Game.home_skaters">
+<code class="descname">home_skaters</code><a class="headerlink" href="#nhlscrapi.games.game.Game.home_skaters" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the skaters that dressed for the home team</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict keyed by player number</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.game.Game.home_toi">
+<code class="descname">home_toi</code><a class="headerlink" href="#nhlscrapi.games.game.Game.home_toi" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">TOI shift summary for skaters on the home team</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict keyed by player number, value <a class="reference internal" href="#nhlscrapi.games.toi.ShiftSummary" title="nhlscrapi.games.toi.ShiftSummary"><code class="xref py py-class docutils literal"><span class="pre">ShiftSummary</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.game.Game.linesman">
+<code class="descname">linesman</code><a class="headerlink" href="#nhlscrapi.games.game.Game.linesman" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the linesman for the game</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict <code class="docutils literal"><span class="pre">{</span> <span class="pre">number:</span> <span class="pre">'name'</span> <span class="pre">}</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.games.game.Game.load_all">
+<code class="descname">load_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/game.html#Game.load_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.game.Game.load_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Force all reports to be loaded and parsed instead of lazy loading on demand.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">self</span></code> or <code class="docutils literal"><span class="pre">None</span></code> if load fails</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.game.Game.matchup">
+<code class="descname">matchup</code><a class="headerlink" href="#nhlscrapi.games.game.Game.matchup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the game meta information displayed in report banners including team names,
+final score, game date, location, and attendance. Data format is</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&#39;home&#39;</span><span class="p">:</span> <span class="n">home</span><span class="p">,</span>
+    <span class="s">&#39;away&#39;</span><span class="p">:</span> <span class="n">away</span><span class="p">,</span>
+    <span class="s">&#39;final&#39;</span><span class="p">:</span> <span class="n">final</span><span class="p">,</span>
+    <span class="s">&#39;attendance&#39;</span><span class="p">:</span> <span class="n">att</span><span class="p">,</span>
+    <span class="s">&#39;date&#39;</span><span class="p">:</span> <span class="n">date</span><span class="p">,</span>
+    <span class="s">&#39;location&#39;</span><span class="p">:</span> <span class="n">loc</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">matchup banner info</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.game.Game.plays">
+<code class="descname">plays</code><a class="headerlink" href="#nhlscrapi.games.game.Game.plays" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the plays from the game</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">list</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.game.Game.refs">
+<code class="descname">refs</code><a class="headerlink" href="#nhlscrapi.games.game.Game.refs" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">refs for the game</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict <code class="docutils literal"><span class="pre">{</span> <span class="pre">number:</span> <span class="pre">'name'</span> <span class="pre">}</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.game.GameKey">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.game.</code><code class="descname">GameKey</code><span class="sig-paren">(</span><em>season=2008</em>, <em>game_type=2</em>, <em>game_num=1</em>, <em>key_tup=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/game.html#GameKey"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.game.GameKey" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Unique identifier for a game. See constants for acceptable seasons and game counts. The key can
+be initialized by setting key_tup or the set of season, game type and game number.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>season</strong> &#8211; the season number denoted by year season ends</li>
+<li><strong>game_type</strong> &#8211; enum, (1) pre season, (2) regular season or (3) playoffs</li>
+<li><strong>game_num</strong> &#8211; the index number of the game</li>
+<li><strong>key_tup</strong> &#8211; tuple (season, game_type, game_num)</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="nhlscrapi.games.game.GameKey.game_type">
+<code class="descname">game_type</code><a class="headerlink" href="#nhlscrapi.games.game.GameKey.game_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Code indicating pre season (1), regular season (2) or playoffs (3)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.game.GameKey.season">
+<code class="descname">season</code><a class="headerlink" href="#nhlscrapi.games.game.GameKey.season" title="Permalink to this definition">¶</a></dt>
+<dd><p>Season of the keyed game. Season year is denoted by when the season ends. See constants for acceptable
+range of seasons considered. Not all years have supported summary reports ... or any reports at all.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">int</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.games.game.GameKey.to_tuple">
+<code class="descname">to_tuple</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/game.html#GameKey.to_tuple"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.game.GameKey.to_tuple" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return tuple version of the game key</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">tuple(season, game_type, game_num)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nhlscrapi.games.playbyplay">
+<span id="nhlscrapi-games-playbyplay-module"></span><h2>nhlscrapi.games.playbyplay module<a class="headerlink" href="#module-nhlscrapi.games.playbyplay" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nhlscrapi.games.playbyplay.Play">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.playbyplay.</code><code class="descname">Play</code><span class="sig-paren">(</span><em>play_num=0</em>, <em>period=0</em>, <em>strength=0</em>, <em>time={'sec': 0</em>, <em>'min': 20}</em>, <em>vis_on_ice={}</em>, <em>home_on_ice={}</em>, <em>event=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/playbyplay.html#Play"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.playbyplay.Play" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Contains base level of state info about a given play.</p>
+<dl class="attribute">
+<dt id="nhlscrapi.games.playbyplay.Play.event">
+<code class="descname">event</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.playbyplay.Play.event" title="Permalink to this definition">¶</a></dt>
+<dd><p>An object that inherits from <a class="reference internal" href="#nhlscrapi.games.events.Event" title="nhlscrapi.games.events.Event"><code class="xref py py-class docutils literal"><span class="pre">Event</span></code></a> that contains other specifics related to
+the given type of play</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.playbyplay.Play.home_on_ice">
+<code class="descname">home_on_ice</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.playbyplay.Play.home_on_ice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Home skaters on the ice. <code class="docutils literal"><span class="pre">{</span> <span class="pre">num:</span> <span class="pre">[position,</span> <span class="pre">name]</span> <span class="pre">}</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.playbyplay.Play.period">
+<code class="descname">period</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.playbyplay.Play.period" title="Permalink to this definition">¶</a></dt>
+<dd><p>Current period</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.playbyplay.Play.play_num">
+<code class="descname">play_num</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.playbyplay.Play.play_num" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of player who made the play</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.playbyplay.Play.strength">
+<code class="descname">strength</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.playbyplay.Play.strength" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enum of type <code class="xref py py-class docutils literal"><span class="pre">Strength</span></code> indicating either even strength, shorthanded, or power play</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.playbyplay.Play.time">
+<code class="descname">time</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.playbyplay.Play.time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time remaining in the period</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.playbyplay.Play.vis_on_ice">
+<code class="descname">vis_on_ice</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.playbyplay.Play.vis_on_ice" title="Permalink to this definition">¶</a></dt>
+<dd><p>Visiting skaters on the ice. <code class="docutils literal"><span class="pre">{</span> <span class="pre">num:</span> <span class="pre">[position,</span> <span class="pre">name]</span> <span class="pre">}</span></code></p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.playbyplay.PlayByPlay">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.playbyplay.</code><code class="descname">PlayByPlay</code><span class="sig-paren">(</span><em>game_key</em>, <em>cum_stats={}</em>, <em>init_cs_teams=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/playbyplay.html#PlayByPlay"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.playbyplay.PlayByPlay" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.repscrwrap.RepScrWrap" title="nhlscrapi.games.repscrwrap.RepScrWrap"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.repscrwrap.RepScrWrap</span></code></a></p>
+<p>Aggregator of <a class="reference internal" href="#nhlscrapi.games.playbyplay.Play" title="nhlscrapi.games.playbyplay.Play"><code class="xref py py-class docutils literal"><span class="pre">Play</span></code></a> objects that maintains the play-by-play data for a given game. Allows for
+custom stats of type <a class="reference internal" href="#nhlscrapi.games.cumstats.AccumulateStats" title="nhlscrapi.games.cumstats.AccumulateStats"><code class="xref py py-class docutils literal"><span class="pre">AccumulateStats</span></code></a> to be computed for the game.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Example:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">nhlscrapi.games.game</span> <span class="kn">import</span> <span class="n">GameKey</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi.games.cumstats</span> <span class="kn">import</span> <span class="n">ShotCt</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi.games.playbyplay</span> <span class="kn">import</span> <span class="n">PlayByPlay</span>
+
+<span class="c"># define the game of interest and a stat accumulator</span>
+<span class="n">pbp</span> <span class="o">=</span> <span class="n">PlayByPlay</span><span class="p">(</span>
+    <span class="n">game_key</span><span class="o">=</span><span class="n">GameKey</span><span class="p">(</span><span class="mi">2015</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">224</span><span class="p">),</span>
+    <span class="n">cum_stats</span><span class="o">=</span><span class="p">{</span> <span class="s">&#39;ShotCount&#39;</span><span class="p">:</span> <span class="n">ShotCt</span><span class="p">()</span> <span class="p">}</span>
+<span class="p">)</span>
+
+<span class="c"># compute and print results</span>
+<span class="n">shot_cts</span> <span class="o">=</span> <span class="n">pbp</span><span class="o">.</span><span class="n">compute_stats</span><span class="p">()[</span><span class="s">&#39;ShotCount&#39;</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&#39;Final Score:     {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">shot_cts</span><span class="o">.</span><span class="n">total</span><span class="p">))</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="nhlscrapi.games.playbyplay.PlayByPlay.compute_stats">
+<code class="descname">compute_stats</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/playbyplay.html#PlayByPlay.compute_stats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.playbyplay.PlayByPlay.compute_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the stats defined in <code class="docutils literal"><span class="pre">self.cum_stats</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">collection of all computed <a class="reference internal" href="#nhlscrapi.games.cumstats.AccumulateStats" title="nhlscrapi.games.cumstats.AccumulateStats"><code class="xref py py-class docutils literal"><span class="pre">AccumulateStats</span></code></a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.playbyplay.PlayByPlay.cum_stats">
+<code class="descname">cum_stats</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.playbyplay.PlayByPlay.cum_stats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary of <a class="reference internal" href="#nhlscrapi.games.cumstats.AccumulateStats" title="nhlscrapi.games.cumstats.AccumulateStats"><code class="xref py py-class docutils literal"><span class="pre">AccumulateStats</span></code></a> to be computed</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.playbyplay.PlayByPlay.init_cs_teams">
+<code class="descname">init_cs_teams</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.playbyplay.PlayByPlay.init_cs_teams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean, (default) True if the <a class="reference internal" href="#nhlscrapi.games.cumstats.AccumulateStats" title="nhlscrapi.games.cumstats.AccumulateStats"><code class="xref py py-class docutils literal"><span class="pre">AccumulateStats</span></code></a> objects should have team names initialized.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.playbyplay.PlayByPlay.plays">
+<code class="descname">plays</code><a class="headerlink" href="#nhlscrapi.games.playbyplay.PlayByPlay.plays" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of <a class="reference internal" href="#nhlscrapi.games.playbyplay.Play" title="nhlscrapi.games.playbyplay.Play"><code class="xref py py-class docutils literal"><span class="pre">Play</span></code></a> objects.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.playbyplay.Strength">
+<code class="descclassname">nhlscrapi.games.playbyplay.</code><code class="descname">Strength</code><a class="headerlink" href="#nhlscrapi.games.playbyplay.Strength" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enum indicating play strength.</p>
+<p>alias of <code class="xref py py-class docutils literal"><span class="pre">Enum</span></code></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-nhlscrapi.games.rosters">
+<span id="nhlscrapi-games-rosters-module"></span><h2>nhlscrapi.games.rosters module<a class="headerlink" href="#module-nhlscrapi.games.rosters" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nhlscrapi.games.rosters.Rosters">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.rosters.</code><code class="descname">Rosters</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/rosters.html#Rosters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.rosters.Rosters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.repscrwrap.RepScrWrap" title="nhlscrapi.games.repscrwrap.RepScrWrap"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.repscrwrap.RepScrWrap</span></code></a></p>
+<p>Roster report contains all players that dressed for the game, healthy scratches, coaches and officials. The
+roster for either home or away is returned as</p>
+<div class="code python highlight-python"><div class="highlight"><pre>{
+    player_num: {
+        &#39;pos&#39;: &#39;position&#39;,
+        &#39;name&#39;: &#39;player name&#39;
+    {
+}
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>game_key</strong> &#8211; unique game identifier of type <a class="reference internal" href="#nhlscrapi.games.game.GameKey" title="nhlscrapi.games.game.GameKey"><code class="xref py py-class docutils literal"><span class="pre">GameKey</span></code></a></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="nhlscrapi.games.rosters.Rosters.away_coach">
+<code class="descname">away_coach</code><a class="headerlink" href="#nhlscrapi.games.rosters.Rosters.away_coach" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the name of the away coach</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.rosters.Rosters.away_scratches">
+<code class="descname">away_scratches</code><a class="headerlink" href="#nhlscrapi.games.rosters.Rosters.away_scratches" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">all away healthy scratches</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.rosters.Rosters.away_skaters">
+<code class="descname">away_skaters</code><a class="headerlink" href="#nhlscrapi.games.rosters.Rosters.away_skaters" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">all away skaters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.rosters.Rosters.home_coach">
+<code class="descname">home_coach</code><a class="headerlink" href="#nhlscrapi.games.rosters.Rosters.home_coach" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the name of the home coach</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.rosters.Rosters.home_scratches">
+<code class="descname">home_scratches</code><a class="headerlink" href="#nhlscrapi.games.rosters.Rosters.home_scratches" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">all home healthy scratches</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.rosters.Rosters.home_skaters">
+<code class="descname">home_skaters</code><a class="headerlink" href="#nhlscrapi.games.rosters.Rosters.home_skaters" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">all home skaters</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.rosters.Rosters.linesman">
+<code class="descname">linesman</code><a class="headerlink" href="#nhlscrapi.games.rosters.Rosters.linesman" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the linesman for the game</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict, <code class="docutils literal"><span class="pre">{</span> <span class="pre">num:</span> <span class="pre">'lm_name'</span> <span class="pre">}</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.rosters.Rosters.refs">
+<code class="descname">refs</code><a class="headerlink" href="#nhlscrapi.games.rosters.Rosters.refs" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the refs for the game</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict, <code class="docutils literal"><span class="pre">{</span> <span class="pre">num:</span> <span class="pre">'ref_name'</span> <span class="pre">}</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nhlscrapi.games.toi">
+<span id="nhlscrapi-games-toi-module"></span><h2>nhlscrapi.games.toi module<a class="headerlink" href="#module-nhlscrapi.games.toi" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nhlscrapi.games.toi.ShiftSummary">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.toi.</code><code class="descname">ShiftSummary</code><span class="sig-paren">(</span><em>player_num=0</em>, <em>player_name={}</em>, <em>shifts=[]</em>, <em>by_period={}</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/toi.html#ShiftSummary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.toi.ShiftSummary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Player&#8217;s shift summary</p>
+<dl class="attribute">
+<dt id="nhlscrapi.games.toi.ShiftSummary.by_period">
+<code class="descname">by_period</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.toi.ShiftSummary.by_period" title="Permalink to this definition">¶</a></dt>
+<dd><p>Summary table by period in the form</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&#39;period&#39;</span><span class="p">:</span> <span class="n">period_num</span><span class="p">,</span>
+    <span class="s">&#39;shifts&#39;</span><span class="p">:</span> <span class="n">shift_count</span><span class="p">,</span>
+    <span class="s">&#39;avg&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="nb">min</span><span class="p">,</span> <span class="s">&#39;sec&#39;</span><span class="p">:</span> <span class="n">sec</span> <span class="p">},</span>
+    <span class="s">&#39;toi&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="nb">min</span><span class="p">,</span> <span class="s">&#39;sec&#39;</span><span class="p">:</span> <span class="n">sec</span> <span class="p">},</span>
+    <span class="s">&#39;ev_toi&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="nb">min</span><span class="p">,</span> <span class="s">&#39;sec&#39;</span><span class="p">:</span> <span class="n">sec</span> <span class="p">},</span>
+    <span class="s">&#39;pp_toi&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="nb">min</span><span class="p">,</span> <span class="s">&#39;sec&#39;</span><span class="p">:</span> <span class="n">sec</span> <span class="p">},</span>
+    <span class="s">&#39;sh_toi&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="nb">min</span><span class="p">,</span> <span class="s">&#39;sec&#39;</span><span class="p">:</span> <span class="n">sec</span> <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.toi.ShiftSummary.game_summ">
+<code class="descname">game_summ</code><a class="headerlink" href="#nhlscrapi.games.toi.ShiftSummary.game_summ" title="Permalink to this definition">¶</a></dt>
+<dd><p>Time on ice summary for the game</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dict, same form as <code class="docutils literal"><span class="pre">self.by_period</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.toi.ShiftSummary.player_name">
+<code class="descname">player_name</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.toi.ShiftSummary.player_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Player&#8217;s name: <code class="docutils literal"><span class="pre">{</span> <span class="pre">'first':</span> <span class="pre">'',</span> <span class="pre">'last':</span> <span class="pre">''</span> <span class="pre">}</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.toi.ShiftSummary.player_num">
+<code class="descname">player_num</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.toi.ShiftSummary.player_num" title="Permalink to this definition">¶</a></dt>
+<dd><p>The number of the player</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.toi.ShiftSummary.shifts">
+<code class="descname">shifts</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.toi.ShiftSummary.shifts" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of all shifts in the form</p>
+<div class="code python highlight-python"><div class="highlight"><pre>[
+    {
+        &#39;shift_num&#39;: shift_num,
+        &#39;period&#39;: period_num,
+        &#39;start&#39;: start_time     # (elapsed)
+        &#39;end&#39;: end_time         # (elapsed)
+        &#39;dur&#39;: length_of_shift,
+        &#39;event&#39;: EventType.Goal or EventType.Penalty
+    }
+]
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.toi.TOI">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.toi.</code><code class="descname">TOI</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/toi.html#TOI"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.toi.TOI" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.repscrwrap.RepScrWrap" title="nhlscrapi.games.repscrwrap.RepScrWrap"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.repscrwrap.RepScrWrap</span></code></a></p>
+<p>Time on ice summary report. Produces the time on ice per shift by player for both home and away.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>game_key</strong> &#8211; unique game identifier of type <a class="reference internal" href="#nhlscrapi.games.game.GameKey" title="nhlscrapi.games.game.GameKey"><code class="xref py py-class docutils literal"><span class="pre">GameKey</span></code></a></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="nhlscrapi.games.toi.TOI.all_toi">
+<code class="descname">all_toi</code><a class="headerlink" href="#nhlscrapi.games.toi.TOI.all_toi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the <code class="xref py py-class docutils literal"><span class="pre">scrapr.toi.ShiftSummary</span></code> by player for the home/away team</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict <code class="docutils literal"><span class="pre">{</span> <span class="pre">'home/away':</span> <span class="pre">{</span> <span class="pre">player_num:</span> <span class="pre">shift_summary_obj</span> <span class="pre">}</span> <span class="pre">}</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.toi.TOI.away_shift_summ">
+<code class="descname">away_shift_summ</code><a class="headerlink" href="#nhlscrapi.games.toi.TOI.away_shift_summ" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference internal" href="#nhlscrapi.games.toi.ShiftSummary" title="nhlscrapi.games.toi.ShiftSummary"><code class="xref py py-class docutils literal"><span class="pre">ShiftSummary</span></code></a> by player for the away team</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict <code class="docutils literal"><span class="pre">{</span> <span class="pre">player_num:</span> <span class="pre">shift_summary_obj</span> <span class="pre">}</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.toi.TOI.home_shift_summ">
+<code class="descname">home_shift_summ</code><a class="headerlink" href="#nhlscrapi.games.toi.TOI.home_shift_summ" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><a class="reference internal" href="#nhlscrapi.games.toi.ShiftSummary" title="nhlscrapi.games.toi.ShiftSummary"><code class="xref py py-class docutils literal"><span class="pre">ShiftSummary</span></code></a> by player for the home team</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict <code class="docutils literal"><span class="pre">{</span> <span class="pre">player_num:</span> <span class="pre">shift_summary_obj</span> <span class="pre">}</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.games.toi.TOI.load_all">
+<code class="descname">load_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/toi.html#TOI.load_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.toi.TOI.load_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads all parts of the report.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">self</span></code> or <code class="docutils literal"><span class="pre">None</span></code> if load fails</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nhlscrapi.games.faceoffcomp">
+<span id="nhlscrapi-games-faceoffcomp-module"></span><h2>nhlscrapi.games.faceoffcomp module<a class="headerlink" href="#module-nhlscrapi.games.faceoffcomp" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nhlscrapi.games.faceoffcomp.FaceOffComparison">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.faceoffcomp.</code><code class="descname">FaceOffComparison</code><span class="sig-paren">(</span><em>game_key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/faceoffcomp.html#FaceOffComparison"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.faceoffcomp.FaceOffComparison" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.repscrwrap.RepScrWrap" title="nhlscrapi.games.repscrwrap.RepScrWrap"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.repscrwrap.RepScrWrap</span></code></a></p>
+<p>Face-off Comparison and summary report. Produces the by player and head-to-head matchup face off totals
+by zone and overall. For either home or away the full summary data takes the following form</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="n">player_num</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&#39;off/def/neut/all&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;won&#39;</span><span class="p">:</span> <span class="n">won</span><span class="p">,</span> <span class="s">&#39;total&#39;</span><span class="p">:</span> <span class="n">total</span> <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>game_key</strong> &#8211; unique game identifier of type <a class="reference internal" href="#nhlscrapi.games.game.GameKey" title="nhlscrapi.games.game.GameKey"><code class="xref py py-class docutils literal"><span class="pre">GameKey</span></code></a></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="nhlscrapi.games.faceoffcomp.FaceOffComparison.away_fo">
+<code class="descname">away_fo</code><a class="headerlink" href="#nhlscrapi.games.faceoffcomp.FaceOffComparison.away_fo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property that returns the full by player face-off summary for the away team.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dict keyed by player num</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.faceoffcomp.FaceOffComparison.by_zone">
+<code class="descname">by_zone</code><a class="headerlink" href="#nhlscrapi.games.faceoffcomp.FaceOffComparison.by_zone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the faceoff win/total breakdown by zone for home and away as</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="p">{</span> <span class="s">&#39;home/away&#39;</span><span class="p">:</span> <span class="p">{</span>
+    <span class="s">&#39;off/def/neut/all&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;won&#39;</span><span class="p">:</span> <span class="n">won</span><span class="p">,</span> <span class="s">&#39;total&#39;</span><span class="p">:</span> <span class="n">total</span> <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.faceoffcomp.FaceOffComparison.fo_pct">
+<code class="descname">fo_pct</code><a class="headerlink" href="#nhlscrapi.games.faceoffcomp.FaceOffComparison.fo_pct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the by team overall face-off win %.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dict, <code class="docutils literal"><span class="pre">{</span> <span class="pre">'home':</span> <span class="pre">%,</span> <span class="pre">'away':</span> <span class="pre">%</span> <span class="pre">}</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.faceoffcomp.FaceOffComparison.fo_pct_by_zone">
+<code class="descname">fo_pct_by_zone</code><a class="headerlink" href="#nhlscrapi.games.faceoffcomp.FaceOffComparison.fo_pct_by_zone" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the by team face-off win % by zone. Format is</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dict <code class="docutils literal"><span class="pre">{</span> <span class="pre">'home/away':</span> <span class="pre">{</span> <span class="pre">'off/def/neut':</span> <span class="pre">%</span> <span class="pre">}</span> <span class="pre">}</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.games.faceoffcomp.FaceOffComparison.head_to_head">
+<code class="descname">head_to_head</code><span class="sig-paren">(</span><em>home_num</em>, <em>away_num</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/faceoffcomp.html#FaceOffComparison.head_to_head"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.faceoffcomp.FaceOffComparison.head_to_head" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the head-to-head face-off outcomes between two players.
+If the matchup didn&#8217;t happen, <code class="docutils literal"><span class="pre">{</span> <span class="pre">}</span></code> is returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>home_num</strong> &#8211; the number of the home team player</li>
+<li><strong>away_num</strong> &#8211; the number of the away team player</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">dict, either <code class="docutils literal"><span class="pre">{</span> <span class="pre">}</span></code> or the following</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&#39;home/away&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">&#39;off/def/neut/all&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="s">&#39;won&#39;</span><span class="p">:</span> <span class="n">won</span><span class="p">,</span> <span class="s">&#39;total&#39;</span><span class="p">:</span> <span class="n">total</span> <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.faceoffcomp.FaceOffComparison.home_fo">
+<code class="descname">home_fo</code><a class="headerlink" href="#nhlscrapi.games.faceoffcomp.FaceOffComparison.home_fo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Property that returns the full by player face-off summary for the home team.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dict keyed by player num</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.faceoffcomp.FaceOffComparison.team_totals">
+<code class="descname">team_totals</code><a class="headerlink" href="#nhlscrapi.games.faceoffcomp.FaceOffComparison.team_totals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the overall faceoff win/total breakdown for home and away as</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dict, <code class="docutils literal"><span class="pre">{</span> <span class="pre">'home/away':</span> <span class="pre">{</span> <span class="pre">'won':</span> <span class="pre">won,</span> <span class="pre">'total':</span> <span class="pre">total</span> <span class="pre">}</span> <span class="pre">}</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nhlscrapi.games.cumstats">
+<span id="nhlscrapi-games-cumstats-module"></span><h2>nhlscrapi.games.cumstats module<a class="headerlink" href="#module-nhlscrapi.games.cumstats" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nhlscrapi.games.cumstats.AccumulateStats">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.cumstats.</code><code class="descname">AccumulateStats</code><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#AccumulateStats"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.AccumulateStats" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Base class for accumulator classes. These classes keep tallies of specified events and
+are updated each time a play from <a class="reference internal" href="#nhlscrapi.games.playbyplay.PlayByPlay" title="nhlscrapi.games.playbyplay.PlayByPlay"><code class="xref py py-class docutils literal"><span class="pre">PlayByPlay</span></code></a> is processed. Examples
+include <a class="reference internal" href="#nhlscrapi.games.cumstats.ShotCt" title="nhlscrapi.games.cumstats.ShotCt"><code class="xref py py-class docutils literal"><span class="pre">ShotCt</span></code></a> and <a class="reference internal" href="#nhlscrapi.games.cumstats.Score" title="nhlscrapi.games.cumstats.Score"><code class="xref py py-class docutils literal"><span class="pre">Score</span></code></a>. This class is not intended to be
+used directly.</p>
+<dl class="method">
+<dt id="nhlscrapi.games.cumstats.AccumulateStats.initialize_teams">
+<code class="descname">initialize_teams</code><span class="sig-paren">(</span><em>teams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#AccumulateStats.initialize_teams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.AccumulateStats.initialize_teams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.games.cumstats.AccumulateStats.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>play</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#AccumulateStats.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.AccumulateStats.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the accumulator with the current play</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">new tally, <code class="docutils literal"><span class="pre">{</span> <span class="pre">'period':</span> <span class="pre">per,</span> <span class="pre">'time':</span> <span class="pre">clock,</span> <span class="pre">'team':</span> <span class="pre">cumul,</span> <span class="pre">'play':</span> <span class="pre">play</span> <span class="pre">}</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.cumstats.Corsi">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.cumstats.</code><code class="descname">Corsi</code><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#Corsi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.Corsi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.cumstats.EvenStShotAttCt" title="nhlscrapi.games.cumstats.EvenStShotAttCt"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.cumstats.EvenStShotAttCt</span></code></a></p>
+<p>Tallies even strength shots on goal for each team. Increments if</p>
+<blockquote>
+<div><ul class="simple">
+<li>the play event inherits from <a class="reference internal" href="#nhlscrapi.games.events.Shot" title="nhlscrapi.games.events.Shot"><code class="xref py py-class docutils literal"><span class="pre">Shot</span></code></a></li>
+<li>play happened at even strength</li>
+</ul>
+</div></blockquote>
+<p>Defined more for convention/nostalgia. Same as <a class="reference internal" href="#nhlscrapi.games.cumstats.EvenStShotAttCt" title="nhlscrapi.games.cumstats.EvenStShotAttCt"><code class="xref py py-class docutils literal"><span class="pre">EvenStShotAttCt</span></code></a></p>
+<dl class="method">
+<dt id="nhlscrapi.games.cumstats.Corsi.share">
+<code class="descname">share</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#Corsi.share"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.Corsi.share" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Cori-share (% of shot attempts) for each team</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">dict, <code class="docutils literal"><span class="pre">{</span> <span class="pre">'home_name':</span> <span class="pre">%,</span> <span class="pre">'away_name':</span> <span class="pre">%</span> <span class="pre">}</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.cumstats.EvenStShotAttCt">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.cumstats.</code><code class="descname">EvenStShotAttCt</code><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#EvenStShotAttCt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.EvenStShotAttCt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.cumstats.ShotEventTallyBase" title="nhlscrapi.games.cumstats.ShotEventTallyBase"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.cumstats.ShotEventTallyBase</span></code></a></p>
+<p>Tallies even strength shots on goal for each team. Increments if</p>
+<blockquote>
+<div><ul class="simple">
+<li>the play event inherits from <a class="reference internal" href="#nhlscrapi.games.events.ShotAttempt" title="nhlscrapi.games.events.ShotAttempt"><code class="xref py py-class docutils literal"><span class="pre">ShotAttempt</span></code></a></li>
+<li>play happened at even strength</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.cumstats.EvenStShotCt">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.cumstats.</code><code class="descname">EvenStShotCt</code><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#EvenStShotCt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.EvenStShotCt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.cumstats.ShotEventTallyBase" title="nhlscrapi.games.cumstats.ShotEventTallyBase"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.cumstats.ShotEventTallyBase</span></code></a></p>
+<p>Tallies even strength shots on goal for each team. Increments if</p>
+<blockquote>
+<div><ul class="simple">
+<li>the play event inherits from <a class="reference internal" href="#nhlscrapi.games.events.Shot" title="nhlscrapi.games.events.Shot"><code class="xref py py-class docutils literal"><span class="pre">Shot</span></code></a></li>
+<li>play happened at even strength</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.cumstats.Fenwick">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.cumstats.</code><code class="descname">Fenwick</code><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#Fenwick"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.Fenwick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.cumstats.ShotEventTallyBase" title="nhlscrapi.games.cumstats.ShotEventTallyBase"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.cumstats.ShotEventTallyBase</span></code></a></p>
+<p>Tallies if a goal is scored. Also tracks shootout goals. Increments if</p>
+<ul class="simple">
+<li>the play event inherits from <a class="reference internal" href="#nhlscrapi.games.events.ShotAttempt" title="nhlscrapi.games.events.ShotAttempt"><code class="xref py py-class docutils literal"><span class="pre">ShotAttempt</span></code></a></li>
+<li>the play event does not inherit from <a class="reference internal" href="#nhlscrapi.games.events.Block" title="nhlscrapi.games.events.Block"><code class="xref py py-class docutils literal"><span class="pre">Block</span></code></a></li>
+<li>play happened at even strength</li>
+</ul>
+<dl class="method">
+<dt id="nhlscrapi.games.cumstats.Fenwick.initialize_teams">
+<code class="descname">initialize_teams</code><span class="sig-paren">(</span><em>teams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#Fenwick.initialize_teams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.Fenwick.initialize_teams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.games.cumstats.Fenwick.share">
+<code class="descname">share</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#Fenwick.share"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.Fenwick.share" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">The Fenwick-share (% of unblocked even strength shot attempts) for each team</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict, <code class="docutils literal"><span class="pre">{</span> <span class="pre">'home_name':</span> <span class="pre">%,</span> <span class="pre">'away_name':</span> <span class="pre">%</span> <span class="pre">}</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.games.cumstats.Fenwick.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>play</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#Fenwick.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.Fenwick.update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.cumstats.Score">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.cumstats.</code><code class="descname">Score</code><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#Score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.Score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.cumstats.ShotEventTallyBase" title="nhlscrapi.games.cumstats.ShotEventTallyBase"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.cumstats.ShotEventTallyBase</span></code></a></p>
+<p>Tallies if a goal is scored. Also tracks shootout goals. Increments if</p>
+<ul class="simple">
+<li>the play event inherits from <a class="reference internal" href="#nhlscrapi.games.events.Goal" title="nhlscrapi.games.events.Goal"><code class="xref py py-class docutils literal"><span class="pre">Goal</span></code></a></li>
+<li>the play event inherits from <a class="reference internal" href="#nhlscrapi.games.events.ShootOutGoal" title="nhlscrapi.games.events.ShootOutGoal"><code class="xref py py-class docutils literal"><span class="pre">ShootOutGoal</span></code></a></li>
+</ul>
+<dl class="method">
+<dt id="nhlscrapi.games.cumstats.Score.initialize_teams">
+<code class="descname">initialize_teams</code><span class="sig-paren">(</span><em>teams</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#Score.initialize_teams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.Score.initialize_teams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.games.cumstats.Score.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>play</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#Score.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.Score.update" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.cumstats.ShootOut">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.cumstats.</code><code class="descname">ShootOut</code><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#ShootOut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.ShootOut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.cumstats.ShotEventTallyBase" title="nhlscrapi.games.cumstats.ShotEventTallyBase"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.cumstats.ShotEventTallyBase</span></code></a></p>
+<p>Tallies shootout goals. Increments if</p>
+<blockquote>
+<div><ul class="simple">
+<li>the play event inherits from <a class="reference internal" href="#nhlscrapi.games.events.ShootOutGoal" title="nhlscrapi.games.events.ShootOutGoal"><code class="xref py py-class docutils literal"><span class="pre">ShootOutGoal</span></code></a></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.cumstats.ShotAttemptCt">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.cumstats.</code><code class="descname">ShotAttemptCt</code><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#ShotAttemptCt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.ShotAttemptCt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.cumstats.ShotEventTallyBase" title="nhlscrapi.games.cumstats.ShotEventTallyBase"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.cumstats.ShotEventTallyBase</span></code></a></p>
+<p>Tallies even strength shots on goal for each team. Increments if</p>
+<blockquote>
+<div><ul class="simple">
+<li>the play event inherits from <a class="reference internal" href="#nhlscrapi.games.events.ShotAttempt" title="nhlscrapi.games.events.ShotAttempt"><code class="xref py py-class docutils literal"><span class="pre">ShotAttempt</span></code></a></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.cumstats.ShotCt">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.cumstats.</code><code class="descname">ShotCt</code><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#ShotCt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.ShotCt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.cumstats.ShotEventTallyBase" title="nhlscrapi.games.cumstats.ShotEventTallyBase"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.cumstats.ShotEventTallyBase</span></code></a></p>
+<p>Tallies shots on goal for each team. Increments if</p>
+<blockquote>
+<div><ul class="simple">
+<li>the play event inherits from <a class="reference internal" href="#nhlscrapi.games.events.Shot" title="nhlscrapi.games.events.Shot"><code class="xref py py-class docutils literal"><span class="pre">Shot</span></code></a></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.cumstats.ShotEventTallyBase">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.cumstats.</code><code class="descname">ShotEventTallyBase</code><span class="sig-paren">(</span><em>count_play</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#ShotEventTallyBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.ShotEventTallyBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.cumstats.TeamIncrementor" title="nhlscrapi.games.cumstats.TeamIncrementor"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.cumstats.TeamIncrementor</span></code></a></p>
+<p>Base class for all shot attempt based events</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.cumstats.TeamIncrementor">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.cumstats.</code><code class="descname">TeamIncrementor</code><span class="sig-paren">(</span><em>get_team=None</em>, <em>count_play=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#TeamIncrementor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.TeamIncrementor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.cumstats.AccumulateStats" title="nhlscrapi.games.cumstats.AccumulateStats"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.cumstats.AccumulateStats</span></code></a></p>
+<p>Accumulator base class for team vs team stats such as score, shot count et c.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>get_team</strong> &#8211; function, takes a play and returns the team associated with it</li>
+<li><strong>count_play</strong> &#8211; function, takes a play and returns True if it is a tally for the given accumulator&#8217;s definition.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="nhlscrapi.games.cumstats.TeamIncrementor.tally">
+<code class="descname">tally</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.cumstats.TeamIncrementor.tally" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of plays that lead to tallies, i.e. increments of the stat accumulator. E.g. a goal or shot.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.games.cumstats.TeamIncrementor.update">
+<code class="descname">update</code><span class="sig-paren">(</span><em>play</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/cumstats.html#TeamIncrementor.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.cumstats.TeamIncrementor.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the accumulator with the current play</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">new tally</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict, <code class="docutils literal"><span class="pre">{</span> <span class="pre">'period':</span> <span class="pre">per,</span> <span class="pre">'time':</span> <span class="pre">clock,</span> <span class="pre">'team':</span> <span class="pre">cumul,</span> <span class="pre">'play':</span> <span class="pre">play</span> <span class="pre">}</span></code></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-nhlscrapi.games.events">
+<span id="nhlscrapi-games-events-module"></span><h2>nhlscrapi.games.events module<a class="headerlink" href="#module-nhlscrapi.games.events" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nhlscrapi.games.events.Block">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.events.</code><code class="descname">Block</code><a class="reference internal" href="_modules/nhlscrapi/games/events.html#Block"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.Block" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.events.ShotAttempt" title="nhlscrapi.games.events.ShotAttempt"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.events.ShotAttempt</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.events.Event">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.events.</code><code class="descname">Event</code><span class="sig-paren">(</span><em>event_type=0</em>, <em>desc=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/events.html#Event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.Event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Base class for event codes in the RTSS play-by-play reports</p>
+<dl class="attribute">
+<dt id="nhlscrapi.games.events.Event.desc">
+<code class="descname">desc</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.events.Event.desc" title="Permalink to this definition">¶</a></dt>
+<dd><p>The RTSS description of the play.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.events.Event.event_type">
+<code class="descname">event_type</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.events.Event.event_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <code class="xref py py-class docutils literal"><span class="pre">EventType</span></code> enum values corresponding to the event.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.events.EventFactory">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.events.</code><code class="descname">EventFactory</code><a class="reference internal" href="_modules/nhlscrapi/games/events.html#EventFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.EventFactory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Factory for creating event objects corresponding to the different types of plays (events) in RTSS play by play data.
+Constructor selected based upon the event enum <code class="xref py py-class docutils literal"><span class="pre">EventType.Events</span></code> passed.</p>
+<dl class="staticmethod">
+<dt id="nhlscrapi.games.events.EventFactory.Create">
+<em class="property">static </em><code class="descname">Create</code><span class="sig-paren">(</span><em>event_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/events.html#EventFactory.Create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.EventFactory.Create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Factory method creates objects derived from :py:class`.Event` with class name matching the :py:class`.EventType`.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>event_type</strong> &#8211; number for type of event</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">constructed event corresponding to <code class="docutils literal"><span class="pre">event_type</span></code></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><a class="reference internal" href="#nhlscrapi.games.events.Event" title="nhlscrapi.games.events.Event"><code class="xref py py-class docutils literal"><span class="pre">Event</span></code></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.events.EventFactory.event_list">
+<code class="descname">event_list</code><em class="property"> = [&lt;class 'nhlscrapi.games.events.Event'&gt;, &lt;class 'nhlscrapi.games.events.ShotAttempt'&gt;, &lt;class 'nhlscrapi.games.events.Shot'&gt;, &lt;class 'nhlscrapi.games.events.Goal'&gt;, &lt;class 'nhlscrapi.games.events.Miss'&gt;, &lt;class 'nhlscrapi.games.events.Block'&gt;, &lt;class 'nhlscrapi.games.events.Hit'&gt;, &lt;class 'nhlscrapi.games.events.FaceOff'&gt;, &lt;class 'nhlscrapi.games.events.Stoppage'&gt;, &lt;class 'nhlscrapi.games.events.PeriodEnd'&gt;, &lt;class 'nhlscrapi.games.events.GameEnd'&gt;, &lt;class 'nhlscrapi.games.events.ShootOutEnd'&gt;, &lt;class 'nhlscrapi.games.events.Penalty'&gt;, &lt;class 'nhlscrapi.games.events.Turnover'&gt;, &lt;class 'nhlscrapi.games.events.Takeaway'&gt;, &lt;class 'nhlscrapi.games.events.Giveaway'&gt;, &lt;class 'nhlscrapi.games.events.ShootOutAtt'&gt;, &lt;class 'nhlscrapi.games.events.ShootOutGoal'&gt;]</em><a class="headerlink" href="#nhlscrapi.games.events.EventFactory.event_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of available events loaded dynamically by following the subclass structure of <a class="reference internal" href="#nhlscrapi.games.events.Event" title="nhlscrapi.games.events.Event"><code class="xref py py-class docutils literal"><span class="pre">Event</span></code></a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.events.EventType">
+<code class="descclassname">nhlscrapi.games.events.</code><code class="descname">EventType</code><a class="headerlink" href="#nhlscrapi.games.events.EventType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Enum indicating event type.</p>
+<p>alias of <code class="xref py py-class docutils literal"><span class="pre">Enum</span></code></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.events.FaceOff">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.events.</code><code class="descname">FaceOff</code><a class="reference internal" href="_modules/nhlscrapi/games/events.html#FaceOff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.FaceOff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.events.Event" title="nhlscrapi.games.events.Event"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.events.Event</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.events.GameEnd">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.events.</code><code class="descname">GameEnd</code><a class="reference internal" href="_modules/nhlscrapi/games/events.html#GameEnd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.GameEnd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.events.Stoppage" title="nhlscrapi.games.events.Stoppage"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.events.Stoppage</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.events.Giveaway">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.events.</code><code class="descname">Giveaway</code><a class="reference internal" href="_modules/nhlscrapi/games/events.html#Giveaway"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.Giveaway" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.events.Turnover" title="nhlscrapi.games.events.Turnover"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.events.Turnover</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.events.Goal">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.events.</code><code class="descname">Goal</code><a class="reference internal" href="_modules/nhlscrapi/games/events.html#Goal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.Goal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.events.Shot" title="nhlscrapi.games.events.Shot"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.events.Shot</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.events.Hit">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.events.</code><code class="descname">Hit</code><a class="reference internal" href="_modules/nhlscrapi/games/events.html#Hit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.Hit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.events.Event" title="nhlscrapi.games.events.Event"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.events.Event</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.events.Miss">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.events.</code><code class="descname">Miss</code><a class="reference internal" href="_modules/nhlscrapi/games/events.html#Miss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.Miss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.events.ShotAttempt" title="nhlscrapi.games.events.ShotAttempt"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.events.ShotAttempt</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.events.Penalty">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.events.</code><code class="descname">Penalty</code><a class="reference internal" href="_modules/nhlscrapi/games/events.html#Penalty"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.Penalty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.events.Event" title="nhlscrapi.games.events.Event"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.events.Event</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.events.PeriodEnd">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.events.</code><code class="descname">PeriodEnd</code><a class="reference internal" href="_modules/nhlscrapi/games/events.html#PeriodEnd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.PeriodEnd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.events.Stoppage" title="nhlscrapi.games.events.Stoppage"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.events.Stoppage</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.events.ShootOutAtt">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.events.</code><code class="descname">ShootOutAtt</code><span class="sig-paren">(</span><em>event_type=12</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/events.html#ShootOutAtt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.ShootOutAtt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.events.Event" title="nhlscrapi.games.events.Event"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.events.Event</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.events.ShootOutEnd">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.events.</code><code class="descname">ShootOutEnd</code><a class="reference internal" href="_modules/nhlscrapi/games/events.html#ShootOutEnd"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.ShootOutEnd" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.events.Stoppage" title="nhlscrapi.games.events.Stoppage"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.events.Stoppage</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.events.ShootOutGoal">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.events.</code><code class="descname">ShootOutGoal</code><a class="reference internal" href="_modules/nhlscrapi/games/events.html#ShootOutGoal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.ShootOutGoal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.events.ShootOutAtt" title="nhlscrapi.games.events.ShootOutAtt"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.events.ShootOutAtt</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.events.Shot">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.events.</code><code class="descname">Shot</code><a class="reference internal" href="_modules/nhlscrapi/games/events.html#Shot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.Shot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.events.ShotAttempt" title="nhlscrapi.games.events.ShotAttempt"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.events.ShotAttempt</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.events.ShotAttempt">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.events.</code><code class="descname">ShotAttempt</code><span class="sig-paren">(</span><em>event_type=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/events.html#ShotAttempt"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.ShotAttempt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.events.Event" title="nhlscrapi.games.events.Event"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.events.Event</span></code></a></p>
+<dl class="attribute">
+<dt id="nhlscrapi.games.events.ShotAttempt.dist">
+<code class="descname">dist</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.events.ShotAttempt.dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Distance of shot in feet</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.events.ShotAttempt.is_penalty_shot">
+<code class="descname">is_penalty_shot</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.events.ShotAttempt.is_penalty_shot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flag indicating if it was a penalty shot</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.events.ShotAttempt.shooter">
+<code class="descname">shooter</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.events.ShotAttempt.shooter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shooter info <code class="docutils literal"><span class="pre">{</span> <span class="pre">'team':</span> <span class="pre">team,</span> <span class="pre">'name':</span> <span class="pre">name,</span> <span class="pre">'num':</span> <span class="pre">num</span> <span class="pre">}</span></code></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.events.ShotAttempt.shot_type">
+<code class="descname">shot_type</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.events.ShotAttempt.shot_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Description of shot, e.g. Wrist Shot, et c</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.events.Stoppage">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.events.</code><code class="descname">Stoppage</code><span class="sig-paren">(</span><em>event_type=11</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/events.html#Stoppage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.Stoppage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.events.Event" title="nhlscrapi.games.events.Event"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.events.Event</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.events.Takeaway">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.events.</code><code class="descname">Takeaway</code><a class="reference internal" href="_modules/nhlscrapi/games/events.html#Takeaway"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.Takeaway" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.events.Turnover" title="nhlscrapi.games.events.Turnover"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.events.Turnover</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="nhlscrapi.games.events.Turnover">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.events.</code><code class="descname">Turnover</code><span class="sig-paren">(</span><em>to_type=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/events.html#Turnover"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.Turnover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#nhlscrapi.games.events.Event" title="nhlscrapi.games.events.Event"><code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.games.events.Event</span></code></a></p>
+<p>Base class for Takeaway and Giveaway events. Not meant to be used directly</p>
+<dl class="class">
+<dt id="nhlscrapi.games.events.Turnover.TOType">
+<em class="property">class </em><code class="descname">TOType</code><a class="reference internal" href="_modules/nhlscrapi/games/events.html#Turnover.TOType"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.events.Turnover.TOType" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="attribute">
+<dt id="nhlscrapi.games.events.Turnover.TOType.Giveaway">
+<code class="descname">Giveaway</code><em class="property"> = 1</em><a class="headerlink" href="#nhlscrapi.games.events.Turnover.TOType.Giveaway" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.events.Turnover.TOType.Takeaway">
+<code class="descname">Takeaway</code><em class="property"> = 0</em><a class="headerlink" href="#nhlscrapi.games.events.Turnover.TOType.Takeaway" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.events.Turnover.turnover_type">
+<code class="descclassname">Turnover.</code><code class="descname">turnover_type</code><a class="headerlink" href="#nhlscrapi.games.events.Turnover.turnover_type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="nhlscrapi-games-gamesummary-module">
+<h2>nhlscrapi.games.gamesummary module<a class="headerlink" href="#nhlscrapi-games-gamesummary-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="nhlscrapi-games-plays-module">
+<h2>nhlscrapi.games.plays module<a class="headerlink" href="#nhlscrapi-games-plays-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-nhlscrapi.games.repscrwrap">
+<span id="nhlscrapi-games-repscrwrap-module"></span><h2>nhlscrapi.games.repscrwrap module<a class="headerlink" href="#module-nhlscrapi.games.repscrwrap" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="nhlscrapi.games.repscrwrap.RepScrWrap">
+<em class="property">class </em><code class="descclassname">nhlscrapi.games.repscrwrap.</code><code class="descname">RepScrWrap</code><span class="sig-paren">(</span><em>game_key</em>, <em>rep_reader</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/repscrwrap.html#RepScrWrap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.repscrwrap.RepScrWrap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Lazy matchup reader base. Reports can be read in pieces. Only need to read matchup on read of first part. Serves
+as the base class for all wrappers of report scrapers.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>game_key</strong> &#8211; <a class="reference internal" href="#nhlscrapi.games.game.GameKey" title="nhlscrapi.games.game.GameKey"><code class="xref py py-class docutils literal"><span class="pre">GameKey</span></code></a> of the game being loaded</li>
+<li><strong>rep_reader</strong> &#8211; object of type <code class="xref py py-class docutils literal"><span class="pre">nhlscrapi.scrapr.ReportLoader</span></code></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="nhlscrapi.games.repscrwrap.RepScrWrap.game_key">
+<code class="descname">game_key</code><em class="property"> = None</em><a class="headerlink" href="#nhlscrapi.games.repscrwrap.RepScrWrap.game_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Game key identifier of type <a class="reference internal" href="#nhlscrapi.games.game.GameKey" title="nhlscrapi.games.game.GameKey"><code class="xref py py-class docutils literal"><span class="pre">GameKey</span></code></a></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="nhlscrapi.games.repscrwrap.RepScrWrap.load_all">
+<code class="descname">load_all</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/repscrwrap.html#RepScrWrap.load_all"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.repscrwrap.RepScrWrap.load_all" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads all parts of the report.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><code class="docutils literal"><span class="pre">self</span></code> or <code class="docutils literal"><span class="pre">None</span></code> if load fails</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="nhlscrapi.games.repscrwrap.RepScrWrap.matchup">
+<code class="descname">matchup</code><a class="headerlink" href="#nhlscrapi.games.repscrwrap.RepScrWrap.matchup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the game meta information displayed in report banners including team names,
+final score, game date, location, and attendance. Data format is</p>
+<div class="code python highlight-python"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s">&#39;home&#39;</span><span class="p">:</span> <span class="n">home</span><span class="p">,</span>
+    <span class="s">&#39;away&#39;</span><span class="p">:</span> <span class="n">away</span><span class="p">,</span>
+    <span class="s">&#39;final&#39;</span><span class="p">:</span> <span class="n">final</span><span class="p">,</span>
+    <span class="s">&#39;attendance&#39;</span><span class="p">:</span> <span class="n">att</span><span class="p">,</span>
+    <span class="s">&#39;date&#39;</span><span class="p">:</span> <span class="n">date</span><span class="p">,</span>
+    <span class="s">&#39;location&#39;</span><span class="p">:</span> <span class="n">loc</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">matchup banner info</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">dict</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="nhlscrapi.games.repscrwrap.dispatch_loader">
+<code class="descclassname">nhlscrapi.games.repscrwrap.</code><code class="descname">dispatch_loader</code><span class="sig-paren">(</span><em>scraper</em>, <em>loader_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/nhlscrapi/games/repscrwrap.html#dispatch_loader"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#nhlscrapi.games.repscrwrap.dispatch_loader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator that enforces one time loading for scrapers. The one time loading is applied
+to partial loaders, e.g. only parse and load the home team roster once. This is not
+meant to be used directly.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>scraper</strong> &#8211; property name (string) containing an object of type <code class="xref py py-class docutils literal"><span class="pre">scrapr.ReportLoader</span></code></li>
+<li><strong>loader_name</strong> &#8211; name of method that does the scraping/parsing</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">function wrapper</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-nhlscrapi.games">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-nhlscrapi.games" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">nhlscrapi.games package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.games.game">nhlscrapi.games.game module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.games.playbyplay">nhlscrapi.games.playbyplay module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.games.rosters">nhlscrapi.games.rosters module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.games.toi">nhlscrapi.games.toi module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.games.faceoffcomp">nhlscrapi.games.faceoffcomp module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.games.cumstats">nhlscrapi.games.cumstats module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.games.events">nhlscrapi.games.events module</a></li>
+<li><a class="reference internal" href="#nhlscrapi-games-gamesummary-module">nhlscrapi.games.gamesummary module</a></li>
+<li><a class="reference internal" href="#nhlscrapi-games-plays-module">nhlscrapi.games.plays module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.games.repscrwrap">nhlscrapi.games.repscrwrap module</a></li>
+<li><a class="reference internal" href="#module-nhlscrapi.games">Module contents</a></li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="nhlscrapi.html">nhlscrapi package</a><ul>
+      <li>Previous: <a href="nhlscrapi.html" title="previous chapter">nhlscrapi package</a></li>
+      <li>Next: <a href="nhlscrapi.scrapr.html" title="next chapter">nhlscrapi.scrapr package</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/nhlscrapi.games.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+      |
+      <a href="_sources/nhlscrapi.games.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
