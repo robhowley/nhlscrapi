@@ -19,7 +19,7 @@ setup(
     
   include_package_data=True,
     
-  scripts=['bin/gamedata'],
+  scripts=['bin/gamedata.py'],
     
   license="Apache Software License version 2.0",
     
