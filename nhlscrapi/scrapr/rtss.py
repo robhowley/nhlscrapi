@@ -1,5 +1,10 @@
 
-from nhlscrapi.scrapr import playparser as pp
+# for the play parser
+import nhlscrapi.constants as c
+from nhlscrapi._tools import to_int
+from eventparser import event_type_mapper, parse_event_desc
+
+# base for RTSS
 from nhlscrapi.scrapr.reportloader import ReportLoader
 
 
@@ -40,10 +45,108 @@ class RTSS(ReportLoader):
         
         lx_doc = self.html_doc()
         if lx_doc is not None:
-            parser = pp.PlayParser(self.game_key.season)
+            parser = PlayParser(self.game_key.season)
             plays = lx_doc.xpath('//tr[@class = "evenColor"]')
             for p in plays:
                 p_obj = parser.build_play(p)
                 self.plays.append(p_obj)
                 
                 yield p_obj
+                
+                
+# will take a RTSS play table row and return a Play object
+class PlayParser(object):
+    """Interprets RTSS play by play table row and populates nhlscrapi.Play with info."""
+    
+    def __init__(self, season = c.MAX_SEASON):
+        self.season = season
+    
+    @staticmethod
+    def ColMap(season):
+        """
+        Returns a dictionary mapping the type of information in the RTSS play row to the
+        appropriate column number. The column locations pre/post 2008 are different.
+        
+        :param season: int for the season number
+        :returns: dict, keys are ``'play_num', 'per', 'str', 'time', 'event', 'desc', 'vis', 'home'``
+        """
+        if c.MIN_SEASON <= season <= c.MAX_SEASON:
+            return {
+                "play_num": 0,
+                "per": 1,
+                "str": 2,
+                "time": 3,
+                "event": 4,
+                "desc": 5,
+                "vis": 6,
+                "home": 7
+            }
+        else:
+            raise ValueError("RTSSCol.MAP(season): Invalid season " + str(season))
+    
+    def build_play(self, pbp_row):
+        """
+        Parses table row from RTSS
+        :param pbp_row: table row from RTSS tagged with <tr class='evenColor' ... >
+        :returns: nhlscrapi.Play
+        """
+        d = pbp_row.findall('./td')
+        c = PlayParser.ColMap(self.season)
+        
+        p = { }
+        to_dig = lambda t: int(t) if t.isdigit() else 0
+        p['play_num'] = to_int(d[c["play_num"]].text, 0)
+        p['period'] = to_int(d[c["per"]].text, 0)
+        
+        p['strength'] = self.__strength(d[c["str"]].text)
+        
+        time = d[c["time"]].text.split(":")
+        p['time'] = { "min": int(time[0]), "sec": int(time[1]) }
+        
+        skater_tab = d[c["vis"]].xpath("./table")
+        p['vis_on_ice'] = self.__skaters(skater_tab[0][0]) if len(skater_tab) else { }
+            
+        skater_tab = d[c["home"]].xpath("./table")
+        p['home_on_ice'] = self.__skaters(skater_tab[0][0]) if len(skater_tab) else { }
+            
+        p['event'] = event_type_mapper(
+            d[c["event"]].text,
+            period=p['period'],
+            skater_ct=len(p['vis_on_ice']) + len(p['home_on_ice'])
+        )
+        p['event'].desc = " ".join([str(t.encode('ascii', 'replace')) for t in d[c["desc"]].xpath("text()")])
+        parse_event_desc(p['event'], season=self.season)
+        
+        return p
+        
+    def __skaters(self, tab):
+        """
+        Constructs dictionary of players on the ice in the provided table at time of play.
+        :param tab: RTSS table of the skaters and goalie on at the time of the play
+        :returns: dictionary, key = player number, value = [position, name]
+        """
+        
+        res = { }
+        for td in tab.iterchildren():
+            if len(td):
+                pl_data = td.xpath("./table/tr")
+                pl = pl_data[0].xpath("./td/font")
+                
+                if pl[0].text.isdigit():
+                    res[int(pl[0].text)] = [s.strip() for s in pl[0].get("title").split("-")][::-1]
+                
+                s = pl[0].get("title").split("-")
+                pos = pl_data[1].getchildren()[0].text
+                
+        return res
+        
+    def __strength(self, sg_str):
+        # avoids the circular import, but wreaks of code that needs refactoring
+        from nhlscrapi.games.playbyplay import Strength
+        
+        if 'PP' in sg_str:
+            return Strength.PP
+        elif 'SH' in sg_str:
+            return Strength.PP
+        else:
+            return Strength.Even
