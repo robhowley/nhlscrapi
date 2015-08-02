@@ -1,21 +1,22 @@
 v0.3.2
 ------
 
-  * refactored Plays/Strength construct
+  * refactored ``Plays``/``Strength`` construct
 
-    - moved Plays and Strength from games.plays to games.playbyplay
-    - moved scrapr.rtss.playparser.PlayParser to scrapr.rtss
+    - moved ``Plays`` and ``Strength`` from ``games.plays`` to ``games.playbyplay``
+    - moved ``scrapr.rtss.playparser.PlayParser`` to ``scrapr.rtss``
     - deleted games/plays.py and scrapr/playparser.py
-    - reworked data structure of PlayParser to be purely a dict
-    - parsed play data isn't converted into the proper Play object until games.playbyplay.PlayByPlay gets it
+    - reworked data structure of ``PlayParser`` to be purely a dict
+    - parsed play data isn't converted into the proper ``Play`` object until ``games.playbyplay.PlayByPlay`` gets it
 
   * refactored TOI/ShiftSummary construct
 
-    - moved ShiftSummary from scrapr.toirep to games.toi
-    - scrapr.toirep.TOIRepBase now stores by player shift info as dict
-    - parsed shit summary isn't made into a ShiftSummary object until in TOI
+    - moved ``ShiftSummary`` from ``scrapr.toirep`` to ``games.toi``
+    - ``scrapr.toirep.TOIRepBase`` now stores by player shift info as dict
+    - parsed shift summary isn't made into a ``ShiftSummary`` object until in ``TOI``
 
   * Goal of both big refactors was to keep scraping/raw web data as dicts and have object wrappers only exist in the games package
+  * added a ``unittest`` for the time on ice and shift summary info
   * added docstrings to major report and scraper interfaces
   * built docs using Sphinx
 
