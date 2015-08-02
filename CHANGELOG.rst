@@ -1,3 +1,9 @@
+v0.3.3
+------
+
+  * true bug fix. messed up the pypi upload setup
+  * forgot cfg et c.
+
 v0.3.2
 ------
 

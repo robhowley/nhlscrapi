@@ -4,3 +4,4 @@
 *.EGG-INFO
 *.pyc
 *.pyo
+dist/

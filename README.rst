@@ -56,7 +56,7 @@ Scrape data for game 1226 of 2014, Ottawa vs Pittsburgh.
   # scrape all remaining reports
   game.load_all()
 
-Current Release: v0.3.2
+Current Release: v0.3.3
 ------------------------
 This is a pre-release and is not stable and fully fit for production. The first full stable release (v1.0.0) will be made available once the framework for all `NHL game reports <http://www.nhl.com/ice/gamestats.htm?fetchKey=20142ALLSATAll&sort=gameDate&viewName=teamRTSSreports>`_ are completed. Currently, Play-by-Play, Home/Away TOI, Roster and Face-off Comparison reports are functional.
 
