@@ -6,54 +6,49 @@ from nhlscrapi.scrapr.reportloader import ReportLoader
 from nhlscrapi.games.events import EventType as ET
 
 
-class ShiftSummary(object):
-    """Player's shift summary"""
-  
-    def __init__(self):
-    
-        self.player_num = 0
-        self.player_name = { }
-        """ Player's name: { 'first': '', 'last': '' }"""
-        
-        self.shifts = []
-        """List of all shifts in the form
-        [
-            {
-                'shift_num': shift_num,
-                'period': period_num,
-                'start': start_time (elapsed)
-                'end': end_time (elapsed)
-                'dur': length_of_shift,
-                'event': EventType.Goal or EventType.Penalty
-            }
-        ] """
-      
-      
-        self.by_period = { }
-        """Summary table by period
-        {
-            'period': period_num,
-            'shifts': shift_count,
-            'avg': avg_shift_length,
-            'toi': total_toi,
-            'ev_toi': even_str_toi,
-            'pp_toi': pp_toi,
-            'sh_toi': sh_toi
-        } """
-      
-    @property
-    def game_summ(self):
-        return self.by_period.get(0, None)
-
-
 class TOIRepBase(ReportLoader):
-    """Scrapes TOI reports. (home/away are same format)"""
+    """
+    Scrapes TOI reports. (home/away are same format).
+    """
   
     def __init__(self, game_key, rep_type):
         super(TOIRepBase, self).__init__(game_key, rep_type)
     
         self.by_player = { }
-        """by player dictionary of shift summaries { player_num: ShiftSummary() }}"""
+        """
+        By player dictionary of shift summaries. Format is
+        
+        .. code:: python
+        
+            {
+                player_num: {
+                    'player_name': { 'first': '', 'last': '' },
+                    'shifts': [
+                        {
+                            'shift_num': shift_num,
+                            'period': period_num,
+                            'start': start_time (elapsed)
+                            'end': end_time (elapsed)
+                            'dur': length_of_shift,
+                            'event': event_enum_goal_or_penalty
+                        }
+                    ],
+                    'by_period': {
+                        'period': period_num,
+                        'shifts': shift_count,
+                        'avg': { 'min': min, 'sec': sec },
+                        'toi': { 'min': min, 'sec': sec },
+                        'ev_toi': { 'min': min, 'sec': sec },
+                        'pp_toi': { 'min': min, 'sec': sec },
+                        'sh_toi': { 'min': min, 'sec': sec }
+                    }
+                }
+            }
+            
+            
+        The only events recorded per shift are :py:class:`.EventType.Goal` or :py:class:`.EventType.Penalty`. For
+        ``period = 0``, the game totals are returned.
+        """
 
     def __player_shifts(self, shift):
         parsed_shifts = []
@@ -122,15 +117,13 @@ class TOIRepBase(ReportLoader):
 
     def parse(self):
         """Parse full TOI document.
-        :returns: self if successfule else None
+        :returns: ``self`` if successful else ``None``
         """
         
         try:
             return super(TOIRepBase, self).parse().self.parse_shifts()
         except:
-            r = False
-      
-        return r and True
+            return None
 
     def parse_shifts(self):
         """Parse shifts from TOI report
@@ -140,26 +133,26 @@ class TOIRepBase(ReportLoader):
         lx_doc = self.html_doc()
         pl_heads = lx_doc.xpath('//td[contains(@class, "playerHeading")]')
         for pl in pl_heads:
-            sh_sum = ShiftSummary()
+            sh_sum = { }
               
             pl_text = pl.xpath('text()')[0]
             num_name = pl_text.replace(',','').split(' ')
-            sh_sum.player_num = int(num_name[0]) if num_name[0].isdigit() else -1
-            sh_sum.player_name = { 'first': num_name[2], 'last': num_name[1] }
+            sh_sum['player_num'] = int(num_name[0]) if num_name[0].isdigit() else -1
+            sh_sum['player_name'] = { 'first': num_name[2], 'last': num_name[1] }
               
             first_shift = pl.xpath('../following-sibling::tr')[1]
-            sh_sum.shifts, last_shift = self.__player_shifts(first_shift)
+            sh_sum['shifts'], last_shift = self.__player_shifts(first_shift)
               
             while ('Per' not in last_shift.xpath('.//text()')):
                 last_shift = last_shift.xpath('following-sibling::tr')[0]
                 
             per_summ = last_shift.xpath('.//tr')[0]
-            sh_sum.by_period, last_sum = self.__get_by_per_summ(per_summ)
+            sh_sum['by_period'], last_sum = self.__get_by_per_summ(per_summ)
             
             
-            self.by_player[sh_sum.player_num] = sh_sum
+            self.by_player[sh_sum['player_num']] = sh_sum
         
-        return self.by_player
+        return self if self.by_player else None
       
 
 class HomeTOIRep(TOIRepBase):
