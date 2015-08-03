@@ -1,3 +1,8 @@
+v0.3.4
+------
+
+  * setup script reference bug.
+
 v0.3.3
 ------
 
