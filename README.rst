@@ -12,6 +12,15 @@ Related projects:
   - `nhlscrapr <http://cran.r-project.org/web/packages/nhlscrapr/index.html>`_
   - `py-nhl <https://github.com/wellsoliver/py-nhl>`_
 
+Installation
+------------
+
+Getting started is as easy as::
+
+    pip install nhlscrapi
+
+For more information on the setup, see the `PyPi: nhlscrapi <https://pypi.python.org/pypi/nhlscrapi/>`_. The documentation for the package can be found `here <http://pythonhosted.org/nhlscrapi/>`_.
+
 Usage Example
 --------------
 Scrape data for game 1226 of 2014, Ottawa vs Pittsburgh.
