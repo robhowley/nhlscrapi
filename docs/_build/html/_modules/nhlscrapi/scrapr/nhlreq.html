@@ -38,14 +38,11 @@
           <div class="body" role="main">
             
   <h1>Source code for nhlscrapi.scrapr.nhlreq</h1><div class="highlight"><pre>
-<span class="kn">from</span> <span class="nn">urllib2</span> <span class="kn">import</span> <span class="n">urlopen</span>
-<span class="kn">from</span> <span class="nn">urllib2</span> <span class="kn">import</span> <span class="n">Request</span>
-<span class="kn">from</span> <span class="nn">urllib2</span> <span class="kn">import</span> <span class="n">URLError</span>
-
+<span class="kn">import</span> <span class="nn">requests</span>
 
 <span class="k">class</span> <span class="nc">NHLCn</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="NHLCn"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn">[docs]</a><span class="sd">    Builds the URLs, makes the HTTP calls and retreives the raw HTML associated with various NHL report data. If</span>
+<div class="viewcode-block" id="NHLCn"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Builds the URLs, makes the HTTP calls and retreives the raw HTML associated with various NHL report data. If</span>
 <span class="sd">    an error occurs in the retrieval process, the error is recorded in ``req_err``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">__domain</span> <span class="o">=</span> <span class="s">&#39;http://www.nhl.com/&#39;</span>
@@ -66,87 +63,82 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__open</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
     
     <span class="k">def</span> <span class="nf">game_roster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<div class="viewcode-block" id="NHLCn.game_roster"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.game_roster">[docs]</a><span class="sd">        :returns: raw HTML for game rosters (RO)</span>
+<div class="viewcode-block" id="NHLCn.game_roster"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.game_roster">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: raw HTML for game rosters (RO)</span>
 <span class="sd">        :rtype: string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;RO&#39;</span><span class="p">)</span>
         
-    <span class="k">def</span> <span class="nf">rtss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="NHLCn.rtss"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.rtss">[docs]</a><span class="sd">        :returns: raw HTML for RTSS play by play (PL)</span>
+    <span class="k">def</span> <span class="nf">rtss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span></div>
+<div class="viewcode-block" id="NHLCn.rtss"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.rtss">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: raw HTML for RTSS play by play (PL)</span>
 <span class="sd">        :rtype: string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;PL&#39;</span><span class="p">)</span>
         
-    <span class="k">def</span> <span class="nf">home_toi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="NHLCn.home_toi"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.home_toi">[docs]</a><span class="sd">        :returns: raw HTML for home TOI by player (TH)</span>
+    <span class="k">def</span> <span class="nf">home_toi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span></div>
+<div class="viewcode-block" id="NHLCn.home_toi"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.home_toi">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: raw HTML for home TOI by player (TH)</span>
 <span class="sd">        :rtype: string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;TH&#39;</span><span class="p">)</span>
         
-    <span class="k">def</span> <span class="nf">away_toi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="NHLCn.away_toi"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.away_toi">[docs]</a><span class="sd">        :returns: raw HTML for away TOI by player (TV)</span>
+    <span class="k">def</span> <span class="nf">away_toi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span></div>
+<div class="viewcode-block" id="NHLCn.away_toi"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.away_toi">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: raw HTML for away TOI by player (TV)</span>
 <span class="sd">        :rtype: string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;TV&#39;</span><span class="p">)</span>
         
-    <span class="k">def</span> <span class="nf">face_offs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="NHLCn.face_offs"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.face_offs">[docs]</a><span class="sd">        :returns: raw HTML for face off comparisons (FC)</span>
+    <span class="k">def</span> <span class="nf">face_offs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span></div>
+<div class="viewcode-block" id="NHLCn.face_offs"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.face_offs">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: raw HTML for face off comparisons (FC)</span>
 <span class="sd">        :rtype: string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;FC&#39;</span><span class="p">)</span>
         
-    <span class="k">def</span> <span class="nf">shootout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="NHLCn.shootout"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.shootout">[docs]</a><span class="sd">        :returns: raw HTML for the game&#39;s shootout (SO)</span>
+    <span class="k">def</span> <span class="nf">shootout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span></div>
+<div class="viewcode-block" id="NHLCn.shootout"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.shootout">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: raw HTML for the game&#39;s shootout (SO)</span>
 <span class="sd">        :rtype: string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;SO&#39;</span><span class="p">)</span>
         
-    <span class="k">def</span> <span class="nf">game_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="NHLCn.game_summary"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.game_summary">[docs]</a><span class="sd">        :returns: raw HTML for game summary report (GS)</span>
+    <span class="k">def</span> <span class="nf">game_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span></div>
+<div class="viewcode-block" id="NHLCn.game_summary"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.game_summary">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: raw HTML for game summary report (GS)</span>
 <span class="sd">        :rtype: string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;GS&#39;</span><span class="p">)</span>
         
-    <span class="k">def</span> <span class="nf">event_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="NHLCn.event_summary"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.event_summary">[docs]</a><span class="sd">        :returns: raw HTML for the event summary report (ES)</span>
+    <span class="k">def</span> <span class="nf">event_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span></div>
+<div class="viewcode-block" id="NHLCn.event_summary"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.event_summary">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: raw HTML for the event summary report (ES)</span>
 <span class="sd">        :rtype: string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;ES&#39;</span><span class="p">)</span>
         
-    <span class="k">def</span> <span class="nf">shot_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span></div>
-<div class="viewcode-block" id="NHLCn.shot_summary"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.shot_summary">[docs]</a><span class="sd">        :returns: raw HTML for the shot summary report (SS)</span>
+    <span class="k">def</span> <span class="nf">shot_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span></div>
+<div class="viewcode-block" id="NHLCn.shot_summary"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.nhlreq.NHLCn.shot_summary">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :returns: raw HTML for the shot summary report (SS)</span>
 <span class="sd">        :rtype: string</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__html_rep</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;SS&#39;</span><span class="p">)</span>
         
-    <span class="k">def</span> <span class="nf">__open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span>
-        <span class="n">req</span> <span class="o">=</span> <span class="n">Request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span></div>
-            <span class="s">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s">&#39;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11&#39;</span><span class="p">,</span>
-            <span class="s">&#39;Accept&#39;</span><span class="p">:</span> <span class="s">&#39;text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8&#39;</span><span class="p">,</span>
-            <span class="s">&#39;Accept-Charset&#39;</span><span class="p">:</span> <span class="s">&#39;ISO-8859-1,utf-8;q=0.7,*;q=0.3&#39;</span><span class="p">,</span>
-            <span class="s">&#39;Accept-Encoding&#39;</span><span class="p">:</span> <span class="s">&#39;none&#39;</span><span class="p">,</span>
-            <span class="s">&#39;Accept-Language&#39;</span><span class="p">:</span> <span class="s">&#39;en-US,en;q=0.8&#39;</span><span class="p">,</span>
-            <span class="s">&#39;Connection&#39;</span><span class="p">:</span> <span class="s">&#39;keep-alive&#39;</span>
-        <span class="p">})</span>
-        
+    <span class="k">def</span> <span class="nf">__open</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">):</span></div>
         <span class="n">req</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">req</span> <span class="o">=</span> <span class="n">urlopen</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">html_src</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+            <span class="n">req</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span>
+                <span class="s">&#39;User-Agent&#39;</span><span class="p">:</span> <span class="s">&#39;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Accept&#39;</span><span class="p">:</span> <span class="s">&#39;text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Accept-Charset&#39;</span><span class="p">:</span> <span class="s">&#39;ISO-8859-1,utf-8;q=0.7,*;q=0.3&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Accept-Encoding&#39;</span><span class="p">:</span> <span class="s">&#39;none&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Accept-Language&#39;</span><span class="p">:</span> <span class="s">&#39;en-US,en;q=0.8&#39;</span><span class="p">,</span>
+                <span class="s">&#39;Connection&#39;</span><span class="p">:</span> <span class="s">&#39;keep-alive&#39;</span>
+            <span class="p">})</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">html_src</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">text</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">req_err</span> <span class="o">=</span> <span class="n">e</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">req_err</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">req</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
                 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">html_src</span>
 </pre></div></div>

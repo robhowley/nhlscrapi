@@ -3,13 +3,21 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to nhlscrapi's documentation!
-=====================================
 
-Contents:
+.. include:: ../README.rst
+
+
+Change log
+----------
+
+.. include:: ../CHANGELOG.rst
+
+
+Contents
+--------
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 3
 
    nhlscrapi
 

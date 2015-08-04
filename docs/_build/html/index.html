@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to nhlscrapi’s documentation! &mdash; nhlscrapi  documentation</title>
+    <title>nhlscrapi: NHL Scraper API &mdash; nhlscrapi  documentation</title>
     
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -37,47 +37,179 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="welcome-to-nhlscrapi-s-documentation">
-<h1>Welcome to nhlscrapi&#8217;s documentation!<a class="headerlink" href="#welcome-to-nhlscrapi-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Contents:</p>
+  <div class="section" id="nhlscrapi-nhl-scraper-api">
+<h1>nhlscrapi: NHL Scraper API<a class="headerlink" href="#nhlscrapi-nhl-scraper-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="purpose">
+<h2>Purpose<a class="headerlink" href="#purpose" title="Permalink to this headline">¶</a></h2>
+<p>Provide a Python API for accessing NHL game data including play by play, game summaries, player stats et c. The library hides the guts of the NHL website scraping process and encapsulates not only the data gathering, but data output. This project is inspired by the <a class="reference external" href="http://www.r-project.org">R</a> package <em>nhlscrapr</em>, an all around must for NHL analytics geeks and R power users.</p>
+<p>nhlscrapi is in the early/initial stages, but will be updated regularly.</p>
+<dl class="docutils">
+<dt>Related projects:</dt>
+<dd><ul class="first last simple">
+<li><a class="reference external" href="http://cran.r-project.org/web/packages/nhlscrapr/index.html">nhlscrapr</a></li>
+<li><a class="reference external" href="https://github.com/wellsoliver/py-nhl">py-nhl</a></li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>Getting started is as easy as:</p>
+<div class="highlight-python"><div class="highlight"><pre>pip install nhlscrapi
+</pre></div>
+</div>
+<p>For more information on the setup, see the <a class="reference external" href="https://pypi.python.org/pypi/nhlscrapi/">PyPi: nhlscrapi</a>. The documentation for the package can be found <a class="reference external" href="http://pythonhosted.org/nhlscrapi/">here</a>.</p>
+</div>
+<div class="section" id="usage-example">
+<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
+<p>Scrape data for game 1226 of 2014, Ottawa vs Pittsburgh.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">nhlscrapi.games.game</span> <span class="kn">import</span> <span class="n">Game</span><span class="p">,</span> <span class="n">GameKey</span><span class="p">,</span> <span class="n">GameType</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi.games.cumstats</span> <span class="kn">import</span> <span class="n">Score</span><span class="p">,</span> <span class="n">ShotCt</span><span class="p">,</span> <span class="n">Corsi</span><span class="p">,</span> <span class="n">Fenwick</span>
+
+<span class="n">season</span> <span class="o">=</span> <span class="mi">2014</span>                                    <span class="c"># 2013-2014 season</span>
+<span class="n">game_num</span> <span class="o">=</span> <span class="mi">1226</span>                                  <span class="c">#</span>
+<span class="n">game_type</span> <span class="o">=</span> <span class="n">GameType</span><span class="o">.</span><span class="n">Regular</span>                     <span class="c"># regular season game</span>
+<span class="n">game_key</span> <span class="o">=</span> <span class="n">GameKey</span><span class="p">(</span><span class="n">season</span><span class="p">,</span> <span class="n">game_type</span><span class="p">,</span> <span class="n">game_num</span><span class="p">)</span>
+
+<span class="c"># define stat types that will be counted as the plays are parsed</span>
+<span class="n">cum_stats</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s">&#39;Score&#39;</span><span class="p">:</span> <span class="n">Score</span><span class="p">(),</span>
+  <span class="s">&#39;Shots&#39;</span><span class="p">:</span> <span class="n">ShotCt</span><span class="p">(),</span>
+  <span class="s">&#39;Corsi&#39;</span><span class="p">:</span> <span class="n">Corsi</span><span class="p">(),</span>
+  <span class="s">&#39;Fenwick&#39;</span><span class="p">:</span> <span class="n">Fenwick</span><span class="p">()</span>
+<span class="p">}</span>
+<span class="n">game</span> <span class="o">=</span> <span class="n">Game</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="n">cum_stats</span><span class="o">=</span><span class="n">cum_stats</span><span class="p">)</span>
+
+<span class="c"># also http requests and processing are lazy</span>
+<span class="c"># accumulators require play by play info so they parse the RTSS PBP</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&#39;Final         : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s">&#39;Score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">total</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&#39;Shootout      : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s">&#39;Score&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shootout</span><span class="o">.</span><span class="n">total</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&#39;Shots         : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s">&#39;Shots&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">total</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&#39;EV Shot Atts  : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s">&#39;Corsi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">total</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&#39;Corsi         : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s">&#39;Corsi&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">share</span><span class="p">()))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&#39;FW Shot Atts  : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s">&#39;Fenwick&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">total</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&#39;Fenwick       : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">cum_stats</span><span class="p">[</span><span class="s">&#39;Fenwick&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">share</span><span class="p">()))</span>
+
+<span class="c"># http req for roster report</span>
+<span class="c"># only parses the sections related to officials and coaches</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">Refs          : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">refs</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&#39;Linesman      : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">linesman</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&#39;Coaches&#39;</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&#39;  Home        : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">home_coach</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">&#39;  Away        : {}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">away_coach</span><span class="p">))</span>
+
+<span class="c"># scrape all remaining reports</span>
+<span class="n">game</span><span class="o">.</span><span class="n">load_all</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="current-release-v0-3-5">
+<h2>Current Release: v0.3.5<a class="headerlink" href="#current-release-v0-3-5" title="Permalink to this headline">¶</a></h2>
+<p>This is a pre-release and is not stable and fully fit for production. The first full stable release (v1.0.0) will be made available once the framework for all <a class="reference external" href="http://www.nhl.com/ice/gamestats.htm?fetchKey=20142ALLSATAll&amp;sort=gameDate&amp;viewName=teamRTSSreports">NHL game reports</a> are completed. Currently, Play-by-Play, Home/Away TOI, Roster and Face-off Comparison reports are functional.</p>
+</div>
+<div class="section" id="license">
+<h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p>The NHL Scraper API is a free Python library provided under Apache License version 2.0.</p>
+<blockquote>
+<div><ul class="simple">
+<li>Free software: Apache License, v2.0</li>
+<li>Documentation: (coming eventually)</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="change-log">
+<h2>Change log<a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="v0-3-5">
+<h2>v0.3.5<a class="headerlink" href="#v0-3-5" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>dropped urllib2 dependency because it&#8217;s 2015 and I&#8217;m tired of being a dinosaur</li>
+<li>added <code class="docutils literal"><span class="pre">requests</span></code> to setup dependencies</li>
+<li>fully qualified the <code class="docutils literal"><span class="pre">scrapr.NHLCn</span></code> import in <code class="docutils literal"><span class="pre">scrapr.reportloader</span></code></li>
+<li>consolidated cli_opts.py into gamedata.py ... that whole thing needs a rewrite anyway (TODO)</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="v0-3-4">
+<h2>v0.3.4<a class="headerlink" href="#v0-3-4" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>setup script reference bug.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="v0-3-3">
+<h2>v0.3.3<a class="headerlink" href="#v0-3-3" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>true bug fix. messed up the pypi upload setup</li>
+<li>forgot cfg et c.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="v0-3-2">
+<h2>v0.3.2<a class="headerlink" href="#v0-3-2" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>refactored <code class="docutils literal"><span class="pre">Plays</span></code>/<code class="docutils literal"><span class="pre">Strength</span></code> construct<ul>
+<li>moved <code class="docutils literal"><span class="pre">Plays</span></code> and <code class="docutils literal"><span class="pre">Strength</span></code> from <code class="docutils literal"><span class="pre">games.plays</span></code> to <code class="docutils literal"><span class="pre">games.playbyplay</span></code></li>
+<li>moved <code class="docutils literal"><span class="pre">scrapr.rtss.playparser.PlayParser</span></code> to <code class="docutils literal"><span class="pre">scrapr.rtss</span></code></li>
+<li>deleted games/plays.py and scrapr/playparser.py</li>
+<li>reworked data structure of <code class="docutils literal"><span class="pre">PlayParser</span></code> to be purely a dict</li>
+<li>parsed play data isn&#8217;t converted into the proper <code class="docutils literal"><span class="pre">Play</span></code> object until <code class="docutils literal"><span class="pre">games.playbyplay.PlayByPlay</span></code> gets it</li>
+</ul>
+</li>
+<li>refactored TOI/ShiftSummary construct<ul>
+<li>moved <code class="docutils literal"><span class="pre">ShiftSummary</span></code> from <code class="docutils literal"><span class="pre">scrapr.toirep</span></code> to <code class="docutils literal"><span class="pre">games.toi</span></code></li>
+<li><code class="docutils literal"><span class="pre">scrapr.toirep.TOIRepBase</span></code> now stores by player shift info as dict</li>
+<li>parsed shift summary isn&#8217;t made into a <code class="docutils literal"><span class="pre">ShiftSummary</span></code> object until in <code class="docutils literal"><span class="pre">TOI</span></code></li>
+</ul>
+</li>
+<li>Goal of both big refactors was to keep scraping/raw web data as dicts and have object wrappers only exist in the games package</li>
+<li>added a <code class="docutils literal"><span class="pre">unittest</span></code> for the time on ice and shift summary info</li>
+<li>added docstrings to major report and scraper interfaces</li>
+<li>built docs using Sphinx</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="v0-3-1">
+<h2>v0.3.1<a class="headerlink" href="#v0-3-1" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>fixed play-by-play bug created when no cum_stats provided</li>
+<li>deprecated extractors</li>
+<li>refactored GameKey and GameType into nhlscrapi.games.game</li>
+<li>updated unittests and README to reflect the refactoring</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="v0-3-0">
+<h2>v0.3.0<a class="headerlink" href="#v0-3-0" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>added face off comparison report, associated report loaded (scraper) and unittest<ul>
+<li>gave Game object basic access/loading to face off comp</li>
+</ul>
+</li>
+<li>reworked testing framework<ul>
+<li>can now run tests w the standard <code class="code docutils literal"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">unittest</span> <span class="pre">discover</span></code></li>
+</ul>
+</li>
+<li>made versioning counter sane. structure is v(realease).(feature).(bug)</li>
+<li>added <code class="code docutils literal"><span class="pre">lxml</span></code> to the install requirements in setup</li>
+<li>added this change log</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="nhlscrapi.html">nhlscrapi package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="nhlscrapi.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="nhlscrapi.games.html">nhlscrapi.games package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.games.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.games.html#module-nhlscrapi.games.game">nhlscrapi.games.game module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.games.html#module-nhlscrapi.games.playbyplay">nhlscrapi.games.playbyplay module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.games.html#module-nhlscrapi.games.rosters">nhlscrapi.games.rosters module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.games.html#module-nhlscrapi.games.toi">nhlscrapi.games.toi module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.games.html#module-nhlscrapi.games.faceoffcomp">nhlscrapi.games.faceoffcomp module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.games.html#module-nhlscrapi.games.cumstats">nhlscrapi.games.cumstats module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.games.html#module-nhlscrapi.games.events">nhlscrapi.games.events module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.games.html#nhlscrapi-games-gamesummary-module">nhlscrapi.games.gamesummary module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.games.html#nhlscrapi-games-plays-module">nhlscrapi.games.plays module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.games.html#module-nhlscrapi.games.repscrwrap">nhlscrapi.games.repscrwrap module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.games.html#module-nhlscrapi.games">Module contents</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="nhlscrapi.scrapr.html">nhlscrapi.scrapr package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.scrapr.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.scrapr.html#module-nhlscrapi.scrapr.nhlreq">nhlscrapi.scrapr.nhlreq module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.scrapr.html#module-nhlscrapi.scrapr.reportloader">nhlscrapi.scrapr.reportloader module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.scrapr.html#module-nhlscrapi.scrapr.rtss">nhlscrapi.scrapr.rtss module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.scrapr.html#module-nhlscrapi.scrapr.rosterrep">nhlscrapi.scrapr.rosterrep module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.scrapr.html#module-nhlscrapi.scrapr.toirep">nhlscrapi.scrapr.toirep module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.scrapr.html#module-nhlscrapi.scrapr.faceoffrep">nhlscrapi.scrapr.faceoffrep module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.scrapr.html#nhlscrapi-scrapr-gamesummrep-module">nhlscrapi.scrapr.gamesummrep module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.scrapr.html#module-nhlscrapi.scrapr.eventsummrep">nhlscrapi.scrapr.eventsummrep module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.scrapr.html#module-nhlscrapi.scrapr.shotsummrep">nhlscrapi.scrapr.shotsummrep module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.scrapr.html#module-nhlscrapi.scrapr.shootoutrep">nhlscrapi.scrapr.shootoutrep module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.scrapr.html#module-nhlscrapi.scrapr.eventparser">nhlscrapi.scrapr.eventparser module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.scrapr.html#module-nhlscrapi.scrapr.descparser">nhlscrapi.scrapr.descparser module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.scrapr.html#module-nhlscrapi.scrapr.officialsparser">nhlscrapi.scrapr.officialsparser module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.scrapr.html#module-nhlscrapi.scrapr.teamnameparser">nhlscrapi.scrapr.teamnameparser module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="nhlscrapi.scrapr.html#module-nhlscrapi.scrapr">Module contents</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="nhlscrapi.games.html">nhlscrapi.games package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nhlscrapi.scrapr.html">nhlscrapi.scrapr package</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="nhlscrapi.html#submodules">Submodules</a></li>
@@ -86,6 +218,7 @@
 </ul>
 </li>
 </ul>
+</div>
 </div>
 </div>
 <div class="section" id="indices-and-tables">
@@ -105,7 +238,22 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Welcome to nhlscrapi&#8217;s documentation!</a></li>
+<li><a class="reference internal" href="#">nhlscrapi: NHL Scraper API</a><ul>
+<li><a class="reference internal" href="#purpose">Purpose</a></li>
+<li><a class="reference internal" href="#installation">Installation</a></li>
+<li><a class="reference internal" href="#usage-example">Usage Example</a></li>
+<li><a class="reference internal" href="#current-release-v0-3-5">Current Release: v0.3.5</a></li>
+<li><a class="reference internal" href="#license">License</a></li>
+<li><a class="reference internal" href="#change-log">Change log</a></li>
+<li><a class="reference internal" href="#v0-3-5">v0.3.5</a></li>
+<li><a class="reference internal" href="#v0-3-4">v0.3.4</a></li>
+<li><a class="reference internal" href="#v0-3-3">v0.3.3</a></li>
+<li><a class="reference internal" href="#v0-3-2">v0.3.2</a></li>
+<li><a class="reference internal" href="#v0-3-1">v0.3.1</a></li>
+<li><a class="reference internal" href="#v0-3-0">v0.3.0</a></li>
+<li><a class="reference internal" href="#contents">Contents</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 <div class="relations">
