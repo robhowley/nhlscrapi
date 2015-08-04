@@ -3,7 +3,7 @@ import re
 
 from lxml.html import fromstring
 
-from nhlreq import NHLCn
+from nhlscrapi.scrapr.nhlreq import NHLCn
 from nhlscrapi.scrapr import teamnameparser as TP
 
 # enforce one method interface that fully parses doc
