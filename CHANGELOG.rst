@@ -1,3 +1,11 @@
+v0.3.5
+------
+
+  * dropped urllib2 dependency because it's 2015 and I'm tired of being a dinosaur
+  * added ``requests`` to setup dependencies
+  * fully qualified the ``scrapr.NHLCn`` import in ``scrapr.reportloader``
+  * consolidated cli_opts.py into gamedata.py ... that whole thing needs a rewrite anyway (TODO)
+
 v0.3.4
 ------
 
