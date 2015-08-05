@@ -202,7 +202,7 @@ def parse_faceoff_08(event):
         tnn2 = team_num_name(vs[1].strip())
         event.head_to_head = [ tnn, tnn2 ]
     except:
-        print vs
+        print(vs)
 
 
 

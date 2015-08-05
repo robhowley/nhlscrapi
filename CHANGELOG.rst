@@ -1,3 +1,8 @@
+v0.3.7
+------
+
+  * messed up the prior upload. embarrassing. fixed remaining 3.x print issue.
+
 v0.3.6
 ------
 
