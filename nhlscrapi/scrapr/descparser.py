@@ -1,5 +1,4 @@
 
-import string
 from nhlscrapi.scrapr.teamnameparser import team_abbr_parser
     
     
@@ -13,7 +12,7 @@ def default_desc_parser(event):
 ##
 #############################
 def rem_char(s, c):
-    return s.translate(string.maketrans("",""), c)
+    return s.replace(c, '')
   
   
 # get int distance from 'num ft.'
