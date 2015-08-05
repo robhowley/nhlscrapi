@@ -2,7 +2,7 @@
 # for the play parser
 import nhlscrapi.constants as c
 from nhlscrapi._tools import to_int
-from eventparser import event_type_mapper, parse_event_desc
+from nhlscrapi.scrapr.eventparser import event_type_mapper, parse_event_desc
 
 # base for RTSS
 from nhlscrapi.scrapr.reportloader import ReportLoader
