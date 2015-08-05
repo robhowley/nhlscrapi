@@ -184,7 +184,7 @@ class Game(object):
         :returns: the plays from the game
         :rtype: list
         """
-        return self.play_by_play.plays()
+        return self.play_by_play.plays
   
   
     #@property
