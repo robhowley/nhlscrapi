@@ -1,3 +1,15 @@
+v0.3.6
+------
+
+  * fixed a lot of python3.x compatibility issues
+
+    - ``_tools.build_enum`` switch to ``items()`` from ``iteritems()``
+    - ``print vs`` to ``print()`` in ``scrapr.descparser``
+    - take out ``maketrans`` in ``scrapr.descparser`` and put in ``replace()``
+
+  * fully qualify the ``scrapr.eventparser`` import in ``scrapr.rtss``
+  * ``Game.plays`` property returns ``self.play_by_play.plays()`` but plays isn't callable
+
 v0.3.5
 ------
 
