@@ -36,7 +36,11 @@ def exclude_from(l, containing = [], equal_to = []):
   
   
 def to_int(s, default=-1):
-    return int(s) if s.isdigit() else 0 if s == '00' else default
+    mult = 1
+    if s[0] in ['-','+']:
+        mult = -1 if '-' in s else 1
+        s = s[1:]
+    return mult*int(s) if s.isdigit() else 0 if s == '00' else default
 
   
 def split_time(t):
