@@ -8,6 +8,7 @@ from nhlscrapi.games.toi import TOI
 from nhlscrapi.games.rosters import Rosters
 from nhlscrapi.games.playbyplay import PlayByPlay
 from nhlscrapi.games.faceoffcomp import FaceOffComparison
+from nhlscrapi.games.eventsummary import EventSummary
 
 
 """Enum denoting whether the game is regular season or playoff"""
@@ -115,12 +116,21 @@ class Game(object):
         self.game_key = game_key if hasattr(game_key, 'to_tuple') else GameKey(key_tup=game_key)
         
         self.toi = TOI(self.game_key)
+        """The :py:class:`.TOI` summary"""
+        
         self.rosters = Rosters(self.game_key)
+        """The :py:class:`.Rosters` summary"""
+        
         #self.summary = GameSummary(game_key)
+        
         self.face_off_comp = FaceOffComparison(self.game_key)
+        """The :py:class:`.FaceOffComparison` summary"""
+        
         self.play_by_play = PlayByPlay(self.game_key, cum_stats)
-  
-    
+        """The :py:class:`.PlayByPlay` summary"""
+        
+        self.event_summary = EventSummary(self.game_key)
+        """The :py:class:`.EventSummary` summary"""
   
     def load_all(self):
         """
