@@ -1,3 +1,15 @@
+v0.4.0
+------
+
+  * added support and associated unit test for event summary report
+
+    - scraper in ``scrapr.eventsummary.EventSummRep``
+    - report wrapper and primary access object in ``games.eventsummary.EventSummary``
+
+  * the event summary report has abiltiy to filter and sort by player data
+  * updated docs
+  * updated REAMDME to reflect change
+
 v0.3.7
 ------
 

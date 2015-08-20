@@ -6,7 +6,7 @@ Purpose
 
 Provide a Python API for accessing NHL game data including play by play, game summaries, player stats et c. The library hides the guts of the NHL website scraping process and encapsulates not only the data gathering, but data output. This project is inspired by the `R <http://www.r-project.org>`_ package *nhlscrapr*, an all around must for NHL analytics geeks and R power users.
 
-nhlscrapi is in the early/initial stages, but will be updated regularly.
+nhlscrapi is in the early/initial stages, but will be updated regularly. Currently, the package support most of the game summary reports, but all of the important and essential ones.
 
 Related projects:
   - `nhlscrapr <http://cran.r-project.org/web/packages/nhlscrapr/index.html>`_
@@ -19,7 +19,7 @@ Getting started is as easy as::
 
     pip install nhlscrapi
 
-For more information on the setup, see the `PyPi: nhlscrapi <https://pypi.python.org/pypi/nhlscrapi/>`_. The documentation for the package can be found `here <http://pythonhosted.org/nhlscrapi/>`_.
+For more information on the setup, see the `PyPi: nhlscrapi <https://pypi.python.org/pypi/nhlscrapi/>`_. The documentation for the package can be found at `nhlscrapi: NHL Scraper API <http://pythonhosted.org/nhlscrapi/>`_.
 
 Usage Example
 --------------
@@ -65,13 +65,13 @@ Scrape data for game 1226 of 2014, Ottawa vs Pittsburgh.
   # scrape all remaining reports
   game.load_all()
 
-Current Release: v0.3.7
+Current Release: v0.4.0
 ------------------------
-This is a pre-release and is not stable and fully fit for production. The first full stable release (v1.0.0) will be made available once the framework for all `NHL game reports <http://www.nhl.com/ice/gamestats.htm?fetchKey=20142ALLSATAll&sort=gameDate&viewName=teamRTSSreports>`_ are completed. Currently, Play-by-Play, Home/Away TOI, Roster and Face-off Comparison reports are functional.
+This is a pre-release and is not stable and fully fit for production. The first full stable release (v1.0.0) will be made available once the framework for all `NHL game reports <http://www.nhl.com/ice/gamestats.htm?fetchKey=20142ALLSATAll&sort=gameDate&viewName=teamRTSSreports>`_ are completed. Currently, Play-by-Play, Home/Away TOI, Roster, Face-off Comparison and Event Summary reports are functional.
 
 License
 --------
 The NHL Scraper API is a free Python library provided under Apache License version 2.0.
 
   - Free software: Apache License, v2.0
-  - Documentation: (coming eventually)
+  - Documentation: `nhlscrapi: NHL Scraper API <http://pythonhosted.org/nhlscrapi/>`_
