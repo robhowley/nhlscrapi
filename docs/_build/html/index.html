@@ -42,7 +42,7 @@
 <div class="section" id="purpose">
 <h2>Purpose<a class="headerlink" href="#purpose" title="Permalink to this headline">¶</a></h2>
 <p>Provide a Python API for accessing NHL game data including play by play, game summaries, player stats et c. The library hides the guts of the NHL website scraping process and encapsulates not only the data gathering, but data output. This project is inspired by the <a class="reference external" href="http://www.r-project.org">R</a> package <em>nhlscrapr</em>, an all around must for NHL analytics geeks and R power users.</p>
-<p>nhlscrapi is in the early/initial stages, but will be updated regularly.</p>
+<p>nhlscrapi is in the early/initial stages, but will be updated regularly. Currently, the package support most of the game summary reports, but all of the important and essential ones.</p>
 <dl class="docutils">
 <dt>Related projects:</dt>
 <dd><ul class="first last simple">
@@ -58,7 +58,7 @@
 <div class="highlight-python"><div class="highlight"><pre>pip install nhlscrapi
 </pre></div>
 </div>
-<p>For more information on the setup, see the <a class="reference external" href="https://pypi.python.org/pypi/nhlscrapi/">PyPi: nhlscrapi</a>. The documentation for the package can be found <a class="reference external" href="http://pythonhosted.org/nhlscrapi/">here</a>.</p>
+<p>For more information on the setup, see the <a class="reference external" href="https://pypi.python.org/pypi/nhlscrapi/">PyPi: nhlscrapi</a>. The documentation for the package can be found at <a class="reference external" href="http://pythonhosted.org/nhlscrapi/">nhlscrapi: NHL Scraper API</a>.</p>
 </div>
 <div class="section" id="usage-example">
 <h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
@@ -103,9 +103,9 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="current-release-v0-3-7">
-<h2>Current Release: v0.3.7<a class="headerlink" href="#current-release-v0-3-7" title="Permalink to this headline">¶</a></h2>
-<p>This is a pre-release and is not stable and fully fit for production. The first full stable release (v1.0.0) will be made available once the framework for all <a class="reference external" href="http://www.nhl.com/ice/gamestats.htm?fetchKey=20142ALLSATAll&amp;sort=gameDate&amp;viewName=teamRTSSreports">NHL game reports</a> are completed. Currently, Play-by-Play, Home/Away TOI, Roster and Face-off Comparison reports are functional.</p>
+<div class="section" id="current-release-v0-4-0">
+<h2>Current Release: v0.4.0<a class="headerlink" href="#current-release-v0-4-0" title="Permalink to this headline">¶</a></h2>
+<p>This is a pre-release and is not stable and fully fit for production. The first full stable release (v1.0.0) will be made available once the framework for all <a class="reference external" href="http://www.nhl.com/ice/gamestats.htm?fetchKey=20142ALLSATAll&amp;sort=gameDate&amp;viewName=teamRTSSreports">NHL game reports</a> are completed. Currently, Play-by-Play, Home/Away TOI, Roster, Face-off Comparison and Event Summary reports are functional.</p>
 </div>
 <div class="section" id="license">
 <h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
@@ -113,7 +113,7 @@
 <blockquote>
 <div><ul class="simple">
 <li>Free software: Apache License, v2.0</li>
-<li>Documentation: (coming eventually)</li>
+<li>Documentation: <a class="reference external" href="http://pythonhosted.org/nhlscrapi/">nhlscrapi: NHL Scraper API</a></li>
 </ul>
 </div></blockquote>
 </div>
@@ -137,6 +137,21 @@
 </div>
 <div class="section" id="change-log">
 <h2>Change log<a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="v0-4-0">
+<h2>v0.4.0<a class="headerlink" href="#v0-4-0" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>added support and associated unit test for event summary report<ul>
+<li>scraper in <code class="docutils literal"><span class="pre">scrapr.eventsummary.EventSummRep</span></code></li>
+<li>report wrapper and primary access object in <code class="docutils literal"><span class="pre">games.eventsummary.EventSummary</span></code></li>
+</ul>
+</li>
+<li>the event summary report has abiltiy to filter and sort by player data</li>
+<li>updated docs</li>
+<li>updated REAMDME to reflect change</li>
+</ul>
+</div></blockquote>
 </div>
 <div class="section" id="v0-3-7">
 <h2>v0.3.7<a class="headerlink" href="#v0-3-7" title="Permalink to this headline">¶</a></h2>
@@ -265,10 +280,11 @@
 <li><a class="reference internal" href="#purpose">Purpose</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
 <li><a class="reference internal" href="#usage-example">Usage Example</a></li>
-<li><a class="reference internal" href="#current-release-v0-3-7">Current Release: v0.3.7</a></li>
+<li><a class="reference internal" href="#current-release-v0-4-0">Current Release: v0.4.0</a></li>
 <li><a class="reference internal" href="#license">License</a></li>
 <li><a class="reference internal" href="#contents">Contents</a></li>
 <li><a class="reference internal" href="#change-log">Change log</a></li>
+<li><a class="reference internal" href="#v0-4-0">v0.4.0</a></li>
 <li><a class="reference internal" href="#v0-3-7">v0.3.7</a></li>
 <li><a class="reference internal" href="#v0-3-6">v0.3.6</a></li>
 <li><a class="reference internal" href="#v0-3-5">v0.3.5</a></li>
