@@ -85,7 +85,7 @@ class EventSummRep(ReportLoader):
         
     def parse(self):
         """
-        Retreive and parse Event Summary report for the given :py:class:`nhlscrapi.games.game.GameKey``
+        Retreive and parse Event Summary report for the given :py:class:`nhlscrapi.games.game.GameKey`
         
         :returns: ``self`` on success, ``None`` otherwise
         """
@@ -147,30 +147,62 @@ class EventSummRep(ReportLoader):
         pass
     
     def parse_home_shots(self):
-        self.__set_shot_tables()
-        self.shots['home'] = self.__parse_shot_tables(
-            self.__home_top,
-            self.__home_bot
-        )
-        return self
+        """
+        Parse shot info for home team.
+        
+        :returns: ``self`` on success, ``None`` otherwise
+        """
+        try:
+            self.__set_shot_tables()
+            self.shots['home'] = self.__parse_shot_tables(
+                self.__home_top,
+                self.__home_bot
+            )
+            return self
+        except:
+            return None
     
     def parse_away_shots(self):
-        self.__set_shot_tables()
-        self.shots['away'] = self.__parse_shot_tables(
-            self.__aw_top,
-            self.__aw_bot
-        )
-        return self
+        """
+        Parse shot info for away team.
+        
+        :returns: ``self`` on success, ``None`` otherwise
+        """
+        try:
+            self.__set_shot_tables()
+            self.shots['away'] = self.__parse_shot_tables(
+                self.__aw_top,
+                self.__aw_bot
+            )
+            return self
+        except:
+            return None
         
     def parse_home_fo(self):
-        self.__set_fo_tables()
-        self.face_offs['home'] = self.__parse_fo_table(self.__home_fo)
-        return self
+        """
+        Parse face-off info for home team.
         
+        :returns: ``self`` on success, ``None`` otherwise
+        """
+        try:
+            self.__set_fo_tables()
+            self.face_offs['home'] = self.__parse_fo_table(self.__home_fo)
+            return self
+        except:
+            return None
+            
     def parse_away_fo(self):
-        self.__set_fo_tables()
-        self.face_offs['away'] = self.__parse_fo_table(self.__away_fo)
-        return self
+        """
+        Parse face-off info for away team.
+        
+        :returns: ``self`` on success, ``None`` otherwise
+        """
+        try:
+            self.__set_fo_tables()
+            self.face_offs['away'] = self.__parse_fo_table(self.__away_fo)
+            return self
+        except:
+            return None
         
     def __read_line(self, tr):
         rec = _rem(tr.xpath('.//text()'))
@@ -224,13 +256,29 @@ class EventSummRep(ReportLoader):
                 self.by_team[t][num] = p
             
     def parse_home_by_player(self):
-        if not self.by_team:
-            self.__parse_players()
-            
-        return self
+        """
+        Parse by player info for home team.
         
-    def parse_away_by_player(self):
-        if not self.by_team is None:
-            self.__parse_players()
+        :returns: ``self`` on success, ``None`` otherwise
+        """
+        try:
+            if not self.by_team:
+                self.__parse_players()
             
-        return self
+            return self
+        except:
+            return None
+            
+    def parse_away_by_player(self):
+        """
+        Parse by player info for away team.
+        
+        :returns: ``self`` on success, ``None`` otherwise
+        """
+        try:
+            if not self.by_team is None:
+                self.__parse_players()
+            
+            return self
+        except:
+            return None
