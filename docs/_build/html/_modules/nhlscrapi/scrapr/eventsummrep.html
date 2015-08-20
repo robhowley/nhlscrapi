@@ -38,18 +38,289 @@
           <div class="body" role="main">
             
   <h1>Source code for nhlscrapi.scrapr.eventsummrep</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+
+<span class="kn">from</span> <span class="nn">nhlscrapi._tools</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">to_int</span><span class="p">,</span>
+<span class="c">#    re_comp_num_pos_name,</span>
+    <span class="n">exclude_from</span> <span class="k">as</span> <span class="n">ex_junk</span>
+<span class="p">)</span>
 <span class="kn">from</span> <span class="nn">nhlscrapi.scrapr.reportloader</span> <span class="kn">import</span> <span class="n">ReportLoader</span>
 
 
-<span class="k">class</span> <span class="nc">EventSummRep</span><span class="p">(</span><span class="n">ReportLoader</span><span class="p">):</span>
-<div class="viewcode-block" id="EventSummRep"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.eventsummrep.EventSummRep">[docs]</a>  <span class="sd">&quot;&quot;&quot;Retrieve and load event summary report from nhl.com&quot;&quot;&quot;</span>
-  
-  <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
-    <span class="nb">super</span><span class="p">(</span><span class="n">EventSummRep</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;event_summary&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_rem</span><span class="p">(</span><span class="n">txt</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ex_junk</span><span class="p">(</span><span class="n">txt</span><span class="p">,</span> <span class="n">containing</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">,</span><span class="s">&#39;</span><span class="se">\r</span><span class="s">&#39;</span><span class="p">])</span>
     
-  <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<div class="viewcode-block" id="EventSummRep.parse"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.eventsummrep.EventSummRep.parse">[docs]</a>    <span class="n">r</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">EventSummRep</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">r</span> <span class="ow">and</span> <span class="bp">False</span>
+    
+<span class="k">def</span> <span class="nf">_zip_top_bot</span><span class="p">(</span><span class="n">txt_lst</span><span class="p">):</span>
+    <span class="n">cols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">txt_lst</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+    <span class="k">return</span> <span class="p">[</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">txt_lst</span><span class="p">[:</span><span class="n">cols</span><span class="p">],</span><span class="n">txt_lst</span><span class="p">[</span><span class="n">cols</span><span class="p">:])</span> <span class="p">]</span>
+    
+
+<span class="k">class</span> <span class="nc">EventSummRep</span><span class="p">(</span><span class="n">ReportLoader</span><span class="p">):</span>
+<div class="viewcode-block" id="EventSummRep"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.eventsummrep.EventSummRep">[docs]</a>    <span class="sd">&quot;&quot;&quot;Retrieve and load event summary report from nhl.com&quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">EventSummRep</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="s">&#39;event_summary&#39;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">shots</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The shot summary by strength at the aggregate and detail level</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict of the form</span>
+<span class="sd">        </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">        </span>
+<span class="sd">            {</span>
+<span class="sd">                &#39;home/away&#39;: {</span>
+<span class="sd">                    &#39;agg&#39;: { &#39;ev/pp/sh/tot&#39;: { &#39;g&#39;: goals, &#39;s&#39;: shots } },</span>
+<span class="sd">                    &#39;det&#39;: { &#39;5v5/5v4/5v3/et c&#39;: { &#39;g&#39;: goals, &#39;s&#39;: shots } }</span>
+<span class="sd">                }</span>
+<span class="sd">            }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">face_offs</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Face off summary by strength.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict of the form</span>
+<span class="sd">        </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">        </span>
+<span class="sd">            {</span>
+<span class="sd">                &#39;home/away&#39;: {</span>
+<span class="sd">                    &#39;ev/pp/sh/tot&#39;: { &#39;won&#39;: goals, &#39;total&#39;: shots } },</span>
+<span class="sd">                }</span>
+<span class="sd">            }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">by_team</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        By player team summary.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict of the form</span>
+<span class="sd">        </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">        </span>
+<span class="sd">            {</span>
+<span class="sd">                &#39;home/away&#39;: {</span>
+<span class="sd">                    &#39;num&#39;: {</span>
+<span class="sd">                        &#39;pos&#39;: pos,</span>
+<span class="sd">                        &#39;name&#39;: { &#39;first&#39;: first, &#39;last&#39;: last },</span>
+<span class="sd">                        &#39;g/a/p/pm/pn/pim/shifts/s/ab/ms/ht/gv/tk/bs&#39;: value</span>
+<span class="sd">                        &#39;fo&#39;: { &#39;won&#39;: won, &#39;tot&#39;: total },</span>
+<span class="sd">                        &#39;toi&#39;: {</span>
+<span class="sd">                            &#39;tot/avg/pp/sh/ev&#39;: { &#39;min&#39;: mins, &#39;sec&#39;: secs }</span>
+<span class="sd">                        }</span>
+<span class="sd">                    }</span>
+<span class="sd">                }</span>
+<span class="sd">            }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="c"># define place holders for different parts of the report</span>
+        <span class="c"># each one corresponds to a bit of data that can be parsed individually</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__aw_top</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__aw_bot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__h_top</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__h_bot</span> <span class="o">=</span> <span class="p">[</span><span class="bp">None</span><span class="p">]</span><span class="o">*</span><span class="mi">4</span>  <span class="c"># shot summ</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__away_fo</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__home_fo</span> <span class="o">=</span> <span class="p">[</span><span class="bp">None</span><span class="p">]</span><span class="o">*</span><span class="mi">2</span>  <span class="c"># face off summ</span>
+        
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EventSummRep.parse"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.eventsummrep.EventSummRep.parse">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retreive and parse Event Summary report for the given :py:class:`nhlscrapi.games.game.GameKey`</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: ``self`` on success, ``None`` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">EventSummRep</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span> \
+                <span class="o">.</span><span class="n">parse_away_shots</span><span class="p">()</span> \
+                <span class="o">.</span><span class="n">parse_home_shots</span><span class="p">()</span> \
+                <span class="o">.</span><span class="n">parse_away_fo</span><span class="p">()</span> \
+                <span class="o">.</span><span class="n">parse_home_fo</span><span class="p">()</span> \
+                <span class="o">.</span><span class="n">parse_away_by_player</span><span class="p">()</span> \
+                <span class="o">.</span><span class="n">parse_home_by_player</span><span class="p">()</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+    
+    <span class="k">def</span> <span class="nf">__get_tr_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span></div>
+        <span class="n">xp</span> <span class="o">=</span> <span class="s">&quot;.//td[contains(./text(),&#39;{}&#39;)]/../following-sibling::tr&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">html_doc</span><span class="p">()</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="n">xp</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        
+    <span class="k">def</span> <span class="nf">__set_shot_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__aw_top</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">shot_tr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_tr_by_name</span><span class="p">(</span><span class="s">&#39;SHOTS SUMM&#39;</span><span class="p">)</span>
+            <span class="n">_</span> <span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__aw_top</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__aw_bot</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__home_top</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__home_bot</span> <span class="o">=</span> <span class="n">shot_tr</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;.//table&#39;</span><span class="p">)</span>
+            
+    <span class="k">def</span> <span class="nf">__parse_shot_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">top_table</span><span class="p">,</span> <span class="n">bot_table</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">key_g_s</span><span class="p">(</span><span class="n">rows_lst</span><span class="p">):</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_zip_top_bot</span><span class="p">(</span><span class="n">_rem</span><span class="p">(</span><span class="n">rows_lst</span><span class="p">)):</span>
+                <span class="n">g</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="s">&#39;-&#39;</span> <span class="ow">in</span> <span class="n">v</span> <span class="k">else</span> <span class="p">(</span><span class="s">&#39;0&#39;</span><span class="p">,</span> <span class="s">&#39;0&#39;</span><span class="p">)</span>
+                <span class="n">res</span><span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;g&#39;</span><span class="p">:</span> <span class="n">to_int</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="s">&#39;s&#39;</span><span class="p">:</span> <span class="n">to_int</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="p">}</span>
+            <span class="k">return</span> <span class="n">res</span>
+        
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">&#39;agg&#39;</span><span class="p">:</span> <span class="n">key_g_s</span><span class="p">(</span><span class="n">top_table</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;.//text()&#39;</span><span class="p">)),</span>
+            <span class="s">&#39;det&#39;</span><span class="p">:</span> <span class="n">key_g_s</span><span class="p">(</span><span class="n">bot_table</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;.//text()&#39;</span><span class="p">))</span>
+        <span class="p">}</span>
+        
+    <span class="k">def</span> <span class="nf">__set_fo_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__away_fo</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">fo_tr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_tr_by_name</span><span class="p">(</span><span class="s">&#39;FACE-OFF&#39;</span><span class="p">)</span>
+            <span class="n">_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__away_fo</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__home_fo</span> <span class="o">=</span> <span class="n">fo_tr</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;.//table&#39;</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">__parse_fo_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+        <span class="k">def</span> <span class="nf">str_w_t</span><span class="p">(</span><span class="n">rows_lst</span><span class="p">):</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">_zip_top_bot</span><span class="p">(</span><span class="n">_rem</span><span class="p">(</span><span class="n">rows_lst</span><span class="p">)):</span>
+                <span class="n">ct</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="s">&#39;/&#39;</span> <span class="ow">in</span>  <span class="n">v</span> <span class="k">else</span> <span class="p">(</span><span class="s">&#39;0-0&#39;</span><span class="p">,</span><span class="s">&#39;0&#39;</span><span class="p">)</span>
+                <span class="n">w</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="n">ct</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="s">&#39;-&#39;</span> <span class="ow">in</span> <span class="n">v</span> <span class="k">else</span> <span class="p">(</span><span class="s">&#39;0&#39;</span><span class="p">,</span> <span class="s">&#39;0&#39;</span><span class="p">)</span>
+                <span class="n">res</span><span class="p">[</span><span class="n">k</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;won&#39;</span><span class="p">:</span> <span class="n">to_int</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="s">&#39;total&#39;</span><span class="p">:</span> <span class="n">to_int</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="p">}</span>
+            <span class="k">return</span> <span class="n">res</span>
+            
+        <span class="k">return</span> <span class="n">str_w_t</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;.//text()&#39;</span><span class="p">))</span>
+        
+    <span class="k">def</span> <span class="nf">__set_team_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__away</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">team_tr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_tr_by_name</span><span class="p">(</span><span class="s">&#39;TEAM&#39;</span><span class="p">)</span>
+            <span class="n">_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__away</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__home</span> <span class="o">=</span> <span class="n">team_tr</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;.//table&#39;</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">__parse_team_tables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">):</span>
+        <span class="k">pass</span>
+    
+    <span class="k">def</span> <span class="nf">parse_home_shots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EventSummRep.parse_home_shots"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.eventsummrep.EventSummRep.parse_home_shots">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse shot info for home team.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: ``self`` on success, ``None`` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__set_shot_tables</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shots</span><span class="p">[</span><span class="s">&#39;home&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parse_shot_tables</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__home_top</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__home_bot</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+    
+    <span class="k">def</span> <span class="nf">parse_away_shots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="EventSummRep.parse_away_shots"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.eventsummrep.EventSummRep.parse_away_shots">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse shot info for away team.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: ``self`` on success, ``None`` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__set_shot_tables</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shots</span><span class="p">[</span><span class="s">&#39;away&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parse_shot_tables</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__aw_top</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__aw_bot</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        
+    <span class="k">def</span> <span class="nf">parse_home_fo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="EventSummRep.parse_home_fo"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.eventsummrep.EventSummRep.parse_home_fo">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse face-off info for home team.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: ``self`` on success, ``None`` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__set_fo_tables</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">face_offs</span><span class="p">[</span><span class="s">&#39;home&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parse_fo_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__home_fo</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+            
+    <span class="k">def</span> <span class="nf">parse_away_fo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="EventSummRep.parse_away_fo"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.eventsummrep.EventSummRep.parse_away_fo">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse face-off info for away team.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: ``self`` on success, ``None`` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__set_fo_tables</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">face_offs</span><span class="p">[</span><span class="s">&#39;away&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parse_fo_table</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__away_fo</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        
+    <span class="k">def</span> <span class="nf">__read_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">):</span></div>
+        <span class="n">rec</span> <span class="o">=</span> <span class="n">_rem</span><span class="p">(</span><span class="n">tr</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&#39;.//text()&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rec</span><span class="p">)</span> <span class="o">==</span> <span class="mi">25</span><span class="p">:</span>
+            <span class="c"># player info</span>
+            <span class="n">num</span> <span class="o">=</span> <span class="n">to_int</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">num</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">{</span> <span class="p">}</span>
+                
+            <span class="n">dat</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+            <span class="n">dat</span><span class="p">[</span><span class="s">&#39;pos&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            
+            <span class="n">last</span><span class="p">,</span> <span class="n">first</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
+            <span class="n">dat</span><span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;first&#39;</span><span class="p">:</span> <span class="n">first</span><span class="p">,</span> <span class="s">&#39;last&#39;</span><span class="p">:</span> <span class="n">last</span> <span class="p">}</span>
+            
+            <span class="n">dat</span><span class="p">[</span><span class="s">&#39;shifts&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_int</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span><span class="mi">0</span><span class="p">)</span>
+            
+            <span class="n">cols</span> <span class="o">=</span> <span class="n">chain</span><span class="p">(</span>
+                <span class="p">[</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">3</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s">&#39;g&#39;</span><span class="p">,</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;p&#39;</span><span class="p">,</span><span class="s">&#39;pm&#39;</span><span class="p">,</span><span class="s">&#39;pn&#39;</span><span class="p">,</span><span class="s">&#39;pim&#39;</span><span class="p">])</span> <span class="p">],</span>
+                <span class="p">[</span> <span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">15</span><span class="p">,</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s">&#39;s&#39;</span><span class="p">,</span><span class="s">&#39;ab&#39;</span><span class="p">,</span><span class="s">&#39;ms&#39;</span><span class="p">,</span><span class="s">&#39;ht&#39;</span><span class="p">,</span><span class="s">&#39;gv&#39;</span><span class="p">,</span><span class="s">&#39;tk&#39;</span><span class="p">,</span><span class="s">&#39;bs&#39;</span><span class="p">])</span> <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+                <span class="n">dat</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_int</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="mi">0</span><span class="p">)</span>
+            
+            <span class="n">dat</span><span class="p">[</span><span class="s">&#39;toi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="p">[</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="s">&#39;tot&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">11</span><span class="p">,</span><span class="s">&#39;avg&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="s">&#39;pp&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">13</span><span class="p">,</span><span class="s">&#39;sh&#39;</span><span class="p">),</span> <span class="p">(</span><span class="mi">14</span><span class="p">,</span><span class="s">&#39;ev&#39;</span><span class="p">)</span> <span class="p">]:</span>
+                <span class="k">if</span> <span class="s">&#39;:&#39;</span> <span class="ow">in</span> <span class="n">rec</span><span class="p">[</span><span class="n">k</span><span class="p">]:</span>
+                    <span class="n">mins</span><span class="p">,</span> <span class="n">secs</span> <span class="o">=</span> <span class="n">rec</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;:&#39;</span><span class="p">)</span>
+                    <span class="n">dat</span><span class="p">[</span><span class="s">&#39;toi&#39;</span><span class="p">][</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="n">to_int</span><span class="p">(</span><span class="n">mins</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="s">&#39;sec&#39;</span><span class="p">:</span> <span class="n">to_int</span><span class="p">(</span><span class="n">secs</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="p">}</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">dat</span><span class="p">[</span><span class="s">&#39;toi&#39;</span><span class="p">][</span><span class="n">v</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;min&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;sec&#39;</span><span class="p">:</span> <span class="mi">0</span> <span class="p">}</span>
+            
+            <span class="n">w</span><span class="p">,</span> <span class="n">l</span> <span class="o">=</span> <span class="n">to_int</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="mi">22</span><span class="p">],</span><span class="mi">0</span><span class="p">),</span> <span class="n">to_int</span><span class="p">(</span><span class="n">rec</span><span class="p">[</span><span class="mi">23</span><span class="p">],</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">dat</span><span class="p">[</span><span class="s">&#39;fo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;won&#39;</span><span class="p">:</span> <span class="n">w</span><span class="p">,</span> <span class="s">&#39;total&#39;</span><span class="p">:</span> <span class="n">w</span><span class="o">+</span><span class="n">l</span> <span class="p">}</span>
+            
+            <span class="k">return</span> <span class="n">num</span><span class="p">,</span> <span class="n">dat</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">{</span> <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__parse_players</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">bp_tr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__get_tr_by_name</span><span class="p">(</span><span class="s">&#39;TEAM SUMM&#39;</span><span class="p">)</span>
+        <span class="n">all_bp</span> <span class="o">=</span> <span class="n">bp_tr</span><span class="o">.</span><span class="n">xpath</span><span class="p">(</span><span class="s">&quot;.//tr[contains(@class,&#39;Color&#39;)]&quot;</span><span class="p">)</span>
+        
+        <span class="n">t</span> <span class="o">=</span> <span class="s">&#39;away&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">by_team</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;home&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="p">},</span> <span class="s">&#39;away&#39;</span><span class="p">:</span> <span class="p">{</span> <span class="p">}</span> <span class="p">}</span>
+        <span class="k">for</span> <span class="n">abp</span> <span class="ow">in</span> <span class="n">all_bp</span><span class="p">:</span>
+            <span class="n">num</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__read_line</span><span class="p">(</span><span class="n">abp</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">num</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="s">&#39;home&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">by_team</span><span class="p">[</span><span class="n">t</span><span class="p">][</span><span class="n">num</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span>
+            
+    <span class="k">def</span> <span class="nf">parse_home_by_player</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EventSummRep.parse_home_by_player"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.eventsummrep.EventSummRep.parse_home_by_player">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse by player info for home team.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: ``self`` on success, ``None`` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">by_team</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__parse_players</span><span class="p">()</span>
+            
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+            
+    <span class="k">def</span> <span class="nf">parse_away_by_player</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="EventSummRep.parse_away_by_player"><a class="viewcode-back" href="../../../nhlscrapi.scrapr.html#nhlscrapi.scrapr.eventsummrep.EventSummRep.parse_away_by_player">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse by player info for away team.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: ``self`` on success, ``None`` otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">by_team</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">__parse_players</span><span class="p">()</span>
+            
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
 </pre></div></div></div>
 
           </div>

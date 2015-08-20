@@ -52,14 +52,6 @@ nhlscrapi.scrapr.faceoffrep module
     :undoc-members:
     :show-inheritance:
 
-nhlscrapi.scrapr.gamesummrep module
------------------------------------
-
-.. automodule:: nhlscrapi.scrapr.gamesummrep
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 nhlscrapi.scrapr.eventsummrep module
 ------------------------------------
 
@@ -80,6 +72,14 @@ nhlscrapi.scrapr.shootoutrep module
 -----------------------------------
 
 .. automodule:: nhlscrapi.scrapr.shootoutrep
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+nhlscrapi.scrapr.gamesummrep module
+-----------------------------------
+
+.. automodule:: nhlscrapi.scrapr.gamesummrep
     :members:
     :undoc-members:
     :show-inheritance:

@@ -54,7 +54,7 @@
 <span class="c"># didn&#39;t use built in enum for backwards compat</span>
 <span class="k">def</span> <span class="nf">build_enum</span><span class="p">(</span><span class="o">*</span><span class="n">sequential</span><span class="p">,</span> <span class="o">**</span><span class="n">named</span><span class="p">):</span>
     <span class="n">enums</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">sequential</span><span class="p">,</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sequential</span><span class="p">))),</span> <span class="o">**</span><span class="n">named</span><span class="p">)</span>
-    <span class="n">reverse</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">enums</span><span class="o">.</span><span class="n">iteritems</span><span class="p">())</span>
+    <span class="n">reverse</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">value</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">enums</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
     <span class="n">enums</span><span class="p">[</span><span class="s">&#39;Name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reverse</span>
     <span class="k">return</span> <span class="nb">type</span><span class="p">(</span><span class="s">&#39;Enum&#39;</span><span class="p">,</span> <span class="p">(),</span> <span class="n">enums</span><span class="p">)</span>
 
@@ -75,7 +75,11 @@
   
   
 <span class="k">def</span> <span class="nf">to_int</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="s">&#39;00&#39;</span> <span class="k">else</span> <span class="n">default</span>
+    <span class="n">mult</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;-&#39;</span><span class="p">,</span><span class="s">&#39;+&#39;</span><span class="p">]:</span>
+        <span class="n">mult</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="s">&#39;-&#39;</span> <span class="ow">in</span> <span class="n">s</span> <span class="k">else</span> <span class="mi">1</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">return</span> <span class="n">mult</span><span class="o">*</span><span class="nb">int</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="k">if</span> <span class="n">s</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="k">else</span> <span class="mi">0</span> <span class="k">if</span> <span class="n">s</span> <span class="o">==</span> <span class="s">&#39;00&#39;</span> <span class="k">else</span> <span class="n">default</span>
 
   
 <span class="k">def</span> <span class="nf">split_time</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>

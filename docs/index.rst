@@ -7,12 +7,6 @@
 .. include:: ../README.rst
 
 
-Change log
-----------
-
-.. include:: ../CHANGELOG.rst
-
-
 Contents
 --------
 
@@ -20,6 +14,12 @@ Contents
    :maxdepth: 3
 
    nhlscrapi
+
+
+Change log
+----------
+
+.. include:: ../CHANGELOG.rst
 
 
 Indices and tables

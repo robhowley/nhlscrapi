@@ -103,8 +103,8 @@
 </pre></div>
 </div>
 </div>
-<div class="section" id="current-release-v0-3-5">
-<h2>Current Release: v0.3.5<a class="headerlink" href="#current-release-v0-3-5" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="current-release-v0-3-7">
+<h2>Current Release: v0.3.7<a class="headerlink" href="#current-release-v0-3-7" title="Permalink to this headline">¶</a></h2>
 <p>This is a pre-release and is not stable and fully fit for production. The first full stable release (v1.0.0) will be made available once the framework for all <a class="reference external" href="http://www.nhl.com/ice/gamestats.htm?fetchKey=20142ALLSATAll&amp;sort=gameDate&amp;viewName=teamRTSSreports">NHL game reports</a> are completed. Currently, Play-by-Play, Home/Away TOI, Roster and Face-off Comparison reports are functional.</p>
 </div>
 <div class="section" id="license">
@@ -117,8 +117,49 @@
 </ul>
 </div></blockquote>
 </div>
+<div class="section" id="contents">
+<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="nhlscrapi.html">nhlscrapi package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nhlscrapi.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="nhlscrapi.games.html">nhlscrapi.games package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="nhlscrapi.scrapr.html">nhlscrapi.scrapr package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="nhlscrapi.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nhlscrapi.html#module-nhlscrapi.constants">nhlscrapi.constants module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nhlscrapi.html#module-nhlscrapi">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 <div class="section" id="change-log">
 <h2>Change log<a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="v0-3-7">
+<h2>v0.3.7<a class="headerlink" href="#v0-3-7" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>messed up the prior upload. embarrassing. fixed remaining 3.x print issue.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="v0-3-6">
+<h2>v0.3.6<a class="headerlink" href="#v0-3-6" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>fixed a lot of python3.x compatibility issues<ul>
+<li><code class="docutils literal"><span class="pre">_tools.build_enum</span></code> switch to <code class="docutils literal"><span class="pre">items()</span></code> from <code class="docutils literal"><span class="pre">iteritems()</span></code></li>
+<li><code class="docutils literal"><span class="pre">print</span> <span class="pre">vs</span></code> to <code class="docutils literal"><span class="pre">print()</span></code> in <code class="docutils literal"><span class="pre">scrapr.descparser</span></code></li>
+<li>take out <code class="docutils literal"><span class="pre">maketrans</span></code> in <code class="docutils literal"><span class="pre">scrapr.descparser</span></code> and put in <code class="docutils literal"><span class="pre">replace()</span></code></li>
+</ul>
+</li>
+<li>fully qualify the <code class="docutils literal"><span class="pre">scrapr.eventparser</span></code> import in <code class="docutils literal"><span class="pre">scrapr.rtss</span></code></li>
+<li><code class="docutils literal"><span class="pre">Game.plays</span></code> property returns <code class="docutils literal"><span class="pre">self.play_by_play.plays()</span></code> but plays isn&#8217;t callable</li>
+</ul>
+</div></blockquote>
 </div>
 <div class="section" id="v0-3-5">
 <h2>v0.3.5<a class="headerlink" href="#v0-3-5" title="Permalink to this headline">¶</a></h2>
@@ -202,24 +243,6 @@
 </ul>
 </div></blockquote>
 </div>
-<div class="section" id="contents">
-<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="nhlscrapi.html">nhlscrapi package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="nhlscrapi.html#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="nhlscrapi.games.html">nhlscrapi.games package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="nhlscrapi.scrapr.html">nhlscrapi.scrapr package</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="nhlscrapi.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nhlscrapi.html#module-nhlscrapi.constants">nhlscrapi.constants module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="nhlscrapi.html#module-nhlscrapi">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
@@ -242,16 +265,18 @@
 <li><a class="reference internal" href="#purpose">Purpose</a></li>
 <li><a class="reference internal" href="#installation">Installation</a></li>
 <li><a class="reference internal" href="#usage-example">Usage Example</a></li>
-<li><a class="reference internal" href="#current-release-v0-3-5">Current Release: v0.3.5</a></li>
+<li><a class="reference internal" href="#current-release-v0-3-7">Current Release: v0.3.7</a></li>
 <li><a class="reference internal" href="#license">License</a></li>
+<li><a class="reference internal" href="#contents">Contents</a></li>
 <li><a class="reference internal" href="#change-log">Change log</a></li>
+<li><a class="reference internal" href="#v0-3-7">v0.3.7</a></li>
+<li><a class="reference internal" href="#v0-3-6">v0.3.6</a></li>
 <li><a class="reference internal" href="#v0-3-5">v0.3.5</a></li>
 <li><a class="reference internal" href="#v0-3-4">v0.3.4</a></li>
 <li><a class="reference internal" href="#v0-3-3">v0.3.3</a></li>
 <li><a class="reference internal" href="#v0-3-2">v0.3.2</a></li>
 <li><a class="reference internal" href="#v0-3-1">v0.3.1</a></li>
 <li><a class="reference internal" href="#v0-3-0">v0.3.0</a></li>
-<li><a class="reference internal" href="#contents">Contents</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>

@@ -44,6 +44,22 @@ nhlscrapi.games.faceoffcomp module
     :undoc-members:
     :show-inheritance:
 
+nhlscrapi.games.eventsummary module
+----------------------------------
+
+.. automodule:: nhlscrapi.games.eventsummary
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+nhlscrapi.games.gamesummary module
+----------------------------------
+
+.. automodule:: nhlscrapi.games.gamesummary
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 nhlscrapi.games.cumstats module
 -------------------------------
 
@@ -56,23 +72,6 @@ nhlscrapi.games.events module
 -----------------------------
 
 .. automodule:: nhlscrapi.games.events
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-
-nhlscrapi.games.gamesummary module
-----------------------------------
-
-.. automodule:: nhlscrapi.games.gamesummary
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-nhlscrapi.games.plays module
-----------------------------
-
-.. automodule:: nhlscrapi.games.plays
     :members:
     :undoc-members:
     :show-inheritance:

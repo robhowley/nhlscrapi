@@ -1,0 +1,346 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>nhlscrapi.games.eventsummary &mdash; nhlscrapi  documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="nhlscrapi  documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" />
+   
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9">
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for nhlscrapi.games.eventsummary</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">nhlscrapi.scrapr.eventsummrep</span> <span class="kn">import</span> <span class="n">EventSummRep</span>
+<span class="kn">from</span> <span class="nn">nhlscrapi.games.repscrwrap</span> <span class="kn">import</span> <span class="n">RepScrWrap</span><span class="p">,</span> <span class="n">dispatch_loader</span>
+
+
+<span class="k">class</span> <span class="nc">EventSummary</span><span class="p">(</span><span class="n">RepScrWrap</span><span class="p">):</span>
+<div class="viewcode-block" id="EventSummary"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.eventsummary.EventSummary">[docs]</a>    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Event summary report. Produces the team shot/face-off summary by strength as well as the by player stats</span>
+<span class="sd">    including scoring, TOI by situation et c.</span>
+<span class="sd">        </span>
+<span class="sd">    :param game_key: unique game identifier of type :py:class:`.GameKey`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">game_key</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">EventSummary</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">game_key</span><span class="p">,</span> <span class="n">EventSummRep</span><span class="p">(</span><span class="n">game_key</span><span class="p">))</span>
+        
+    <span class="nd">@property</span>
+    <span class="nd">@dispatch_loader</span><span class="p">(</span><span class="s">&#39;_rep_reader&#39;</span><span class="p">,</span> <span class="s">&#39;parse_home_shots&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">home_shots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property that returns the home team shot summary by situation.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict of the form</span>
+<span class="sd">        </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">        </span>
+<span class="sd">            {</span>
+<span class="sd">                &#39;agg&#39;: { &#39;ev/pp/sh/tot&#39;: { &#39;g&#39;: goals, &#39;s&#39;: shots } },</span>
+<span class="sd">                &#39;det&#39;: { &#39;5v5/5v4/5v3/et c&#39;: { &#39;g&#39;: goals, &#39;s&#39;: shots } }</span>
+<span class="sd">            }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rep_reader</span><span class="o">.</span><span class="n">shots</span><span class="p">[</span><span class="s">&#39;home&#39;</span><span class="p">]</span>
+        
+    <span class="nd">@property</span>
+    <span class="nd">@dispatch_loader</span><span class="p">(</span><span class="s">&#39;_rep_reader&#39;</span><span class="p">,</span> <span class="s">&#39;parse_away_shots&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">away_shots</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property that returns the away team shot summary by situation.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict of the form</span>
+<span class="sd">        </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">        </span>
+<span class="sd">            {</span>
+<span class="sd">                &#39;agg&#39;: { &#39;ev/pp/sh/tot&#39;: { &#39;g&#39;: goals, &#39;s&#39;: shots } },</span>
+<span class="sd">                &#39;det&#39;: { &#39;5v5/5v4/5v3/et c&#39;: { &#39;g&#39;: goals, &#39;s&#39;: shots } }</span>
+<span class="sd">            }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rep_reader</span><span class="o">.</span><span class="n">shots</span><span class="p">[</span><span class="s">&#39;away&#39;</span><span class="p">]</span>
+        
+    <span class="nd">@property</span>
+    <span class="nd">@dispatch_loader</span><span class="p">(</span><span class="s">&#39;_rep_reader&#39;</span><span class="p">,</span> <span class="s">&#39;parse_home_by_player&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">home_players</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property that returns the home team by player summary..</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict of the form</span>
+<span class="sd">        </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">        </span>
+<span class="sd">            {</span>
+<span class="sd">                &#39;num&#39;: {</span>
+<span class="sd">                    &#39;pos&#39;: pos,</span>
+<span class="sd">                    &#39;name&#39;: { &#39;first&#39;: first, &#39;last&#39;: last },</span>
+<span class="sd">                    &#39;g/a/p/pm/pn/pim/shifts/s/ab/ms/ht/gv/tk/bs&#39;: value</span>
+<span class="sd">                    &#39;fo&#39;: { &#39;won&#39;: won, &#39;tot&#39;: total },</span>
+<span class="sd">                    &#39;toi&#39;: {</span>
+<span class="sd">                        &#39;tot/avg/pp/sh/ev&#39;: { &#39;min&#39;: mins, &#39;sec&#39;: secs }</span>
+<span class="sd">                    }</span>
+<span class="sd">                }</span>
+<span class="sd">            }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rep_reader</span><span class="o">.</span><span class="n">by_team</span><span class="p">[</span><span class="s">&#39;home&#39;</span><span class="p">]</span>
+        
+    <span class="nd">@property</span>
+    <span class="nd">@dispatch_loader</span><span class="p">(</span><span class="s">&#39;_rep_reader&#39;</span><span class="p">,</span> <span class="s">&#39;parse_away_by_player&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">away_players</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Property that returns the away team by player summary..</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict of the form</span>
+<span class="sd">        </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">        </span>
+<span class="sd">            {</span>
+<span class="sd">                &#39;num&#39;: {</span>
+<span class="sd">                    &#39;pos&#39;: pos,</span>
+<span class="sd">                    &#39;name&#39;: { &#39;first&#39;: first, &#39;last&#39;: last },</span>
+<span class="sd">                    &#39;g/a/p/pm/pn/pim/shifts/s/ab/ms/ht/gv/tk/bs&#39;: value</span>
+<span class="sd">                    &#39;fo&#39;: { &#39;won&#39;: won, &#39;tot&#39;: total },</span>
+<span class="sd">                    &#39;toi&#39;: {</span>
+<span class="sd">                        &#39;tot/avg/pp/sh/ev&#39;: { &#39;min&#39;: mins, &#39;sec&#39;: secs }</span>
+<span class="sd">                    }</span>
+<span class="sd">                }</span>
+<span class="sd">            }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rep_reader</span><span class="o">.</span><span class="n">by_team</span><span class="p">[</span><span class="s">&#39;away&#39;</span><span class="p">]</span>
+        
+    <span class="nd">@property</span>
+    <span class="nd">@dispatch_loader</span><span class="p">(</span><span class="s">&#39;_rep_reader&#39;</span><span class="p">,</span> <span class="s">&#39;parse_home_fo&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">home_fo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Home team face off summary by strength.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict of the form</span>
+<span class="sd">        </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">        </span>
+<span class="sd">            {</span>
+<span class="sd">                &#39;ev/pp/sh/tot&#39;: { &#39;won&#39;: goals, &#39;total&#39;: shots }</span>
+<span class="sd">            }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rep_reader</span><span class="o">.</span><span class="n">face_offs</span><span class="p">[</span><span class="s">&#39;home&#39;</span><span class="p">]</span>
+        
+    <span class="nd">@property</span>
+    <span class="nd">@dispatch_loader</span><span class="p">(</span><span class="s">&#39;_rep_reader&#39;</span><span class="p">,</span> <span class="s">&#39;parse_away_fo&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">away_fo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Away team face off summary by strength.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict of the form</span>
+<span class="sd">        </span>
+<span class="sd">        .. code:: python</span>
+<span class="sd">        </span>
+<span class="sd">            {</span>
+<span class="sd">                &#39;ev/pp/sh/tot&#39;: { &#39;won&#39;: goals, &#39;total&#39;: shots }</span>
+<span class="sd">            }</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rep_reader</span><span class="o">.</span><span class="n">face_offs</span><span class="p">[</span><span class="s">&#39;away&#39;</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">__apply_to_both</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">&#39;home&#39;</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">home_players</span><span class="p">),</span>
+            <span class="s">&#39;away&#39;</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">away_players</span><span class="p">)</span>
+        <span class="p">}</span>
+        
+    <span class="k">def</span> <span class="nf">totals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="EventSummary.totals"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.eventsummary.EventSummary.totals">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Computes and returns dictionary containing home/away by player, shots and face-off totals</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict of the form ``{ &#39;home/away&#39;: { &#39;all_keys&#39;: w_numeric_data } }``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">agg</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+            <span class="n">keys</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;g&#39;</span><span class="p">,</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;p&#39;</span><span class="p">,</span><span class="s">&#39;pm&#39;</span><span class="p">,</span><span class="s">&#39;pn&#39;</span><span class="p">,</span><span class="s">&#39;pim&#39;</span><span class="p">,</span><span class="s">&#39;s&#39;</span><span class="p">,</span><span class="s">&#39;ab&#39;</span><span class="p">,</span><span class="s">&#39;ms&#39;</span><span class="p">,</span><span class="s">&#39;ht&#39;</span><span class="p">,</span><span class="s">&#39;gv&#39;</span><span class="p">,</span><span class="s">&#39;tk&#39;</span><span class="p">,</span><span class="s">&#39;bs&#39;</span><span class="p">]</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="p">{</span> <span class="n">k</span><span class="p">:</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span> <span class="p">}</span>
+            <span class="n">res</span><span class="p">[</span><span class="s">&#39;fo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&#39;won&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s">&#39;total&#39;</span><span class="p">:</span> <span class="mi">0</span> <span class="p">}</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">keys</span><span class="p">:</span>
+                    <span class="n">res</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+=</span> <span class="n">v</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">fi</span> <span class="ow">in</span> <span class="n">res</span><span class="p">[</span><span class="s">&#39;fo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">res</span><span class="p">[</span><span class="s">&#39;fo&#39;</span><span class="p">][</span><span class="n">fi</span><span class="p">]</span> <span class="o">+=</span> <span class="n">v</span><span class="p">[</span><span class="s">&#39;fo&#39;</span><span class="p">][</span><span class="n">fi</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">res</span>
+            
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__apply_to_both</span><span class="p">(</span><span class="n">agg</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">filter_players</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pl_filter</span><span class="p">):</span></div>
+<div class="viewcode-block" id="EventSummary.filter_players"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.eventsummary.EventSummary.filter_players">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the subset home and away players that satisfy the provided filter function.</span>
+<span class="sd">        </span>
+<span class="sd">        :param pl_filter: function that takes a by player dictionary and returns bool</span>
+<span class="sd">        :returns: dict of the form ``{ &#39;home/away&#39;: { by_player_dict } }``. See :py:func:`home_players` and :py:func:`away_players`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">each</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="n">k</span><span class="p">:</span> <span class="n">v</span>
+                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">pl_filter</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+            <span class="p">}</span>
+            
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__apply_to_both</span><span class="p">(</span><span class="n">each</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">sort_players</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sort_key</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">sort_func</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span></div>
+<div class="viewcode-block" id="EventSummary.sort_players"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.eventsummary.EventSummary.sort_players">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return all home and away by player info sorted by either the provided key or function. Must provide</span>
+<span class="sd">        at least one of the two parameters. Can sort either ascending or descending.</span>
+<span class="sd">        </span>
+<span class="sd">        :param sort_key: (def None) dict key to sort on</span>
+<span class="sd">        :param sort_func: (def None) sorting function</span>
+<span class="sd">        :param reverse: (optional, def False) if True, sort descending</span>
+<span class="sd">        :returns: dict of the form ``{ &#39;home/away&#39;: { by_player_dict } }``. See :py:func:`home_players` and :py:func:`away_players`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">each</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="p">[</span> <span class="p">]</span>
+            <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">ti</span> <span class="o">=</span> <span class="p">{</span> <span class="n">vk</span><span class="p">:</span> <span class="n">vv</span> <span class="k">for</span> <span class="n">vk</span><span class="p">,</span> <span class="n">vv</span> <span class="ow">in</span> <span class="n">v</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="p">}</span>
+                <span class="n">ti</span><span class="p">[</span><span class="s">&#39;num&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">num</span>
+                <span class="n">t</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ti</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">sort_key</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="p">[</span><span class="n">sort_key</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">sort_func</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__apply_to_both</span><span class="p">(</span><span class="n">each</span><span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">goal_scorers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="EventSummary.goal_scorers"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.eventsummary.EventSummary.goal_scorers">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return home/away by player info for the game&#39;s goal scorers.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict of the form ``{ &#39;home/away&#39;: { by_player_dict } }``. See :py:func:`home_players` and :py:func:`away_players`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_players</span><span class="p">(</span>
+            <span class="n">pl_filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">num</span><span class="p">,</span> <span class="n">stats</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="s">&#39;g&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">point_getters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="EventSummary.point_getters"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.eventsummary.EventSummary.point_getters">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return home/away by player info for the game&#39;s point getters.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict of the form ``{ &#39;home/away&#39;: { by_player_dict } }``. See :py:func:`home_players` and :py:func:`away_players`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_players</span><span class="p">(</span>
+            <span class="n">pl_filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">num</span><span class="p">,</span> <span class="n">stats</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="s">&#39;p&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+        
+    <span class="k">def</span> <span class="nf">had_penalties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="EventSummary.had_penalties"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.eventsummary.EventSummary.had_penalties">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return home/away by player info for players who had a penalty.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict of the form ``{ &#39;home/away&#39;: { by_player_dict } }``. See :py:func:`home_players` and :py:func:`away_players`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_players</span><span class="p">(</span>
+            <span class="n">pl_filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">num</span><span class="p">,</span> <span class="n">stats</span><span class="p">:</span> <span class="n">stats</span><span class="p">[</span><span class="s">&#39;pn&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">top_by_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sort_key</span><span class="p">):</span></div>
+<div class="viewcode-block" id="EventSummary.top_by_key"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.eventsummary.EventSummary.top_by_key">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return home/away by player info for the players on each team that are first in the provided category.</span>
+<span class="sd">        </span>
+<span class="sd">        :param sort_key: str, the dictionary key to be sorted on</span>
+<span class="sd">        :returns: dict of the form ``{ &#39;home/away&#39;: { by_player_dict } }``. See :py:func:`home_players` and :py:func:`away_players`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sort_players</span><span class="p">(</span><span class="n">sort_key</span><span class="o">=</span><span class="n">sort_key</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">&#39;home&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="s">&#39;home&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s">&#39;away&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="s">&#39;away&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">}</span>
+        
+    <span class="k">def</span> <span class="nf">top_by_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sort_func</span><span class="p">):</span></div>
+<div class="viewcode-block" id="EventSummary.top_by_func"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.eventsummary.EventSummary.top_by_func">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return home/away by player info for the players on each team who come in first according to the</span>
+<span class="sd">        provided sorting function. Will perform ascending sort.</span>
+<span class="sd">        </span>
+<span class="sd">        :param sort_func: function that yields the sorting quantity</span>
+<span class="sd">        :returns: dict of the form ``{ &#39;home/away&#39;: { by_player_dict } }``. See :py:func:`home_players` and :py:func:`away_players`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sort_players</span><span class="p">(</span><span class="n">sort_func</span><span class="o">=</span><span class="n">sort_func</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s">&#39;home&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="s">&#39;home&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+            <span class="s">&#39;away&#39;</span><span class="p">:</span> <span class="n">res</span><span class="p">[</span><span class="s">&#39;away&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="p">}</span>
+        
+    <span class="k">def</span> <span class="nf">top_toi</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span></div>
+<div class="viewcode-block" id="EventSummary.top_toi"><a class="viewcode-back" href="../../../nhlscrapi.games.html#nhlscrapi.games.eventsummary.EventSummary.top_toi">[docs]</a>        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return home/away by player info for the players on each team who logged the most time on ice.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: dict of the form ``{ &#39;home/away&#39;: { by_player_dict } }``. See :py:func:`home_players` and :py:func:`away_players`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_by_func</span><span class="p">(</span>
+            <span class="n">sort_func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">k</span><span class="p">:</span> <span class="n">k</span><span class="p">[</span><span class="s">&#39;toi&#39;</span><span class="p">][</span><span class="s">&#39;tot&#39;</span><span class="p">][</span><span class="s">&#39;min&#39;</span><span class="p">]</span><span class="o">*</span><span class="mi">60</span><span class="o">+</span><span class="n">k</span><span class="p">[</span><span class="s">&#39;toi&#39;</span><span class="p">][</span><span class="s">&#39;tot&#39;</span><span class="p">][</span><span class="s">&#39;sec&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../../index.html">Documentation overview</a><ul>
+  <li><a href="../../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2015, Author.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.3.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.6</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
