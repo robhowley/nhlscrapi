@@ -158,8 +158,7 @@ class EventSummary(RepScrWrap):
         Return the subset home and away players that satisfy the provided filter function.
         
         :param pl_filter: function that takes a by player dictionary and returns bool
-        :returns: dict of the form ``{ 'home/away': { by_player_dict } }``. See :py:classmethod:`home_players`
-        and :py:classmethod:`away_players`
+        :returns: dict of the form ``{ 'home/away': { by_player_dict } }``. See :py:func:`home_players` and :py:func:`away_players`
         """
         def each(d):
             return {
@@ -178,8 +177,7 @@ class EventSummary(RepScrWrap):
         :param sort_key: (def None) dict key to sort on
         :param sort_func: (def None) sorting function
         :param reverse: (optional, def False) if True, sort descending
-        :returns: dict of the form ``{ 'home/away': { by_player_dict } }``. See :py:classmethod:`home_players`
-        and :py:classmethod:`away_players`
+        :returns: dict of the form ``{ 'home/away': { by_player_dict } }``. See :py:func:`home_players` and :py:func:`away_players`
         """
         def each(d):
             t = [ ]
@@ -199,8 +197,7 @@ class EventSummary(RepScrWrap):
         """
         Return home/away by player info for the game's goal scorers.
         
-        :returns: dict of the form ``{ 'home/away': { by_player_dict } }``. See :py:classmethod:`home_players`
-        and :py:classmethod:`away_players`
+        :returns: dict of the form ``{ 'home/away': { by_player_dict } }``. See :py:func:`home_players` and :py:func:`away_players`
         """
         return self.filter_players(
             pl_filter=lambda num, stats: stats['g']
@@ -210,8 +207,7 @@ class EventSummary(RepScrWrap):
         """
         Return home/away by player info for the game's point getters.
         
-        :returns: dict of the form ``{ 'home/away': { by_player_dict } }``. See :py:classmethod:`home_players`
-        and :py:classmethod:`away_players`
+        :returns: dict of the form ``{ 'home/away': { by_player_dict } }``. See :py:func:`home_players` and :py:func:`away_players`
         """
         return self.filter_players(
             pl_filter=lambda num, stats: stats['p']
@@ -221,8 +217,7 @@ class EventSummary(RepScrWrap):
         """
         Return home/away by player info for players who had a penalty.
         
-        :returns: dict of the form ``{ 'home/away': { by_player_dict } }``. See :py:classmethod:`home_players`
-        and :py:classmethod:`away_players`
+        :returns: dict of the form ``{ 'home/away': { by_player_dict } }``. See :py:func:`home_players` and :py:func:`away_players`
         """
         return self.filter_players(
             pl_filter=lambda num, stats: stats['pn']
@@ -233,8 +228,7 @@ class EventSummary(RepScrWrap):
         Return home/away by player info for the players on each team that are first in the provided category.
         
         :param sort_key: str, the dictionary key to be sorted on
-        :returns: dict of the form ``{ 'home/away': { by_player_dict } }``. See :py:classmethod:`home_players`
-        and :py:classmethod:`away_players`
+        :returns: dict of the form ``{ 'home/away': { by_player_dict } }``. See :py:func:`home_players` and :py:func:`away_players`
         """
         res = self.sort_players(sort_key=sort_key, reverse=True)
         return {
@@ -248,8 +242,7 @@ class EventSummary(RepScrWrap):
         provided sorting function. Will perform ascending sort.
         
         :param sort_func: function that yields the sorting quantity
-        :returns: dict of the form ``{ 'home/away': { by_player_dict } }``. See :py:classmethod:`home_players`
-        and :py:classmethod:`away_players`
+        :returns: dict of the form ``{ 'home/away': { by_player_dict } }``. See :py:func:`home_players` and :py:func:`away_players`
         """
         res = self.sort_players(sort_func=sort_func, reverse=True)
         return {
@@ -261,8 +254,7 @@ class EventSummary(RepScrWrap):
         """
         Return home/away by player info for the players on each team who logged the most time on ice.
         
-        :returns: dict of the form ``{ 'home/away': { by_player_dict } }``. See :py:classmethod:`home_players`
-        and :py:classmethod:`away_players`
+        :returns: dict of the form ``{ 'home/away': { by_player_dict } }``. See :py:func:`home_players` and :py:func:`away_players`
         """
         return self.top_by_func(
             sort_func=lambda k: k['toi']['tot']['min']*60+k['toi']['tot']['sec']
