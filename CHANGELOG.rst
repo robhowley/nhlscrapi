@@ -1,3 +1,9 @@
+v0.4.1
+------
+
+  * Ugly hack in ``scrapr.toirep.TOIRepBase`` to account for missing data in the report discussed in `Issue #1 <https://github.com/robhowley/nhlscrapi/issues/1>`_
+  * TODO: need to add a more robust way to handle broken records gracefully and continues parsing the remainder of the document.
+
 v0.4.0
 ------
 

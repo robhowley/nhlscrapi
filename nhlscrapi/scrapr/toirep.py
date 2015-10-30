@@ -63,8 +63,11 @@ class TOIRepBase(ReportLoader):
         return parsed_shifts, shift
   
     def __get_time(self, time_str):
-        mins, secs = time_str.split(':')
-        return { 'min': to_int(mins), 'sec': to_int(secs) }
+        if time_str and ':' in time_str:
+            mins, secs = time_str.split(':')
+            return { 'min': to_int(mins), 'sec': to_int(secs) }
+        else:
+            return { 'min': 0, 'sec': 0 }
     
     def __build_shift(self, shift):
         shift = [s.strip() for s in shift]

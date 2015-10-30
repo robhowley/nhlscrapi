@@ -5,3 +5,5 @@
 *.pyc
 *.pyo
 dist/
+.idea
+build/*
