@@ -18,8 +18,9 @@ def __shot_type(**kwargs):
 def __goal_type(**kwargs):
   skater_ct = kwargs['skater_ct'] if 'skater_ct' in kwargs else 12
   period = kwargs['period'] if 'period' in kwargs else 1
+  gt = kwargs['game_type']
   
-  if skater_ct <= 2 and period > 4:
+  if skater_ct <= 7 and period > 4 and gt < 3:
     return ET.ShootOutGoal
   else:
     return ET.Goal

@@ -50,7 +50,7 @@ class RTSS(ReportLoader):
         
         lx_doc = self.html_doc()
         if lx_doc is not None:
-            parser = PlayParser(self.game_key.season)
+            parser = PlayParser(self.game_key.season, self.game_key.game_type)
             plays = lx_doc.xpath('//tr[@class = "evenColor"]')
             for p in plays:
                 p_obj = parser.build_play(p)
@@ -63,8 +63,9 @@ class RTSS(ReportLoader):
 class PlayParser(object):
     """Interprets a single RTSS play by play table row, i.e. a single play. Constructs a dictionary of play features."""
     
-    def __init__(self, season = c.MAX_SEASON):
+    def __init__(self, season = c.MAX_SEASON, game_type=None):
         self.season = season
+        self.game_type = game_type
     
     @staticmethod
     def ColMap(season):
@@ -134,7 +135,8 @@ class PlayParser(object):
         p['event'] = event_type_mapper(
             d[c["event"]].text,
             period=p['period'],
-            skater_ct=len(p['vis_on_ice']) + len(p['home_on_ice'])
+            skater_ct=len(p['vis_on_ice']) + len(p['home_on_ice']),
+            game_type=self.game_type
         )
         p['event'].desc = " ".join([str(t.encode('ascii', 'replace')) for t in d[c["desc"]].xpath("text()")])
         parse_event_desc(p['event'], season=self.season)
