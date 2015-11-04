@@ -2,7 +2,10 @@
 from nhlscrapi.constants import TEAMS_BY_ABBR as ABB
 
 __abbr_alts = {
-  'LAK': 'LA'
+  'LAK': 'LA',
+  'NJD': 'NJ',
+  'SJS': 'SJ',
+  'TBL': 'TB'
 }
 
 def team_abbr_parser(abr):
