@@ -216,7 +216,7 @@ class EventSummRep(ReportLoader):
             dat['pos'] = rec[1]
             
             last, first = rec[2].split(',')
-            dat['name'] = { 'first': first, 'last': last }
+            dat['name'] = { 'first': first.strip(), 'last': last.strip() }
             
             dat['shifts'] = to_int(rec[10],0)
             
