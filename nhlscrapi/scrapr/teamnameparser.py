@@ -20,16 +20,15 @@ def team_abbr_parser(abr):
 
 
 def team_name_parser(name):
-  
-  # give proper capitalization
-  ns = ' '.join(s[:1].upper() + s[1:] for s in name.lower().split(' '))
+  # give proper capitalization, translate to expected team name
+  # WASHINGTON CAPITALS -> Washington Capitals
+  # ST. LOUIS BLUES -> St Louis Blues
+  ns = ' '.join(s[:1].upper() + s[1:] for s in name.lower().replace('.','').split(' '))
   
   try:
-    return ABB.keys()[ABB.values().index(ns)]
+    return ABB.keys()[ABB.values().index(ns)] #Reverse lookup, by value.
   except:
     #print 'UNKNOWN TEAM NAME: %s' % name
     pass
   
   return name
-  
-  
