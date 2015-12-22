@@ -234,16 +234,24 @@ def parse_hit_08(event):
 # VAN #14 BURROWS BLOCKED BY NYR #27 MCDONAGH, Snap, Def. Zone
 def parse_block_08(event):
     s = split_and_strip(event.desc, "BLOCKED BY")
-
     event.shooter = team_num_name(s[0])
 
     s = split_and_strip(s[1], ",")
     event.blocked_by = team_num_name(s[0])
 
-    event.shot_type = s[1]
-    event.zone = s[2]
-  
-  
+    if len(s) == 3:  # Normal number of items found (expected case)
+        event.shot_type = s[1]
+        event.zone = s[2]
+    else:  # Something is missing - shot or zone
+        if 'Zone' in s[1]:  # We have zone, not shot.
+            event.shot_type = ''
+            event.zone = s[1]
+        else:  # Shot, not zone.
+            event.shot_type = s[1]
+            event.zone = ''
+
+
+
 
 #############################
 ##

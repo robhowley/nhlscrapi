@@ -171,6 +171,6 @@ class PlayParser(object):
         if 'PP' in sg_str:
             return Strength.PP
         elif 'SH' in sg_str:
-            return Strength.PP
+            return Strength.SH
         else:
             return Strength.Even
