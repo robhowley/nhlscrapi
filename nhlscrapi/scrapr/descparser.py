@@ -18,16 +18,36 @@ def get_ft(s, def_dist = -1):
     return int(sd) if sd.isdigit() else def_dist
   
   
-def team_num_name(s):
-    tnn = s.split(" ")
-    tnn[1] = tnn[1].replace('#','')
-    tnn[1] = int(tnn[1]) if tnn[1].isdigit() else -1
+# def team_num_name(s):
+#     tnn = s.split(" ")
+#     tnn[1] = tnn[1].replace('#','')
+#     tnn[1] = int(tnn[1]) if tnn[1].isdigit() else -1
   
-    return {
-        "team": team_abbr_parser(tnn[0]),
-        "num": tnn[1],
-        "name": ' '.join(tnn[2:])
+#     return {
+#         "team": team_abbr_parser(tnn[0]),
+#         "num": tnn[1],
+#         "name": ' '.join(tnn[2:])
+#     }
+import re
+__num_name_re = re.compile('([0-9]*)(.*)')
+
+def team_num_name(s):
+    # error report 600 and error report 672
+    tnn = s.split("#")
+    team = team_abbr_parser(tnn[0].strip())
+    m = __num_name_re.search(tnn[1])
+    if m:
+        name = m.group(2).strip()
+        num = int(m.group(1)) if len(m.group(1)) > 0 else -1
+    else:
+        num = -1
+        name = ''
+    d = {
+        "team": team,
+        "num": num,
+        "name": name
     }
+    return d
 
 
 def split_and_strip(s, by):
@@ -172,11 +192,28 @@ def parse_miss_08(event):
     s = rem_penalty_shot_desc(s)
     
     event.shooter = team_num_name(s[0])
-    event.shot_type = s[1]
-    event.shot_miss_desc = s[2]
-    event.zone = s[3]
-  
-    event.dist = get_ft(s[4])
+    # event.shot_type = s[1]
+    # event.shot_miss_desc = s[2]
+    # event.zone = s[3]
+    # event.dist = get_ft(s[4])
+    
+    if s[1][-4:] == 'Zone': # error report 1090
+        event.shot_type = ''
+        event.shot_miss_desc = ''
+        event.zone = s[1]
+        event.dist = get_ft(s[2])
+    elif s[2][-4:] == 'Zone': # error report 171
+        event.shot_miss_desc = ''
+        event.zone = s[2]
+        event.dist = get_ft(s[3])
+    elif s[3][-3:] == 'ft.': # error report 467
+        event.shot_miss_desc = s[2]
+        event.zone = ''
+        event.dist = get_ft(s[3])
+    else:
+        event.shot_miss_desc = s[2]
+        event.zone = s[3]
+        event.dist = get_ft(s[4])
   
   
   
@@ -218,7 +255,7 @@ def parse_hit_08(event):
     p_z = s[1].split(",")
     event.player_hit = team_num_name(p_z[0])
   
-    event.zone = p_z[1].strip()
+    event.zone = p_z[1].strip() if len(p_z) > 1 else ''
   
   
   

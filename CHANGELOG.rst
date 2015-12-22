@@ -1,9 +1,16 @@
+v0.4.3
+------
+
+  * Put some blunt checks in ``scrapr.descparser.py`` for missing info in RTSS reports.
+  * See Issue 4
+  * TODO: design a more robust/elegant way of defining data formats and missing data. This works for now.
+
 v0.4.2
 ------
 
   * Let ``scrapr.rtss.PlayParser`` track game type and loosen skater count to address shootout parsing discussed in `Issue #2 <https://github.com/robhowley/nhlscrapi/issues/2>`_
   * Update constants ... will find a better way to handle checks.
-  * see Issues 2, 3, and 4
+  * see Issues 2, and 3
 
 v0.4.1
 ------
