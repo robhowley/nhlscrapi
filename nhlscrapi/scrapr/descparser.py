@@ -11,10 +11,6 @@ def default_desc_parser(event):
 ## helper funcs
 ##
 #############################
-def rem_char(s, c):
-    return s.replace(c, '')
-  
-  
 # get int distance from 'num ft.'
 def get_ft(s, def_dist = -1):
     sd = s.split(" ")[0]
@@ -24,13 +20,13 @@ def get_ft(s, def_dist = -1):
   
 def team_num_name(s):
     tnn = s.split(" ")
-    tnn[1] = rem_char(tnn[1], "#")
+    tnn[1] = tnn[1].replace('#','')
     tnn[1] = int(tnn[1]) if tnn[1].isdigit() else -1
   
     return {
         "team": team_abbr_parser(tnn[0]),
         "num": tnn[1],
-        "name": str(tnn[2] + (tnn[3] if len(tnn) > 3 else ""))  # two word names
+        "name": ' '.join(tnn[2:])
     }
 
 
@@ -63,7 +59,7 @@ def parse_shot_desc_08(event):
   
     # split to get team
     st = split_and_strip(s[0], " - ")
-    st[0] = rem_char(st[0].split(" ")[0].strip(), ".")
+    st[0] = st[0].split(" ")[0].strip().replace('.','')
   
     # s[0] in form (#)num name; split by space to get num
     event.shooter = team_num_name(" ".join(st))
@@ -85,6 +81,7 @@ def parse_shot_desc_08(event):
 #############################
 # NYR #13 CARCILLO(4), Wrist, Off. Zone, 11 ft. Assists: #15 DORSETT(4); #22 BOYLE(12)
 # NYR #21 STEPAN(10), Penalty Shot, Wrist, Off. Zone, 10 ft.
+# MTL #25 DE LA ROSE(1), Deflected, Off. Zone, 13 ft. Assists: #8 PRUST(10); #76 SUBBAN(35)
 def parse_goal_desc_08(event):
   
     event.is_penalty_shot = 'penalty' in event.desc.lower()
@@ -132,9 +129,9 @@ def parse_goal_desc_08(event):
     # account for two word last names
     if len(scorer) == 4:
         scorer[2] = scorer[2] + " " + scorer[3]
-  
-    num_str = rem_char(scorer[1], '#')
-    pl_tot = [e.strip() for e in scorer[2].split("(")]
+
+    num_str = scorer[1].replace('#','')
+    pl_tot = [e.strip() for e in ' '.join(scorer[2:]).split("(")]
   
     event.shooter = {
         'team': team_abbr_parser(scorer[0]),
@@ -142,19 +139,19 @@ def parse_goal_desc_08(event):
         'name': pl_tot[0]
     }
   
-    pl_tot[1] = rem_char(pl_tot[1], '()')
+    pl_tot[1] = pl_tot[1].replace('(','').replace(')','')
     event.shooter_seas_tot = int(pl_tot[1]) if pl_tot[1].isdigit() else -1
     
     
 def assist_from(a):
     pl = a.strip().split(" ")
-    num_str = rem_char(pl[0], '#')
+    num_str = pl[0].replace('#','')
   
     r = []
     r.append(int(num_str) if num_str.isdigit() else -1)
     r.extend([p.strip() for p in pl[1].split("(") ])
     if len(r) == 3:
-        r[2] = rem_char(r[2], '()')
+        r[2] = r[2].replace('(','').replace(')','')
     
     return r
   

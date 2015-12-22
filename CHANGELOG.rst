@@ -1,3 +1,10 @@
+v0.4.2
+------
+
+  * Let ``scrapr.rtss.PlayParser`` track game type and loosen skater count to address shootout parsing discussed in `Issue #2 <https://github.com/robhowley/nhlscrapi/issues/2>`_
+  * Update constants ... will find a better way to handle checks.
+  * see Issues 2, 3, and 4
+
 v0.4.1
 ------
 
