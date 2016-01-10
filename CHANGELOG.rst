@@ -1,3 +1,10 @@
+v0.4.4
+------
+
+  * Close issue 15 from ``scrapr.rosterrep.parse_rosters()``
+  * Calling ``max`` on empty key list, used common sense and switched to ``len``
+  * Stupid indentation issue leading to inclusion of roster table header 
+
 v0.4.3
 ------
 
