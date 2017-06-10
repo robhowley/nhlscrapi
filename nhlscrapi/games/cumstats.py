@@ -5,6 +5,7 @@ from nhlscrapi.games import events as EV
 from nhlscrapi.games.events import EventFactory as EF
 
 from nhlscrapi.games.playbyplay import Strength as St
+import re
 
 # base class for accumulators
 class AccumulateStats(object):
@@ -64,6 +65,8 @@ class TeamIncrementor(AccumulateStats):
             # the team who made the play / triggered the event
     
             team = self._get_team(play)
+            # patch to fix some string issue with python3
+            team = re.sub("^b'", '', team)
             try:
                 self.total[team] += 1
             except:

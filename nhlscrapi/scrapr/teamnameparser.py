@@ -24,9 +24,9 @@ def team_name_parser(name):
   # WASHINGTON CAPITALS -> Washington Capitals
   # ST. LOUIS BLUES -> St Louis Blues
   ns = ' '.join(s[:1].upper() + s[1:] for s in name.lower().replace('.','').split(' '))
-  
+
   try:
-    return ABB.keys()[ABB.values().index(ns)] #Reverse lookup, by value.
+    return list(ABB.keys())[list(ABB.values()).index(ns)] #Reverse lookup, by value.
   except:
     #print 'UNKNOWN TEAM NAME: %s' % name
     pass
