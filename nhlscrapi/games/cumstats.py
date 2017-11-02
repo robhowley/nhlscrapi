@@ -65,8 +65,7 @@ class TeamIncrementor(AccumulateStats):
             # the team who made the play / triggered the event
     
             team = self._get_team(play)
-            # patch to fix some string issue with python3
-            team = re.sub("^b'", '', team)
+
             try:
                 self.total[team] += 1
             except:
