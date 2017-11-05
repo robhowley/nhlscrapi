@@ -1,6 +1,9 @@
 nhlscrapi: NHL Scraper API
 ===============================
 
+.. image:: https://badge.fury.io/py/nhlscrapi.svg
+    :target: https://badge.fury.io/py/nhlscrapi
+
 Purpose
 --------
 
