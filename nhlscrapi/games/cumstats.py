@@ -5,7 +5,7 @@ from nhlscrapi.games import events as EV
 from nhlscrapi.games.events import EventFactory as EF
 
 from nhlscrapi.games.playbyplay import Strength as St
-import re
+
 
 # base class for accumulators
 class AccumulateStats(object):
