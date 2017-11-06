@@ -102,7 +102,7 @@ class PlayByPlay(RepScrWrap):
         return self.cum_stats
         
     def __process(self, play, d, meth):
-        for name, m in d.iteritems():
+        for name, m in d.items():
             getattr(m, meth)(play)
 
     def __init_cs_teams(self):

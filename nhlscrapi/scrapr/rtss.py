@@ -138,7 +138,8 @@ class PlayParser(object):
             skater_ct=len(p['vis_on_ice']) + len(p['home_on_ice']),
             game_type=self.game_type
         )
-        p['event'].desc = " ".join([str(t.encode('ascii', 'replace')) for t in d[c["desc"]].xpath("text()")])
+        p['event'].desc = " ".join([t.encode('ascii', 'replace').decode('utf-8') for t in d[c["desc"]].xpath("text()")])
+
         parse_event_desc(p['event'], season=self.season)
         
         return p

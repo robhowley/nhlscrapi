@@ -6,6 +6,7 @@ from nhlscrapi.games.events import EventFactory as EF
 
 from nhlscrapi.games.playbyplay import Strength as St
 
+
 # base class for accumulators
 class AccumulateStats(object):
     """
@@ -64,6 +65,7 @@ class TeamIncrementor(AccumulateStats):
             # the team who made the play / triggered the event
     
             team = self._get_team(play)
+
             try:
                 self.total[team] += 1
             except:
@@ -73,7 +75,7 @@ class TeamIncrementor(AccumulateStats):
                     self.tally[i][team] = 0
       
             try:
-                new_tally = { k:v for k,v in self.tally[len(self.tally)-1].iteritems() }
+                new_tally = { k:v for k,v in self.tally[len(self.tally)-1].items() }
                 new_tally['period'] = play.period
                 new_tally['time'] = play.time
                 new_tally[team] += 1
@@ -173,7 +175,7 @@ class Corsi(EvenStShotAttCt):
         :returns: dict, ``{ 'home_name': %, 'away_name': % }``
         """
         tot = sum(self.total.values())
-        return { k: v/float(tot) for k,v in self.total.iteritems() }
+        return { k: v/float(tot) for k,v in self.total.items() }
 
 
 class ShootOut(ShotEventTallyBase):
@@ -287,4 +289,4 @@ class Fenwick(ShotEventTallyBase):
         :rtype: dict, ``{ 'home_name': %, 'away_name': % }``
         """
         tot = sum(self.total.values())
-        return { k: v/float(tot) for k,v in self.total.iteritems() }
+        return { k: v/float(tot) for k,v in self.total.items() }
