@@ -4,6 +4,21 @@ nhlscrapi: NHL Scraper API
 .. image:: https://badge.fury.io/py/nhlscrapi.svg
     :target: https://badge.fury.io/py/nhlscrapi
 
+
+All good things ...
+-------------------
+
+I wrote this as a way to learn python seemingly forever ago. Back then parsing horrendously structured HTML files from the NHL site was basically the only way to go. No longer.
+
+The NHL's backend API is `public <https://www.kevinsidwar.com/iot/2017/7/1/the-undocumented-nhl-stats-api>`_. Just use that. 
+
+For example, if you put https://statsapi.web.nhl.com/api/v1/teams/1 in your browser you'll get some nice JSON about the NJ Devils. While it seems inexplicable that they'd be the first team anyone would put into their database, it's the NHL. Blame Bettman. Better yet, if you want the game feed for the first game of the 2017-2018 season? Go `here <https://statsapi.web.nhl.com/api/v1/game/2017020001/feed/live>`_.
+
+Best of all, the `nhlapi <https://gitlab.com/dword4/nhlapi>`_ project on GitLab is working to uncover and document the endpoints.
+
+So please, someone just write a nice client for that API.
+
+
 Purpose
 --------
 
