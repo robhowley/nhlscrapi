@@ -52,7 +52,9 @@ class RTSS(ReportLoader):
         if lx_doc is not None:
             parser = PlayParser(self.game_key.season, self.game_key.game_type)
             plays_even = lx_doc.xpath('//tr[@class = "evenColor"]')
-            plays_odd = lx_doc.xpath('//tr[@class = "    oddColor"]')
+            print(plays_even)
+            plays_odd = lx_doc.xpath('//tr[@class = "  oddColor"]')
+            print(plays_odd)
             plays = plays_even + plays_odd
             for p in plays:
                 p_obj = parser.build_play(p)
