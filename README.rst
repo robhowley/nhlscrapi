@@ -8,7 +8,7 @@ nhlscrapi: NHL Scraper API
 All good things ...
 -------------------
 
-I wrote this as a way to learn python seemingly forever ago. Back then parsing horrendously structured HTML files from the NHL site was basically the only way to go. No longer.
+I wrote this as a way to learn python (the quality in here, yikes) seemingly forever ago. Back then parsing horrendously structured HTML files from the NHL site was basically the only way to go. No longer.
 
 The NHL's backend API is `public <https://www.kevinsidwar.com/iot/2017/7/1/the-undocumented-nhl-stats-api>`_. Just use that. 
 
